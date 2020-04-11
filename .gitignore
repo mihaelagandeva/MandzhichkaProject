@@ -1,2 +1,5 @@
-mandzhichka-be/node_modules/
-mandzhichka-fe/node_modules/
+server/node_modules/
+server/lib
+server/db
+client/node_modules/
+desktop.ini
