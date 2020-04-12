@@ -2,4 +2,5 @@ server/node_modules/
 server/lib
 server/db
 client/node_modules/
+client/react-app-env.d.ts
 desktop.ini
