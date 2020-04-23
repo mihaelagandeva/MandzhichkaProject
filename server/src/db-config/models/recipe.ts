@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 const recipeSchema = new Schema({
-    id: { type: Number },
     name: { type: String },
     author: { type: String },
     date: { type: Date },
