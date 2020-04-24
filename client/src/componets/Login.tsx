@@ -73,7 +73,7 @@ const Login = () => {
     return (
         <div className={styles.root}>
             <form className={styles.formContainer} onSubmit={formik.handleSubmit}>
-                <h1 className={styles.title}>Login {formik.submitCount}</h1>
+                <h1 className={styles.title}>Login</h1>
                 <TextField
                     className={styles.inputField}
                     id="email"
