@@ -51,10 +51,10 @@ const validate = (values: RegisterFormValues): RegisterFormValues => {
     errors.username = 'Полето е задължително!';
   }
   else if (values.username.length < 5) {
-    errors.username = 'Потребителското име е прекалено кратко!'
+    errors.username = 'Потребителското име е твърде кратко!'
   }
   if (!values.password) {
-    errors.password = 'Полето е задължително!!';
+    errors.password = 'Полето е задължително!';
   }
   else if (values.password.length < 5) {
     errors.password = 'Паролата трябва да е поне 5 символа!'
@@ -72,7 +72,6 @@ const validate = (values: RegisterFormValues): RegisterFormValues => {
 const Register = () => {
   const formik = useFormik({
     initialValues: {
-      email: '',
       username: '',
       password: '',
       confirmPassword: ''
