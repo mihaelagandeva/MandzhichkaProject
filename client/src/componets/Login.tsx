@@ -47,16 +47,12 @@ const useStyles = makeStyles({
 
 const validate = (values: LoginFormValues): LoginFormValues => {
   const errors: LoginFormValues = {};
-  const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 
-  if (!values.email) {
-    errors.email = 'Required';
-  } else if (!emailPattern.test(values.email)) {
-    errors.email = 'Invalid email format'
+  if (!values.username) {
+    errors.username = 'Полето е задължително!';
   }
-
   if (!values.password) {
-    errors.password = 'Required';
+    errors.password = 'Полето е задължително!';
   }
 
   // only by returning an empty object here you can submit the form
@@ -66,7 +62,7 @@ const validate = (values: LoginFormValues): LoginFormValues => {
 const Login = () => {
   const formik = useFormik({
     initialValues: {
-      email: '',
+      username: '',
       password: ''
     },
     validate,
@@ -80,22 +76,22 @@ const Login = () => {
   return (
     <div className={styles.root}>
       <form className={styles.formContainer} onSubmit={formik.handleSubmit}>
-        <h1 className={styles.title}>Login</h1>
+        <h1 className={styles.title}>Вход</h1>
         <TextField
           className={styles.inputField}
-          id="email"
-          name="email"
-          label="Email"
+          id="username"
+          name="username"
+          label="Потребителско име"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          error={!!formik.errors.email && formik.touched.email}
-          helperText={formik.touched.email ? formik.errors.email : ''}
+          error={!!formik.errors.username && formik.touched.username}
+          helperText={formik.touched.username ? formik.errors.username : ''}
         />
         <TextField
           className={styles.inputField}
           id="password"
           name="password"
-          label="Password"
+          label="Парола"
           type="password"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
@@ -107,11 +103,11 @@ const Login = () => {
           color="primary"
           variant="outlined"
           type="submit"
-          disabled={!!formik.errors.email || !!formik.errors.password}
-        >Login</Button>
+          disabled={!!formik.errors.username || !!formik.errors.password}
+        >Вход</Button>
         <div className={styles.footer}>
           <Link href="/register" variant="body2" align="center">
-            Don&apos;t have an account? Sign Up
+            Нямате профил? Регистрирайте се!
               </Link>
         </div>
       </form>
