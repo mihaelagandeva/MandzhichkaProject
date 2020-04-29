@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
-const Schema = mongoose.Schema;
-const courseSchema = new Schema({
+const CourseSchema = new mongoose.Schema({
     name: { type: String },
     date: { type: Date },
     address: { type: String },
@@ -14,4 +13,20 @@ const courseSchema = new Schema({
         userId: { type: Number }
     }]
 });
-export const Course = mongoose.model("course", courseSchema);
+
+interface ICourse extends mongoose.Document {
+    name: string;
+    date: Date;
+    address: string;
+    picturePath: string;
+    duration: {
+        quantity: number;
+        metric: string
+    }
+    participants: {
+        userId: string
+    }[]
+}
+
+const Course = mongoose.model<ICourse>("Course", CourseSchema);
+export default Course;

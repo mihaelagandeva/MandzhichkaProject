@@ -1,8 +1,14 @@
 import mongoose from "mongoose";
 
-const Schema = mongoose.Schema;
-const achievementsSchema = new Schema({
+const AchievementSchema = new mongoose.Schema({
     name: { type: String },
     description: { type: String }
 });
-export const Achievement = mongoose.model("achievements", achievementsSchema);
+
+interface IAchievement extends mongoose.Document {
+    name: string;
+    description: string;
+}
+
+export const Achievement = mongoose.model<IAchievement>("achievement", AchievementSchema);
+export default Achievement;

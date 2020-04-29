@@ -1,9 +1,16 @@
 import mongoose from "mongoose";
 
-const Schema = mongoose.Schema;
-const shopSchema = new Schema({
+const ShopSchema = new mongoose.Schema({
     name: { type: String },
     address: { type: String },
     picturePath: { type: String }
 });
-export const Shop = mongoose.model("shop", shopSchema);
+
+interface IShop extends mongoose.Document {
+    name: string;
+    address: string;
+    picturePath: string;
+}
+
+const Shop = mongoose.model<IShop>("Shop", ShopSchema);
+export default Shop;

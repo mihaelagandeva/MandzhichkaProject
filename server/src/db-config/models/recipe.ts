@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
-const Schema = mongoose.Schema;
-const recipeSchema = new Schema({
+const RecipeSchema = new mongoose.Schema({
     name: { type: String },
     author: { type: String },
     date: { type: Date },
@@ -11,4 +10,17 @@ const recipeSchema = new Schema({
         tagId: { type: Number }
     }]
 });
-export const Recipe = mongoose.model("recipe", recipeSchema);
+
+interface IRecipe extends mongoose.Document {
+    name: string;
+    author: string;
+    date: Date;
+    rating: number;
+    picturePath: string;
+    tags: {
+        tagId: string;
+    }[]
+}
+
+const Recipe = mongoose.model<IRecipe>("Recipe", RecipeSchema);
+export default Recipe;
