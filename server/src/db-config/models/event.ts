@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
-const Schema = mongoose.Schema;
-const eventSchema = new Schema({
+const EventSchema = new mongoose.Schema({
     name: { type: String },
     date: { type: Date },
     address: { type: String },
@@ -14,4 +13,20 @@ const eventSchema = new Schema({
         userId: { type: Number }
     }]
 });
-export const Event = mongoose.model("event", eventSchema);
+
+interface IEvent extends mongoose.Document {
+    name: string;
+    date: Date;
+    address: string;
+    picturePath: string;
+    duration: {
+        quantity: number;
+        metric: string
+    }
+    participants: {
+        userId: string
+    }[]
+}
+
+const Event = mongoose.model<IEvent>("Event", EventSchema);
+export default Event;

@@ -1,10 +1,18 @@
 import mongoose from "mongoose";
 
-const Schema = mongoose.Schema;
-const restaurantSchema = new Schema({
+const RestaurantSchema = new mongoose.Schema({
     name: { type: String },
     address: { type: String },
     picturePath: { type: String },
     phone: { type: String }
 });
-export const Restaurant = mongoose.model("restaurant", restaurantSchema);
+
+interface IRestaurant extends mongoose.Document {
+    name: string;
+    address: string;
+    picturePath: string;
+    phone: string;
+}
+
+const Restaurant = mongoose.model<IRestaurant>("Restaurant", RestaurantSchema);
+export default Restaurant;
