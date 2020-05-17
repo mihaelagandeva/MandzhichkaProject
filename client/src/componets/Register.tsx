@@ -5,6 +5,9 @@ import { RegisterFormValues } from '../model/register';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Link from '@material-ui/core/Link';
+import axios from 'axios';
+import {environment} from '../environments/environment.json';
+import {useSnackbar} from 'notistack';
 
 const useStyles = makeStyles({
   root: {
@@ -69,7 +72,24 @@ const validate = (values: RegisterFormValues): RegisterFormValues => {
   return errors;
 }
 
-const Register = () => {
+const Register = (props: any) => {
+  const {enqueueSnackbar} = useSnackbar();
+
+  const register = (values: RegisterFormValues) => {
+    const {username, password, confirmPassword} = values;
+
+    const body = {
+      username: username,
+      password: password,
+      passwordConf: confirmPassword
+    }
+
+    axios.post(`${environment.apiUrl}/api/registration`, body).then((user) => {
+      enqueueSnackbar('Регистрацията беше успешна', {variant: 'success'});
+      props.history.push('/');
+    });
+  }
+
   const formik = useFormik({
     initialValues: {
       username: '',
@@ -77,9 +97,7 @@ const Register = () => {
       confirmPassword: ''
     },
     validate,
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 3));
-    }
+    onSubmit: (values: RegisterFormValues) => register(values)
   })
 
   const styles = useStyles();
