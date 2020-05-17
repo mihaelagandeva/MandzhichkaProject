@@ -61,12 +61,8 @@ const validate = (values: LoginFormValues): LoginFormValues => {
   return errors;
 }
 
-const login = (username: string, password: string) => {
-  const body = {
-    username: username,
-    password: password
-  }
-  axios.post(`${environment.apiUrl}/api/login`, body).then((user) => {
+const login = (values: LoginFormValues) => {
+  axios.post(`${environment.apiUrl}/api/login`, values).then((user) => {
     console.log(user);
   });
 }
@@ -78,11 +74,7 @@ const Login = () => {
       password: ''
     },
     validate,
-    onSubmit: (values) => {
-      const {username, password} = values;
-
-      login(username, password);
-    }
+    onSubmit: (values: LoginFormValues) => login(values)
   });
 
   const styles = useStyles();
