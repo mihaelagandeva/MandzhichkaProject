@@ -16,6 +16,8 @@ const Interceptor = () => {
         enqueueSnackbar(error.response.data, snackbarOptions);
       }
     }
+
+    return Promise.reject(error);
   });
 
   return (
