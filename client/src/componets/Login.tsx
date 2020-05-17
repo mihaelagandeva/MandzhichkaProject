@@ -5,6 +5,8 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { LoginFormValues } from '../model/form';
 import Link from '@material-ui/core/Link';
+import axios from 'axios';
+import {environment} from '../environments/environment.json'
 
 const useStyles = makeStyles({
   root: {
@@ -59,6 +61,16 @@ const validate = (values: LoginFormValues): LoginFormValues => {
   return errors;
 }
 
+const login = (username: string, password: string) => {
+  const body = {
+    username: username,
+    password: password
+  }
+  axios.post(`${environment.apiUrl}/api/login`, body).then((user) => {
+    console.log(user);
+  });
+}
+
 const Login = () => {
   const formik = useFormik({
     initialValues: {
@@ -67,11 +79,14 @@ const Login = () => {
     },
     validate,
     onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+      const {username, password} = values;
+
+      login(username, password);
     }
   });
 
   const styles = useStyles();
+  const {username, password} = formik.initialValues;
 
   return (
     <div className={styles.root}>
