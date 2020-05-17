@@ -65,7 +65,6 @@ const validate = (values: LoginFormValues): LoginFormValues => {
   return errors;
 }
 
-
 const Login = () => {
   const login = (values: LoginFormValues) => {
     axios.post(`${environment.apiUrl}/api/login`, values).then((user) => {
@@ -83,7 +82,6 @@ const Login = () => {
   });
 
   const styles = useStyles();
-  const {username, password} = formik.initialValues;
 
   return (
     <div className={styles.root}>

@@ -21,7 +21,7 @@ const Interceptor = () => {
   });
 
   return (
-    <div> </div>
+    <div></div>
   )
 }
 
