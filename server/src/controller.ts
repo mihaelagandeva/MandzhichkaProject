@@ -25,7 +25,7 @@ export let registration = async (req: Request, res: Response) => {
             if (err) {
                 res.status(501).send("Error!");
             } else {
-                return res.redirect('/profile');
+                res.send();
             }
         });
     };
