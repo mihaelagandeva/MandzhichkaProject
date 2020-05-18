@@ -8,16 +8,20 @@ export let login = async (req: Request, res: Response) => {
     await User.findOne({username: username}, (err: any, user: any) => {
         if (err) {
             res.status(501).send("Error!");
-        } else {
+        } else if (user) {
             bcrypt.compare(password, user.password, (err, result) => {
                 if (err) {
                     res.status(500).send('Error');
                 } else if (result) {
                     res.send(user);
                 } else {
+                    // username is correct but the password is incorrect
                     res.status(401).send("Потребителското име или парола са грешни");
                 }
             });
+        } else {
+            // no user with this username
+            res.status(401).send("Потребителското име или парола са грешни");
         }
     }).exec();
 };
