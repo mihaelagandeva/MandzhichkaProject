@@ -6,6 +6,8 @@ export interface Recipe {
     title: string,
     date: string,
     picturePath: string,
+    products?: string[],
+    steps?: string[],
     rating: number,
     tags: Tag[],
     summary?: string
