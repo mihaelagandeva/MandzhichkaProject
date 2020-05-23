@@ -1,9 +1,16 @@
 import mongoose from "mongoose";
 
-const Schema = mongoose.Schema;
-const commentSchema = new Schema({
-    authorId: { type: Number },
+const CommentSchema = new mongoose.Schema({
+    authorId: { type: String },
     text: { type: String },
     date: { type: Date }
 });
-export const Comment = mongoose.model("comment", commentSchema);
+
+interface IComment extends mongoose.Document {
+    authorId: string;
+    text: string;
+    date: Date;
+}
+
+const Comment = mongoose.model<IComment>("Comment", CommentSchema);
+export default Comment;
