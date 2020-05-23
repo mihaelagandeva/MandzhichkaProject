@@ -1,9 +1,9 @@
 import React from 'react';
 import Login from './componets/Login';
 import Register from './componets/Register'
-import MainPage from './componets/MainPage'
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
+import NavigationBar from './componets/NavigationBar';
 
 function App() {
   return (
@@ -11,7 +11,7 @@ function App() {
       <Router>
         <Route path="/" exact component={Login} />
         <Route path="/register" exact component={Register} />
-        <Route path="/main" exact component={MainPage} />
+        <Route path="/main/recipes" exact component={() => <NavigationBar tabNumber={0} />} />
       </Router>
     </SnackbarProvider>
   );

@@ -7,6 +7,7 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import { Recipe } from '../model/recipe'
 import { Chip } from '@material-ui/core';
+import Rating from '@material-ui/lab/Rating';
 
 
 
@@ -18,8 +19,8 @@ const useStyles = makeStyles((theme: Theme) =>
             border: '2px solid #E1BFBF',
         },
         media: {
-            height: 50,
-            paddingTop: '56.25%', // 16:9
+            height: 90,
+            paddingTop: '65.25%', // 16:9
             objectFit: 'contain'
         },
         tags: {
@@ -27,6 +28,13 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         summary: {
             height: 70,
+        },
+        rating: {
+            marginLeft: 15,
+            marginBottom: 8
+        },
+        header: {
+            paddingBottom: 8
         }
     }),
 );
@@ -46,9 +54,11 @@ const RecipeCard = (props: ReciepProps) => {
     return (recipe) ? (
         <Card className={classes.root}>
             <CardHeader
+                className={classes.header}
                 title={recipe.title}
                 subheader={`${recipe.author} - ${recipe.date}`}
             />
+            <Rating className={classes.rating} name="read-only" value={recipe.rating} readOnly />
             <CardMedia
                 className={classes.media}
                 image={recipe.picturePath}
@@ -66,9 +76,9 @@ const RecipeCard = (props: ReciepProps) => {
                 </Typography>
             </CardContent>
         </Card>
-    ) : (<div>
+    ) : (<p>
         No such recipe found
-    </div>);
+    </p>);
 }
 
 export default RecipeCard;
