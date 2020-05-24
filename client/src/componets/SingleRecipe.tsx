@@ -35,6 +35,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     commentsSection: {
         height: 200
+    },
+    creator: {
+        fontSize: 15,
+        fontStyle: 'italic'
     }
 }))
 
@@ -59,24 +63,26 @@ const SingleRecipe = (props: SingleRecipeProps) => {
             </div>
             <div className={styles.recipeContainer} >
                 <h1>{recipe.title}</h1>
-                <p>Created by: {recipe.author} on {recipe.date}</p>
+                <p className={styles.creator}>Създадена от: {recipe.author} на {recipe.date}</p>
                 <div>
+                <h3>Описание: </h3>
+                <p>{recipe.summary}</p>
                 <div className={styles.image} >
                     <img height="400" width="400" src={recipe.picturePath} />
                 </div>
                     <div className={styles.products}>
                     <Rating className={styles.rating} name="read-only" value={recipe.rating} readOnly />
-                    <h3> Products: </h3>
+                    <h3> Продукти: </h3>
                     {recipe.products?.map(product => <p>{product}</p>)}
                     </div>
                 </div>
                 <div className={styles.steps} >
-                    <h3>Steps:</h3>
+                    <h3>Стъпки:</h3>
                     {recipe.steps?.map((element, index) => 
                         <p key={++index}>{index}. {element}</p>
                     )}
                 </div>
-                <h2>Comments: </h2>
+                <h2>Коментари: </h2>
                 <div className={styles.commentsSection} >
 
                 </div>

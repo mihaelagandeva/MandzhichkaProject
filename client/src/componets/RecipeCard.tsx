@@ -81,7 +81,7 @@ const RecipeCard = (props: ReciepProps) => {
                     {recipe.summary}
                 </Typography>
                 <Typography variant="body2" color="textSecondary" component="p">
-                    Tags: 
+                    Тагове: 
                     {recipe.tags.map(tag => (
                         <Chip className={classes.tags} key={tag.id} label={tag.value} size="small" variant="outlined" />
                     ))}

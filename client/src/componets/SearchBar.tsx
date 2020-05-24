@@ -58,7 +58,7 @@ const SearchBar = (props: SearchBarProps) => {
                         <div className={classes.search}>
                             <InputBase
                                 type="search"
-                                placeholder="Search…"
+                                placeholder="Търсене…"
                                 classes={{
                                     root: classes.inputRoot,
                                     input: classes.inputInput,
