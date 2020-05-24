@@ -9,7 +9,7 @@ const RestaurantSchema = new mongoose.Schema({
     },
     address: {
         type: String,
-        required: [true, 'Адресът на ресторанта е задължително'],
+        required: [true, 'Адресът на ресторанта е задължителен'],
         minlength: [10, 'Адресът на ресторанта е твърде къс'],
         maxlength: [150, 'Адресът на ресторанта е твърде дълъг']
     },
