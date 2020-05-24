@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import User from "./db-config/models/user";
 import Restaurant from "./db-config/models/restaurant";
-import { Query } from "mongoose";
 
 export let login = async (req: Request, res: Response) => {
     await User.findOne({ username: "user1" }, (err: any, user: any[]) => {
