@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import User from "./db-config/models/user";
+import Restaurant from "./db-config/models/restaurant";
+import { Query } from "mongoose";
 
 export let login = async (req: Request, res: Response) => {
     await User.findOne({ username: "user1" }, (err: any, user: any[]) => {
@@ -30,3 +32,53 @@ export let registration = async (req: Request, res: Response) => {
         });
     };
 };
+
+export let getRestaurants = async (req: Request, res: Response) => {
+    const page = Number(req.params.page);
+    const size = Number(req.params.size);
+
+    if (page && size) {
+        const firstRecord = (page - 1) * size;
+        const search = req.params.search;
+        let restaurants: any[] = [];
+        const query = {name: {$regex: search.toString() || ''}}
+
+        await Restaurant.find(query, (err: any, result: any[]) => {
+            restaurants = result;
+        }).skip(firstRecord).limit(size);
+        
+        const totalItems = await Restaurant.find(query).countDocuments();
+
+        res.send({
+            page: page,
+            size: size,
+            resultSet: restaurants,
+            totalItems: totalItems
+        });
+    } else {
+        res.status(400).send('Липстват задължителните параметри');
+    }
+}
+
+export let createRestaurant = async (req: Request, res: Response) => {
+    const body = req.body;
+
+    Restaurant.findOne({name: body.name}, (err: any, result: any) => {
+        if (err) {
+            res.status(400).send(err);
+        } else if (result) {
+            res.status(400).send('Вече съществува ресторант с такова име');
+        } else {
+
+            Restaurant.create(body).then((restaurant) => {
+                if (restaurant) {
+                    res.send('Ресторанта беше създаден успешно');
+                } else {
+                    res.status(500).send('Грешка, ресторанта не беше създаден');
+                }
+            }).catch((error) => {
+                res.status(400).send(error);
+            });
+        }
+    });
+}

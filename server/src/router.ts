@@ -59,8 +59,8 @@ router.post('/forgottenPassword', (req: Request, res: Response) => {
     console.log("Form to fill in order to request new password");
 });
 
-router.get('/restaurants', (req: Request, res: Response) => {
-    console.log("Restaurants");
+router.get('/restaurants/:page/:size/:search', async (req: Request, res: Response) => {
+    await controller.getRestaurants(req, res);
 });
 
 router.get('/shops', (req: Request, res: Response) => {
@@ -85,4 +85,9 @@ router.post('/tags', (req: Request, res: Response) => {
 
 router.get('/achievements', (req: Request, res: Response) => {
     console.log("achievements");
+});
+
+// so we can create restaurants if we need to
+router.post('/restaurants', async (req: Request, res: Response) => { 
+    await controller.createRestaurant(req, res);
 });
