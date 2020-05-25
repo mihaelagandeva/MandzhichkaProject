@@ -40,7 +40,7 @@ export let getRestaurants = async (req: Request, res: Response) => {
         const firstRecord = (page - 1) * size;
         const search = req.params.search;
         let restaurants: any[] = [];
-        const query = {name: {$regex: search.toString() || ''}}
+        const query = {name: {$regex: search || ''}}
 
         await Restaurant.find(query, (err: any, result: any[]) => {
             restaurants = result;

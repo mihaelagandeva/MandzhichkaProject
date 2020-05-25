@@ -59,7 +59,7 @@ router.post('/forgottenPassword', (req: Request, res: Response) => {
     console.log("Form to fill in order to request new password");
 });
 
-router.get('/restaurants/:page/:size/:search', async (req: Request, res: Response) => {
+router.get('/restaurants/:page/:size/:search?', async (req: Request, res: Response) => {
     await controller.getRestaurants(req, res);
 });
 
