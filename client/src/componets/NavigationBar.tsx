@@ -10,6 +10,7 @@ import TopAppBar from './TopAppBar';
 import picture from '../assets/main.jpg'
 import { Link } from 'react-router-dom';
 import SearchBar from './SearchBar';
+import Restaurants from './Restaurants';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -104,7 +105,7 @@ const NavigationBar = () =>  {
                 <MainPage />
             </TabPanel>
             <TabPanel value={value} index={1}>
-                Item Two
+                <Restaurants />
       </TabPanel>
             <TabPanel value={value} index={2}>
                 Item Three
