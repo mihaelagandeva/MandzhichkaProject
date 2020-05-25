@@ -62,11 +62,11 @@ export let getRestaurants = async (req: Request, res: Response) => {
 export let createRestaurant = async (req: Request, res: Response) => {
     const body = req.body;
 
-    Restaurant.findOne({name: body.name}, (err: any, result: any) => {
+    Restaurant.findOne({name: body.name, address: body.address}, (err: any, result: any) => {
         if (err) {
             res.status(400).send(err);
         } else if (result) {
-            res.status(400).send('Вече съществува ресторант с такова име');
+            res.status(400).send('Този ресторант вече съществува');
         } else {
 
             Restaurant.create(body).then((restaurant) => {
