@@ -52,7 +52,7 @@ interface ReciepProps {
 
 
 const RecipeCard = (props: ReciepProps) => {
-    const { recipe } = props;   //This will be changed to get request 
+    const [recipe] = useState(props.recipe);   //This will be changed to get request 
     const [currUser] = useState(null) // will be added later
     const classes = useStyles()
 
@@ -97,7 +97,7 @@ const RecipeCard = (props: ReciepProps) => {
             </CardContent>
             </Card>
     ) : (<p>
-        Не е намерена такава рецепта
+        No such recipe found
     </p>);
 }
 

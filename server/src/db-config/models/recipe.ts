@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import User from "./user";
+import { User } from "./user";
 
 const RecipeSchema = new mongoose.Schema({
     name: { type: String },
