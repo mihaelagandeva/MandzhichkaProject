@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
-const NavigationBar = () =>  {
+const NavigationBar = () => {
     const classes = useStyles();
     const [value, setValue] = useState(0);
     const [searchString, setSearchString] = useState('')
@@ -90,13 +90,13 @@ const NavigationBar = () =>  {
                     <Tab label="Събития" {...a11yProps(2)} />
                 </Tabs>
                 <div className={classes.search}>
-                <SearchBar
-                    
-                    key="SearchBar"
-                    onType={text => {
-                        setSearchString(text);
-                    }}
-                    onSearch={onSearchBtnClick}
+                    <SearchBar
+
+                        key="SearchBar"
+                        onType={text => {
+                            setSearchString(text);
+                        }}
+                        onSearch={onSearchBtnClick}
                     />
                 </div>
             </AppBar>

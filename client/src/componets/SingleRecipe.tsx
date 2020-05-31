@@ -43,13 +43,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 }))
 
 
-interface SingleRecipeProps{
+interface SingleRecipeProps {
     // id: number   we will use this to make get query later
     recipe: Recipe
 }
 
 const SingleRecipe = (props: SingleRecipeProps) => {
-    const [recipe] = useState(props.recipe) //will be later changed with a get query
+    const { recipe } = props //will be later changed with a get query
 
     const styles = useStyles()
 
@@ -65,20 +65,20 @@ const SingleRecipe = (props: SingleRecipeProps) => {
                 <h1>{recipe.title}</h1>
                 <p className={styles.creator}>Създадена от: {recipe.author} на {recipe.date}</p>
                 <div>
-                <h3>Описание: </h3>
-                <p>{recipe.summary}</p>
-                <div className={styles.image} >
-                    <img height="400" width="400" src={recipe.picturePath} />
-                </div>
+                    <h3>Описание: </h3>
+                    <p>{recipe.summary}</p>
+                    <div className={styles.image} >
+                        <img height="400" width="400" src={recipe.picturePath} />
+                    </div>
                     <div className={styles.products}>
-                    <Rating className={styles.rating} name="read-only" value={recipe.rating} readOnly />
-                    <h3> Продукти: </h3>
-                    {recipe.products?.map(product => <p>{product}</p>)}
+                        <Rating className={styles.rating} name="read-only" value={recipe.rating} readOnly />
+                        <h3> Продукти: </h3>
+                        {recipe.products?.map(product => <p>{product}</p>)}
                     </div>
                 </div>
                 <div className={styles.steps} >
                     <h3>Стъпки:</h3>
-                    {recipe.steps?.map((element, index) => 
+                    {recipe.steps?.map((element, index) =>
                         <p key={++index}>{index}. {element}</p>
                     )}
                 </div>
