@@ -49,7 +49,7 @@ interface SingleRecipeProps{
 }
 
 const SingleRecipe = (props: SingleRecipeProps) => {
-    const [recipe] = useState(props.recipe) //will be later changed with a get query
+    const { recipe } = props //will be later changed with a get query
 
     const styles = useStyles()
 

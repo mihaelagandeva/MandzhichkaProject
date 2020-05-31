@@ -4,7 +4,8 @@ import Register from './componets/Register'
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
 import NavigationBar from './componets/NavigationBar';
-import SingleRecipe from './componets/SingleRecipe';
+import SingleRecipe from './componets/SingleRecipe'; 
+import CreateRecipe from './componets/CreateRecipe';
 
 //delete later pls 
 const hardcodedRecipe = {
@@ -20,6 +21,7 @@ function App() {
         <Route path="/" exact component={Login} />
         <Route path="/register" exact component={Register} />
         <Route path="/main/recipes" exact component={() => <NavigationBar tabNumber={0} />} />
+        <Route path="/recipe/new" exact component={CreateRecipe} />
         <Route path="/singleRecipe" exact component={() => <SingleRecipe recipe={hardcodedRecipe} />} />
       </Router>
     </SnackbarProvider>

@@ -54,26 +54,26 @@ const SearchBar = (props: SearchBarProps) => {
     };
     return (
         <>
-                <Toolbar className={classes.toolbar}>
-                        <div className={classes.search}>
-                            <InputBase
-                                type="search"
-                                placeholder="Търсене…"
-                                classes={{
-                                    root: classes.inputRoot,
-                                    input: classes.inputInput,
-                                }}
-                                inputProps={{ 'aria-label': 'search' }}
-                                onChange={e => {
-                                    onType(e.target.value);
-                                }}
-                                onKeyPress={event => submitSearchOnPressingEnter(event)}
-                            />
-                            <Button onClick={onSearch}>
-                                <SearchIcon />
-                            </Button>
-                        </div>
-                </Toolbar>
+            <Toolbar className={classes.toolbar}>
+                <div className={classes.search}>
+                    <InputBase
+                        type="search"
+                        placeholder="Търсене…"
+                        classes={{
+                        root: classes.inputRoot,
+                        input: classes.inputInput,
+                        }}
+                        inputProps={{ 'aria-label': 'search' }}
+                        onChange={e => {
+                        onType(e.target.value);
+                        }}
+                        onKeyPress={event => submitSearchOnPressingEnter(event)}
+                    />
+                    <Button onClick={onSearch}>
+                        <SearchIcon />
+                    </Button>
+                </div>
+            </Toolbar>
         </>
     );
 }

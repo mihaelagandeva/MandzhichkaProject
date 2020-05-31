@@ -12,13 +12,13 @@ const useStyles = makeStyles({
     },
     recipes: {
         marginTop: 10,
-        marginLeft: 210,
-        marginRight: 210
+        marginLeft: '15%',
+        marginRight: '15%'
     }
 })
 
 const MainPage = () => {
-    const recipes: Recipe[] = [hardcodedRecipe]
+    const recipes: Recipe[] = [hardcodedRecipe, hardcodedRecipe, hardcodedRecipe, hardcodedRecipe]
 
     const styles = useStyles();
     
