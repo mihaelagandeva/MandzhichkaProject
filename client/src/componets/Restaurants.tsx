@@ -5,6 +5,7 @@ import {environment} from 'environments/environment.json';
 import {Restaurant, RestaurantReport} from 'model/restaurant';
 import {withSnackbar, WithSnackbarProps} from 'notistack';
 import If from './If';
+import RestaurantCard from './RestaurantCard';
 
 interface RestaurantsState {
   page: number;
@@ -63,7 +64,7 @@ class Restaurants extends Component<WithSnackbarProps&WithStyles, RestaurantsSta
 
   renderRestaurants() {
     return this.state.restaurants.map((restaurant) => {
-      return <div>{restaurant.name}</div>
+      return <RestaurantCard restaurant={restaurant}></RestaurantCard>
     });
   }
 
