@@ -3,8 +3,7 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import {makeStyles, createStyles} from '@material-ui/styles';
+import {makeStyles} from '@material-ui/styles';
 import {Restaurant} from 'model/restaurant';
 
 
@@ -13,6 +12,12 @@ const useStyles = makeStyles({
     width: 350,
     margin: 10,
     border: '2px solid #E1BFBF',
+  },
+
+  media: {
+    height: 80,
+    paddingTop: '65.25%',
+    objectFit: 'contain'
   }
 });
 
@@ -26,10 +31,10 @@ const RestaurantCard: FunctionComponent<RestaurantCardProps> = ({restaurant}) =>
   return (
     <Card className={classes.root}>
       <CardHeader title={restaurant.name} />
-      <CardMedia image={restaurant.picturePath} title={restaurant.name} />
+      <CardMedia className={classes.media} image={restaurant.picturePath} title={restaurant.name} />
       <CardContent>
-        <p>Адрес: {restaurant.address}</p>
-        <p>Телефон: {restaurant.phone}</p>
+        <div>Адрес: {restaurant.address}</div>
+        <div>Телефон: {restaurant.phone}</div>
       </CardContent>
     </Card>
   );

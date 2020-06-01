@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
-import { withStyles, StyleRules, WithStyles, createStyles } from '@material-ui/core';
+import { withStyles, WithStyles, createStyles } from '@material-ui/core';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import {environment} from 'environments/environment.json';
 import {Restaurant, RestaurantReport} from 'model/restaurant';
 import {withSnackbar, WithSnackbarProps} from 'notistack';
 import If from './If';
 import RestaurantCard from './RestaurantCard';
+import Pagination from '@material-ui/lab/Pagination';
 
 interface RestaurantsState {
   page: number;
@@ -15,17 +16,37 @@ interface RestaurantsState {
   totalItems: number;
 }
 
+const mockupRestaurant: Restaurant = {
+  name: 'Ниагара',
+  address: 'ул. Дойран',
+  picturePath: 'https://media-cdn.tripadvisor.com/media/photo-s/13/5b/fb/06/ta-img-20180620-163753.jpg',
+  phone: '0899863380'
+}
+let mockupRestaurants: Restaurant[] = [];
+for (let i = 0; i < 15; i++) {
+  mockupRestaurants.push(mockupRestaurant);
+}
+
+
 const styles = () => createStyles({
   root: {
     backgroundColor: '#FFEEDF',
+  },
+
+  restaurantContainer: {
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyItems: 'center'
+    justifyContent: 'center'
   },
 
   restaurant: {
     margin: 50,
+  },
+
+  paginationContainer: {
+    display: 'flex',
+    justifyContent: 'center'
   }
 });
 
@@ -40,10 +61,20 @@ class Restaurants extends Component<WithSnackbarProps&WithStyles, RestaurantsSta
       restaurants: [],
       totalItems: 0
     };
+
+    this.handlePageChange = this.handlePageChange.bind(this);
   }
 
   componentDidMount() {
-    const {page, pageSize, search} = this.state;
+    this.setPage(1); 
+  }
+
+  handlePageChange(event: any, value: number) {
+    this.setPage(value);
+  }
+
+  setPage(page: number) {
+    const {pageSize, search} = this.state;
     const mandatoryUrl = `${environment.apiUrl}/api/restaurants/${page}/${pageSize}`;
     const optionalUrl = search ? `/${search}` : '';
     const finalUrl = mandatoryUrl + optionalUrl;
@@ -63,9 +94,34 @@ class Restaurants extends Component<WithSnackbarProps&WithStyles, RestaurantsSta
   }
 
   renderRestaurants() {
-    return this.state.restaurants.map((restaurant) => {
-      return <RestaurantCard restaurant={restaurant}></RestaurantCard>
-    });
+    // const {totalItems, pageSize, page, retaurants} = this.state;
+    const totalItems = 30;
+    const pageSize = 15;
+    const page = 1;
+    const restaurants = mockupRestaurants;
+    const {classes} = this.props;
+
+    return (
+      <div>
+        <div className={classes.restaurantContainer}>
+          {
+            restaurants.map((restaurant) => {
+              return <RestaurantCard restaurant={restaurant}></RestaurantCard>
+            })
+          }
+        </div>
+        <div className={classes.paginationContainer}>
+          <If condition={totalItems > pageSize}>
+            <Pagination
+              count={totalItems / pageSize}
+              page={page}
+              color="primary"
+              onChange={this.handlePageChange}
+            />
+          </If>
+        </div>
+      </div>
+    );
   }
 
   renderNoRestaurantsMessage() {
@@ -76,7 +132,9 @@ class Restaurants extends Component<WithSnackbarProps&WithStyles, RestaurantsSta
 
   render() {
     const {classes} = this.props;
-    const {restaurants} = this.state;
+    // const {restaurants} = this.state;
+    const restaurants = mockupRestaurants;
+    console.log(restaurants);
 
     return (
       <div className={classes.root}>
