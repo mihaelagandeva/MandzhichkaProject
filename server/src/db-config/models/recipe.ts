@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import { ITag } from "./tag";
+import * as Tag from './tag';
 
 const RecipeSchema = new mongoose.Schema({
     name: { type: String },
@@ -6,9 +8,7 @@ const RecipeSchema = new mongoose.Schema({
     date: { type: Date },
     rating: { type: Number, min: 0, max: 5 },
     picturePath: { type: String },
-    tags: [{
-        tagId: { type: Number }
-    }]
+    tags: [Tag.TagSchema]
 });
 
 interface IRecipe extends mongoose.Document {
@@ -17,9 +17,7 @@ interface IRecipe extends mongoose.Document {
     date: Date;
     rating: number;
     picturePath: string;
-    tags: {
-        tagId: string;
-    }[]
+    tags: ITag['_id'];
 }
 
 const Recipe = mongoose.model<IRecipe>("Recipe", RecipeSchema);
