@@ -3,7 +3,11 @@ import { ITag } from "./tag";
 import * as Tag from './tag';
 
 const RecipeSchema = new mongoose.Schema({
-    name: { type: String },
+    name: {
+        type: String,
+        minlength: 3,
+        maxlength: 100,
+    },
     author: { type: String },
     date: { type: Date },
     rating: { type: Number, min: 0, max: 5 },
