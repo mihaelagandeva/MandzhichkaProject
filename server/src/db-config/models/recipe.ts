@@ -1,16 +1,18 @@
 import mongoose from "mongoose";
-import { User } from "./user";
+import { ITag } from "./tag";
+import * as Tag from './tag';
 
 const RecipeSchema = new mongoose.Schema({
-    name: { type: String },
-    author: { type: User },
-    summary: { type: String },
+    name: {
+        type: String,
+        minlength: 3,
+        maxlength: 100,
+    },
+    author: { type: String },
     date: { type: Date },
     rating: { type: Number, min: 0, max: 5 },
     picturePath: { type: String },
-    tags: [{
-        tagId: { type: Number }
-    }]
+    tags: [Tag.TagSchema]
 });
 
 interface IRecipe extends mongoose.Document {
@@ -19,9 +21,7 @@ interface IRecipe extends mongoose.Document {
     date: Date;
     rating: number;
     picturePath: string;
-    tags: {
-        tagId: string;
-    }[]
+    tags: ITag['_id'];
 }
 
 const Recipe = mongoose.model<IRecipe>("Recipe", RecipeSchema);
