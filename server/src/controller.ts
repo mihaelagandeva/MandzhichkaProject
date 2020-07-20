@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import User from "./db-config/models/user";
 import Recipe from "./db-config/models/recipe";
-import Tag, { ITag } from "./db-config/models/tag";
+import Tag, {ITag} from "./db-config/models/tag";
 import bcrypt from 'bcrypt';
+import Restaurant from "./db-config/models/restaurant";
 
 export let login = async (req: Request, res: Response) => {
     const { username, password } = req.body;
@@ -153,6 +154,59 @@ export let listAllRecipes = async (req: Request, res: Response) => {
         res.status(400).send();
     }
 };
+
+export let getRestaurants = async (req: Request, res: Response) => {
+    const page = Number(req.params.page);
+    const size = Number(req.params.size);
+
+    if (page && size) {
+        const firstRecord = (page - 1) * size;
+        const search = req.params.search;
+        let restaurants: any[] = [];
+        const query = {$or: [ {name: {$regex: search || ''}}, {address: {$regex: search || ''}} ]};
+
+        await Restaurant.find(query, (err: any, result: any[]) => {
+            if (err) {
+                res.status(500).send();
+            } else {
+                restaurants = result;
+            }
+        }).skip(firstRecord).limit(size);
+        
+        const totalItems = await Restaurant.find(query).countDocuments();
+
+        res.send({
+            page: page,
+            size: size,
+            resultSet: restaurants,
+            totalItems: totalItems
+        });
+    } else {
+        res.status(400).send('Липстват задължителните параметри');
+    }
+}
+
+export let createRestaurant = async (req: Request, res: Response) => {
+    const body = req.body;
+
+    Restaurant.findOne({name: body.name, address: body.address}, (err: any, result: any) => {
+        if (err) {
+            res.status(400).send(err);
+        } else if (result) {
+            res.status(400).send('Този ресторант вече съществува');
+        } else {
+            Restaurant.create(body, (err: any, restaurant: any) => {
+                if (err) {
+                    res.status(400).send(err);
+                } else if (restaurant) {
+                    res.send('Ресторанта беше създаден успешно');
+                } else {
+                    res.status(500).send('Грешка, ресторанта не беше създаден');
+                }
+            });
+        }
+    });
+}
 
 export let createTags = async (req: Request, res: Response) => {
     await Tag.create(req.body, function (err: any, tags: any) {
