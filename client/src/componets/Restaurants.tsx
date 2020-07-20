@@ -16,17 +16,7 @@ interface RestaurantsState {
   totalItems: number;
 }
 
-const mockupRestaurant: Restaurant = {
-  name: 'Ниагара',
-  address: 'ул. Дойран',
-  picturePath: 'https://media-cdn.tripadvisor.com/media/photo-s/13/5b/fb/06/ta-img-20180620-163753.jpg',
-  phone: '0899863380'
-}
-let mockupRestaurants: Restaurant[] = [];
-for (let i = 0; i < 15; i++) {
-  mockupRestaurants.push(mockupRestaurant);
-}
-
+const mocupPicturePath = 'https://media-cdn.tripadvisor.com/media/photo-s/13/5b/fb/06/ta-img-20180620-163753.jpg';
 
 const styles = () => createStyles({
   root: {
@@ -56,7 +46,7 @@ class Restaurants extends Component<WithSnackbarProps&WithStyles, RestaurantsSta
     super(props);
     this.state = {
       page: 1,
-      pageSize: 15,
+      pageSize: 12,
       search: '',
       restaurants: [],
       totalItems: 0
@@ -94,11 +84,7 @@ class Restaurants extends Component<WithSnackbarProps&WithStyles, RestaurantsSta
   }
 
   renderRestaurants() {
-    // const {totalItems, pageSize, page, retaurants} = this.state;
-    const totalItems = 30;
-    const pageSize = 15;
-    const page = 1;
-    const restaurants = mockupRestaurants;
+    const {totalItems, pageSize, page, restaurants} = this.state;
     const {classes} = this.props;
 
     return (
@@ -132,9 +118,7 @@ class Restaurants extends Component<WithSnackbarProps&WithStyles, RestaurantsSta
 
   render() {
     const {classes} = this.props;
-    // const {restaurants} = this.state;
-    const restaurants = mockupRestaurants;
-    console.log(restaurants);
+    const {restaurants} = this.state;
 
     return (
       <div className={classes.root}>
