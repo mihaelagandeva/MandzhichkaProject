@@ -40,10 +40,14 @@ export let getRestaurants = async (req: Request, res: Response) => {
         const firstRecord = (page - 1) * size;
         const search = req.params.search;
         let restaurants: any[] = [];
-        const query = {name: {$regex: search || ''}}
+        const query = {$or: [ {name: {$regex: search || ''}}, {address: {$regex: search || ''}} ]};
 
         await Restaurant.find(query, (err: any, result: any[]) => {
-            restaurants = result;
+            if (err) {
+                res.status(500).send();
+            } else {
+                restaurants = result;
+            }
         }).skip(firstRecord).limit(size);
         
         const totalItems = await Restaurant.find(query).countDocuments();
