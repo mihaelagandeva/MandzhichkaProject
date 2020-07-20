@@ -72,15 +72,14 @@ export let createRestaurant = async (req: Request, res: Response) => {
         } else if (result) {
             res.status(400).send('Този ресторант вече съществува');
         } else {
-
-            Restaurant.create(body).then((restaurant) => {
-                if (restaurant) {
+            Restaurant.create(body, (err: any, restaurant: any) => {
+                if (err) {
+                    res.status(400).send(err);
+                } else if (restaurant) {
                     res.send('Ресторанта беше създаден успешно');
                 } else {
                     res.status(500).send('Грешка, ресторанта не беше създаден');
                 }
-            }).catch((error) => {
-                res.status(400).send(error);
             });
         }
     });
