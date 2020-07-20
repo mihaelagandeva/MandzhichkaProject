@@ -16,18 +16,19 @@ interface RestaurantsState {
   totalItems: number;
 }
 
-const mocupPicturePath = 'https://media-cdn.tripadvisor.com/media/photo-s/13/5b/fb/06/ta-img-20180620-163753.jpg';
-
 const styles = () => createStyles({
   root: {
     backgroundColor: '#FFEEDF',
+    display: 'flex',
+    justifyContent: 'center',
   },
 
   restaurantContainer: {
+    width: '1150px',
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center'
+    justifyContent: 'left',
   },
 
   restaurant: {
