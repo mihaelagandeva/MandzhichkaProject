@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import User from "./db-config/models/user";
+import { resolve } from 'path';
 
 export let login = async (req: Request, res: Response) => {
     await User.findOne({ username: "user1" }, (err: any, user: any[]) => {
@@ -30,3 +31,23 @@ export let registration = async (req: Request, res: Response) => {
         });
     };
 };
+
+export const uploadPicture = async (req: Request, res: Response) => {
+    if (!req.files) {
+        return res.status(400).send('Няма качен файл')
+    }
+
+    const { file } = req.files;
+    if (!Array.isArray(file)) {
+        const path = resolve(`${__dirname}/../../client/public/uploads/${file.name}`);
+        console.log(path)
+        file.mv(path, err => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send(err)
+            }
+
+            res.json({fileName: file.name, filePath: `/uploads/${file.name}`})
+        })
+    }
+}

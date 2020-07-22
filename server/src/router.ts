@@ -86,3 +86,7 @@ router.post('/tags', (req: Request, res: Response) => {
 router.get('/achievements', (req: Request, res: Response) => {
     console.log("achievements");
 });
+
+router.post('/upload', async (req: Request, res: Response) => {
+    await controller.uploadPicture(req, res);
+});
