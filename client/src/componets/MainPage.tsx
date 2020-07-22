@@ -8,7 +8,7 @@ const hardcodedRecipe = { id: 1, title: 'Musakichka', author: 'Musakichka Master
 
 const useStyles = makeStyles({
     root: {
-        backgroundColor: '#FFEEDF'
+        backgroundColor: '#FFEEDF',
     },
     recipes: {
         marginTop: 10,
@@ -25,7 +25,7 @@ const MainPage = () => {
     return (
         <div className={styles.root}>
             <div className={styles.recipes}>
-                <GridList cellHeight={200} spacing={3}>
+                <GridList cellHeight={200} spacing={6}>
                     {recipes.map(recipe =>
                         <RecipeCard key={recipe.id} recipe={recipe} />
                     )}

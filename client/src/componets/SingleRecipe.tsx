@@ -3,7 +3,6 @@ import { Recipe } from '../model/recipe'
 import { makeStyles, Theme } from '@material-ui/core'
 import TopAppBar from './TopAppBar';
 import picture from '../assets/main.jpg';
-import classes from '*.module.css';
 import Rating from '@material-ui/lab/Rating';
 
 
