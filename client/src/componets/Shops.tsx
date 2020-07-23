@@ -1,28 +1,27 @@
 import React, {Component} from 'react';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import {environment} from 'environments/environment.json';
-import {Restaurant, RestaurantReport} from 'model/restaurant';
+import {Shop, ShopReport} from 'model/shop';
 import {withSnackbar, WithSnackbarProps} from 'notistack';
 import RestaurantCard from './RestaurantCard';
 import CardContainer from './CardContainer';
 
-interface RestaurantsState {
+interface ShopsState {
   page: number;
   pageSize: number;
   search: string;
-  restaurants: Restaurant[];
+  shops: Shop[];
   totalItems: number;
 }
 
-class Restaurants extends Component<WithSnackbarProps, RestaurantsState> {
-
+class Shops extends Component<WithSnackbarProps, ShopsState> {
   constructor(props: any) {
     super(props);
     this.state = {
       page: 1,
-      pageSize: 5,
+      pageSize: 12,
       search: '',
-      restaurants: [],
+      shops: [],
       totalItems: 0
     };
 
@@ -39,17 +38,17 @@ class Restaurants extends Component<WithSnackbarProps, RestaurantsState> {
 
   setPage(page: number) {
     const {pageSize, search} = this.state;
-    const mandatoryUrl = `${environment.apiUrl}/api/restaurants/${page}/${pageSize}`;
+    const mandatoryUrl = `${environment.apiUrl}/api/shops/${page}/${pageSize}`;
     const optionalUrl = search ? `/${search}` : '';
     const finalUrl = mandatoryUrl + optionalUrl;
 
-    axios.get(finalUrl).then((result: AxiosResponse<RestaurantReport>) => {
+    axios.get(finalUrl).then((result: AxiosResponse<ShopReport>) => {
       const response = result.data;
 
       this.setState({
         page: response.page,
         pageSize: response.size,
-        restaurants: response.resultSet,
+        shops: response.resultSet,
         totalItems: response.totalItems
       });
     }).catch((error: AxiosError<string>) => {
@@ -58,7 +57,7 @@ class Restaurants extends Component<WithSnackbarProps, RestaurantsState> {
   }
 
   render() {
-    const {restaurants, page, pageSize, totalItems} = this.state;
+    const {shops, page, pageSize, totalItems} = this.state;
 
     return (
       <CardContainer
@@ -68,8 +67,8 @@ class Restaurants extends Component<WithSnackbarProps, RestaurantsState> {
         onPageChange={this.handlePageChange}
       >
         {
-          restaurants.map((restaurant) => {
-            return <RestaurantCard restaurant={restaurant}></RestaurantCard>
+          shops.map((shop) => {
+            return <RestaurantCard restaurant={shop}></RestaurantCard>
           })
         }
       </CardContainer>
@@ -77,4 +76,4 @@ class Restaurants extends Component<WithSnackbarProps, RestaurantsState> {
   }
 }
 
-export default withSnackbar(Restaurants);
+export default withSnackbar(Shops);

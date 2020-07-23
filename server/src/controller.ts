@@ -5,8 +5,12 @@ import Tag, {ITag} from "./db-config/models/tag";
 import bcrypt from 'bcrypt';
 import Restaurant from "./db-config/models/restaurant";
 import Product from './db-config/models/product';
+<<<<<<< HEAD
 import Course from './db-config/models/courses';
 import Event from './db-config/models/event';
+=======
+import Shop from './db-config/models/shop';
+>>>>>>> 36f3e96eced007439388a3b1e4e39fe433d89b5a
 
 export let login = async (req: Request, res: Response) => {
     const { username, password } = req.body;
@@ -308,6 +312,7 @@ export let getAllProducts = async (req: Request, res: Response) => {
     });
 }
 
+<<<<<<< HEAD
 export let createCourse = async (req: Request, res: Response) => {
     const {body} = req;
 
@@ -407,3 +412,57 @@ export let getAllEvents = async (req: Request, res: Response) => {
         }
     });
 }
+=======
+export let getShops = async (req: Request, res: Response) => {
+    const page = Number(req.params.page);
+    const size = Number(req.params.size);
+
+    if (page && size) {
+        const firstRecord = (page - 1) * size;
+        const search = req.params.search;
+        let shop: any[] = [];
+        const query = {$or: [ {name: {$regex: search || ''}}, {address: {$regex: search || ''}} ]};
+
+        await Shop.find(query, (err: any, result: any[]) => {
+            if (err) {
+                res.status(500).send();
+            } else {
+                shop = result;
+            }
+        }).skip(firstRecord).limit(size);
+        
+        const totalItems = await Shop.find(query).countDocuments();
+
+        res.send({
+            page: page,
+            size: size,
+            resultSet: shop,
+            totalItems: totalItems
+        });
+    } else {
+        res.status(400).send('Липстват задължителните параметри');
+    }
+}
+
+export let createShop = async (req: Request, res: Response) => {
+    const body = req.body;
+
+    Shop.findOne({name: body.name, address: body.address}, (err: any, result: any) => {
+        if (err) {
+            res.status(400).send(err);
+        } else if (result) {
+            res.status(400).send('Този магазина вече съществува');
+        } else {
+            Shop.create(body, (err: any, shop: any) => {
+                if (err) {
+                    res.status(400).send(err);
+                } else if (shop) {
+                    res.send('Магазина беше създаден успешно');
+                } else {
+                    res.status(500).send('Грешка, магазина не беше създаден');
+                }
+            });
+        }
+    });
+}
+>>>>>>> 36f3e96eced007439388a3b1e4e39fe433d89b5a
