@@ -1,13 +1,12 @@
-export interface Restaurant {
+export interface Shop {
   name: string;
   address: string;
   picturePath: string;
-  phone?: string;
 }
 
-export interface RestaurantReport {
+export interface ShopReport {
   page: number;
   size: number;
-  resultSet: Restaurant[];
+  resultSet: Shop[];
   totalItems: number;
 }
