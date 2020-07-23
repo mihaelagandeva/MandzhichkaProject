@@ -10,6 +10,11 @@ const useStyles = makeStyles({
     justifyContent: 'center',
   },
 
+  resultCounter: {
+    fontSize: 20,
+    marginBottom: 20
+  },
+
   cardsContainer: {
     width: '1150px',
     display: 'flex',
@@ -49,6 +54,7 @@ const CardContainer: FunctionComponent<CardContainerProps> = ({page, pageSize, t
     <div className={classes.root}>
       <If condition={totalItems > 0} els={() => renderNoCardsMessage()}>
         <div>
+          <div className={classes.resultCounter}>Намерени: <b>{totalItems}</b></div>
           <div className={classes.cardsContainer}>
             {children}
           </div>
