@@ -259,7 +259,7 @@ async function handleTags(tags: ITag[], res: Response) {
 export let addProducts = async (req: Request, res: Response) => {
     const {products} = req.body;
 
-    if (Array.isArray(products) && products.length > 0) {
+    if (products && Array.isArray(products) && products.length > 0) {
         await Product.create(products, (err: any, created: any[]) => {
             if (err) {
                 res.status(400).send(err);
