@@ -5,6 +5,9 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { LoginFormValues } from '../model/form';
 import Link from '@material-ui/core/Link';
+import axios from 'axios';
+import {environment} from 'environments/environment.json';
+import {useSnackbar} from 'notistack';
 
 const useStyles = makeStyles({
   root: {
@@ -50,9 +53,13 @@ const validate = (values: LoginFormValues): LoginFormValues => {
 
   if (!values.username) {
     errors.username = 'Полето е задължително!';
+  } else if (values.username.length < 5) {
+    errors.username = 'Потребителското име е твърде кратко!'
   }
   if (!values.password) {
     errors.password = 'Полето е задължително!';
+  } else if (values.password.length < 5) {
+    errors.password = 'Паролата трябва да е поне 5 символа!';
   }
 
   // only by returning an empty object here you can submit the form
@@ -60,15 +67,21 @@ const validate = (values: LoginFormValues): LoginFormValues => {
 }
 
 const Login = () => {
+  const {enqueueSnackbar} = useSnackbar();
+
+  const login = (values: LoginFormValues) => {
+    axios.post(`${environment.apiUrl}/api/login`, values).then((user) => {
+      enqueueSnackbar(`Вписахте се успешно`, {variant: 'success'});
+    });
+  }
+
   const formik = useFormik({
     initialValues: {
       username: '',
       password: ''
     },
     validate,
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
-    }
+    onSubmit: (values: LoginFormValues) => login(values)
   });
 
   const styles = useStyles();

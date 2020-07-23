@@ -10,6 +10,8 @@ import TopAppBar from './TopAppBar';
 import picture from '../assets/main.jpg'
 import { Link } from 'react-router-dom';
 import SearchBar from './SearchBar';
+import Restaurants from './Restaurants';
+import Shops from './Shops';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -86,7 +88,8 @@ const NavigationBar = () => {
             <AppBar className={classes.bar} position="static">
                 <Tabs className={classes.tabs} value={value} onChange={handleChange} aria-label="simple tabs example">
                     <Tab label="Рецепти" component={Link} to={`/main/recipes`} />
-                    <Tab label="Ресторанти" {...a11yProps(1)} />
+                    <Tab label="Ресторанти" component={Link} to={`/main/restaurants`} />
+                    <Tab label="Магазини" component={Link} to={'/shops'} />
                     <Tab label="Събития" {...a11yProps(2)} />
                 </Tabs>
                 <div className={classes.search}>
@@ -104,11 +107,11 @@ const NavigationBar = () => {
                 <MainPage />
             </TabPanel>
             <TabPanel value={value} index={1}>
-                Item Two
-      </TabPanel>
+                <Restaurants />
+            </TabPanel>
             <TabPanel value={value} index={2}>
-                Item Three
-      </TabPanel>
+                <Shops />
+            </TabPanel>
         </div>
     );
 }

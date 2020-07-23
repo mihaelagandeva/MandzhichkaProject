@@ -1,6 +1,7 @@
 import React from 'react';
 import Login from './componets/Login';
-import Register from './componets/Register'
+import Register from './componets/Register';
+import Interceptor from './interceptor/interceptor';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
 import NavigationBar from './componets/NavigationBar';
@@ -21,9 +22,12 @@ function App() {
         <Route path="/" exact component={Login} />
         <Route path="/register" exact component={Register} />
         <Route path="/main/recipes" exact component={() => <NavigationBar tabNumber={0} />} />
+        <Route path="/main/restaurants" exact component={() => <NavigationBar tabNumber={1} />} />
+        <Route path="/shops" component={() => <NavigationBar tabNumber={2} />} />
         <Route path="/singleRecipe" exact component={() => <SingleRecipe recipe={hardcodedRecipe} />} />
         <Route path="/recipe/new" exact component={CreateRecipe} />
       </Router>
+      <Interceptor />
     </SnackbarProvider>
   );
 }
