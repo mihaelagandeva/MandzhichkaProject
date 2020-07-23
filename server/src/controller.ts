@@ -312,7 +312,6 @@ export let getAllProducts = async (req: Request, res: Response) => {
     });
 }
 
-<<<<<<< HEAD
 export let createCourse = async (req: Request, res: Response) => {
     const {body} = req;
 
@@ -412,7 +411,6 @@ export let getAllEvents = async (req: Request, res: Response) => {
         }
     });
 }
-=======
 export let getShops = async (req: Request, res: Response) => {
     const page = Number(req.params.page);
     const size = Number(req.params.size);
@@ -465,4 +463,3 @@ export let createShop = async (req: Request, res: Response) => {
         }
     });
 }
->>>>>>> 36f3e96eced007439388a3b1e4e39fe433d89b5a
