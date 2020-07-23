@@ -19,13 +19,13 @@ function App() {
   return (
     <SnackbarProvider maxSnack={3}>
       <Router>
-        <Route path="/" exact component={Login} />
+        <Route path="/" exact component={() => <NavigationBar tabNumber={0} />} />
+        <Route path="/login" exact component={Login} />
         <Route path="/register" exact component={Register} />
-        <Route path="/main/recipes" exact component={() => <NavigationBar tabNumber={0} />} />
-        <Route path="/main/restaurants" exact component={() => <NavigationBar tabNumber={1} />} />
+        <Route path="/restaurants" exact component={() => <NavigationBar tabNumber={1} />} />
         <Route path="/shops" component={() => <NavigationBar tabNumber={2} />} />
-        <Route path="/singleRecipe" exact component={() => <SingleRecipe recipe={hardcodedRecipe} />} />
-        <Route path="/recipe/new" exact component={CreateRecipe} />
+        <Route path="/recipes/:id" exact component={() => <SingleRecipe recipe={hardcodedRecipe} />} />
+        <Route path="/recipes/my/add" exact component={CreateRecipe} />
       </Router>
       <Interceptor />
     </SnackbarProvider>
