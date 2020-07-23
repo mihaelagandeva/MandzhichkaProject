@@ -88,6 +88,14 @@ router.get('/achievements', (req: Request, res: Response) => {
     console.log("achievements");
 });
 
+router.get('/products', async (req: Request, res: Response) => {
+    await controller.getAllProducts(req, res);
+});
+
+router.post('/products', async (req: Request, res: Response) => {
+    await controller.addProducts(req, res);
+});
+
 // so we can create restaurants if we need to
 router.post('/restaurants', async (req: Request, res: Response) => { 
     await controller.createRestaurant(req, res);

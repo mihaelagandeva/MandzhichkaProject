@@ -4,6 +4,7 @@ import Recipe from "./db-config/models/recipe";
 import Tag, {ITag} from "./db-config/models/tag";
 import bcrypt from 'bcrypt';
 import Restaurant from "./db-config/models/restaurant";
+import Product from './db-config/models/product';
 
 export let login = async (req: Request, res: Response) => {
     const { username, password } = req.body;
@@ -253,4 +254,54 @@ async function handleTags(tags: ITag[], res: Response) {
         )
     }
     return result;
+}
+
+export let addProducts = async (req: Request, res: Response) => {
+    const {products} = req.body;
+
+    if (products && Array.isArray(products) && products.length) {
+        const errorList: any[] = [];
+
+        for (let i = 0; i < products.length; i++) {
+            const product = products[i];
+
+            await Product.findOne({name: product.name}, async (err: any, result: any) => {
+                if (err) {
+                    errorList.push(err);
+                } else if (result) {
+                    errorList.push(`Вече съществува продукт с име '${product.name}'`);
+                } else {
+                    if (product.name && product.type && product.metrics) {
+                        await Product.create(product, (err: any, record: any) => {
+                            if (err) {
+                                errorList.push(err);
+                            } else if (!record) {
+                                res.status(500).send(`Грещка при създаване на продукт!`);
+                            }
+                        });
+                    } else {
+                        errorList.push('Не бяха предоставени задължителните параметри за продукта');
+                    }
+                }
+            });
+        }
+
+        if (errorList.length > 0) {
+            res.status(400).send(errorList);
+        } else {
+            res.send(`Oперацията завърши успешно`);
+        }
+    } else {
+        res.status(400).send('Невалидно тяло на заявката');
+    }
+}
+
+export let getAllProducts = async (req: Request, res: Response) => {
+    Product.find((err: any, result: any) => {
+        if (err) {
+            res.status(500).send(err);
+        } else {
+            res.send(result);
+        }
+    });
 }
