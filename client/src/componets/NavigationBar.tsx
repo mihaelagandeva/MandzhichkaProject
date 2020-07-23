@@ -11,6 +11,7 @@ import picture from '../assets/main.jpg'
 import { Link } from 'react-router-dom';
 import SearchBar from './SearchBar';
 import Restaurants from './Restaurants';
+import Shops from './Shops';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -88,6 +89,7 @@ const NavigationBar = () =>  {
                 <Tabs className={classes.tabs} value={value} onChange={handleChange} aria-label="simple tabs example">
                     <Tab label="Рецепти" component={Link} to={`/main/recipes`} />
                     <Tab label="Ресторанти" component={Link} to={`/main/restaurants`} />
+                    <Tab label="Магазини" component={Link} to={'/shops'} />
                     <Tab label="Събития" {...a11yProps(2)} />
                 </Tabs>
                 <div className={classes.search}>
@@ -108,7 +110,7 @@ const NavigationBar = () =>  {
                 <Restaurants />
             </TabPanel>
             <TabPanel value={value} index={2}>
-                Item Three
+                <Shops />
             </TabPanel>
         </div>
     );
