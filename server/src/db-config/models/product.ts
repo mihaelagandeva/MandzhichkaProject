@@ -6,7 +6,6 @@ const ProductSchema = new mongoose.Schema({
         maxlength: [30, 'Името на продукта трябва да е най-много 30 символа'],
         minlength: [2, 'Името на продукта трябва да е най-малко 2 символа'],
         required: [true, 'Името на продукта е задължително'],
-        unique: [true, 'Вече има продукт с такова име']
     },
     type: {
         type: String,

@@ -259,18 +259,37 @@ async function handleTags(tags: ITag[], res: Response) {
 export let addProducts = async (req: Request, res: Response) => {
     const {products} = req.body;
 
-    if (products && Array.isArray(products) && products.length > 0) {
-        await Product.create(products, (err: any, created: any[]) => {
-            if (err) {
-                res.status(400).send(err);
-            } else if (created) {
-                res.send(`Бяха създадени ${created.length} продукта`);
-            } else {
-                res.status(500).send('Грешка');
-            }
-        });
+    if (products && Array.isArray(products) && products.length) {
+        const errorList: any[] = [];
+
+        for (let i = 0; i < products.length; i++) {
+            const product = products[i];
+
+            await Product.findOne({name: product.name}, async (err: any, result: any) => {
+                if (err) {
+                    errorList.push(err);
+                } else if (result) {
+                    errorList.push(`Вече съществува продукт с име '${product.name}'`);
+                } else {
+                    await Product.create(product, (err: any, record: any) => {
+                        if (err) {
+                            errorList.push(err);
+                        } else if (!record) {
+                            const message = `Грещка при създаване на продукт!`;
+                            res.status(500).send(message);
+                        }
+                    });
+                }
+            });
+        }
+
+        if (errorList.length > 0) {
+            res.status(400).send(errorList);
+        } else {
+            res.send(`Oперацията завърши успешно`);
+        }
     } else {
-        res.status(400).send('Не е поддаден масив като тяло на заявката');
+        res.status(400).send('Невалидно тяло на заявката');
     }
 }
 
