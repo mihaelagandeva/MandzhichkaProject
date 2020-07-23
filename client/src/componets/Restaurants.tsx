@@ -1,12 +1,10 @@
 import React, {Component} from 'react';
-import { withStyles, WithStyles, createStyles } from '@material-ui/core';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import {environment} from 'environments/environment.json';
 import {Restaurant, RestaurantReport} from 'model/restaurant';
 import {withSnackbar, WithSnackbarProps} from 'notistack';
-import If from './If';
 import RestaurantCard from './RestaurantCard';
-import Pagination from '@material-ui/lab/Pagination';
+import CardContainer from './CardContainer';
 
 interface RestaurantsState {
   page: number;
@@ -16,38 +14,13 @@ interface RestaurantsState {
   totalItems: number;
 }
 
-const styles = () => createStyles({
-  root: {
-    backgroundColor: '#FFEEDF',
-    display: 'flex',
-    justifyContent: 'center',
-  },
-
-  restaurantContainer: {
-    width: '1150px',
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'left',
-  },
-
-  restaurant: {
-    margin: 50,
-  },
-
-  paginationContainer: {
-    display: 'flex',
-    justifyContent: 'center'
-  }
-});
-
-class Restaurants extends Component<WithSnackbarProps&WithStyles, RestaurantsState> {
+class Restaurants extends Component<WithSnackbarProps, RestaurantsState> {
 
   constructor(props: any) {
     super(props);
     this.state = {
       page: 1,
-      pageSize: 12,
+      pageSize: 5,
       search: '',
       restaurants: [],
       totalItems: 0
@@ -84,51 +57,24 @@ class Restaurants extends Component<WithSnackbarProps&WithStyles, RestaurantsSta
     });
   }
 
-  renderRestaurants() {
-    const {totalItems, pageSize, page, restaurants} = this.state;
-    const {classes} = this.props;
-
-    return (
-      <div>
-        <div className={classes.restaurantContainer}>
-          {
-            restaurants.map((restaurant) => {
-              return <RestaurantCard restaurant={restaurant}></RestaurantCard>
-            })
-          }
-        </div>
-        <div className={classes.paginationContainer}>
-          <If condition={totalItems > pageSize}>
-            <Pagination
-              count={totalItems / pageSize}
-              page={page}
-              color="primary"
-              onChange={this.handlePageChange}
-            />
-          </If>
-        </div>
-      </div>
-    );
-  }
-
-  renderNoRestaurantsMessage() {
-    return (
-      <div>Няма намерени ресторанти</div>
-    );
-  }
-
   render() {
-    const {classes} = this.props;
-    const {restaurants} = this.state;
+    const {restaurants, page, pageSize, totalItems} = this.state;
 
     return (
-      <div className={classes.root}>
-        <If condition={restaurants.length > 0} els={this.renderNoRestaurantsMessage}>
-          {this.renderRestaurants()}
-        </If>
-      </div>
+      <CardContainer
+        page={page}
+        pageSize={pageSize}
+        totalItems={totalItems}
+        onPageChange={this.handlePageChange}
+      >
+        {
+          restaurants.map((restaurant) => {
+            return <RestaurantCard restaurant={restaurant}></RestaurantCard>
+          })
+        }
+      </CardContainer>
     );
   }
 }
 
-export default withStyles(styles)(withSnackbar(Restaurants));
+export default withSnackbar(Restaurants);
