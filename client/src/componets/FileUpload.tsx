@@ -2,7 +2,11 @@ import React, { useState, FormEvent } from 'react';
 import { environment } from '../environments/environment.json';
 import axios from 'axios'
 
-export const FileUpload = () => {
+interface FileProps {
+    setPicturePath: (val: string) => void
+}
+
+export const FileUpload = (props: FileProps) => {
     const [file,setFile] = useState()
     const [filename, setFilename] = useState("Изберете снимка")
     const [uploadedFile, setUploadedFile] = useState({filename:"",filePath:""});
@@ -26,7 +30,8 @@ export const FileUpload = () => {
                }
             })
             const { filename, filePath } = res.data;
-            setUploadedFile({filename,filePath})
+            setUploadedFile({ filename, filePath })
+            props.setPicturePath(filePath);
         }
         catch (err) {
             if (err.response.status === 500) {
@@ -46,6 +51,7 @@ export const FileUpload = () => {
             </div>) : null
             }
             <form onSubmit={onSubmit}>
+                <br />
                 <label>{filename}</label>
                 <div>
                     <input style={{ marginTop: 10, color: "transparent", display:"inline-block" }} type="file" id="customFile"

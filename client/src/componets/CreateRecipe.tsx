@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import { makeStyles } from '@material-ui/core/styles';
-import { RecipeFormValue } from "../model/recipeForm";
-import { useFormik } from 'formik';
-import { TextField, Button } from "@material-ui/core";
+import { TextField, Button, Typography } from "@material-ui/core";
 import CancelIcon from '@material-ui/icons/Cancel';
 import { InputTags } from './InputTags'
 import { FileUpload } from './FileUpload'
+import { ProductSelect } from './ProductSelect'
+import Slider from '@material-ui/core/Slider';
 
 const useStyles = makeStyles({
     root: {
         position: 'absolute',
-        width: '40%',
+        width: '60%',
         height: '50%',
-        left: '25%',
+        left: '15%',
         top: '10%'
     },
     
@@ -32,16 +32,18 @@ const useStyles = makeStyles({
         flex: 1,
         minWidth: 500,
         alignSelf: 'center',
-        margin: 10
+        marginBottom: 10,
+        marginTop: 10,
+        marginLeft: '20%'
     },
     steps: {
-        alignSelf: 'center',
-        marginTop: 10,
+        clear: "both",
+        marginTop: 20,
     },
     stepsInputField: {
         flex: 1,
         float: 'left',
-        minWidth: 400,
+        minWidth: 600,
         alignSelf: 'center',
     },
     stepNumbers: {
@@ -63,94 +65,69 @@ const useStyles = makeStyles({
         marginTop: 10,
         float: 'left',
         marginRight: 15
+    },
+    button: {
+        marginTop: 10,
+        float: "right"
     }
 });
 
-const validate = (values: RecipeFormValue): RecipeFormValue => {
-    const errors: RecipeFormValue = {};
-    
-    if (!values.title) {
-        errors.title = 'Полето е задължително'
-    }
-    if (!values.summary) {
-        errors.summary = 'Полето е задължително'
-    }
-    if (values.summary!.length > 100) {
-        errors.summary = 'Описанието е прекалено дълго'
-    }
-    if (values.products!.length < 1) {
-        errors.products![0] = 'Полето е задължително!'
-    }
-    if (!values.steps) {
-        errors.steps![0] = 'Полето е задължително!'
-    }
-    if (!values.picturePath) {
-        errors.picturePath = 'Полето е задължително!'
-    }
-    
-    return errors;
+function valuetext(value: number) {
+    return `${value}мин.`;
 }
 
 const CreateRecipe = () => {
+    const [title, setTitle] = useState("");
+    const [summary, setSummary] = useState("");
+    const [prepTime, setPrepTime] = useState(0);
+    const [picturePath, setPicturePath] = useState("");
     const [stepsList, setStepsList] = useState([""]);
+    const [productList, setProductList] = useState([{value:"", quantity: 0, metric:""}]);
     const [tags, setTags] = useState<string[]>([]);
     const [initialTags, setInitialTags] = useState<string[]>([]);
     const selectedTags = (t: string[]) => {
         setTags(t);
     };
     
-    const formik = useFormik({
-        initialValues: {
-            title: '',
-            summary: '',
-            picturePath: '',
-            products: [],
-            tags: [],
-            steps: []
-            
-        },
-        validate,
-        onSubmit: (values) => {
-            alert(JSON.stringify(values, null, 6));
-        }
-    });
-    
-    const handleInputChange = (e:any, index:number) => {
+    const handleInputChange = (e: any, index: number, valuesList: any, setValuesList: (v: any) => void) => {
         const { value } = e.target;
-        const list = [...stepsList];
+        const list = [...valuesList];
         list[index] = value;
-        setStepsList(list);
+        setValuesList(list);
     };
     
-    const handleRemoveClick = (index:number) => {
-        const list = [...stepsList];
+    const handleRemoveClick = (index: number, valuesList: any, setValuesList: (v:any) => void) => {
+        const list = [...valuesList];
         list.splice(index, 1);
-        setStepsList(list);
+        setValuesList(list);
     };
     
-    const handleAddClick = () => {
-        setStepsList([...stepsList, ""]);
+    const handleAddClick = (valuesList:any, initialValue: any, setValuesList: (v: any) => void) => {
+        setValuesList([...valuesList, initialValue]);
     };
+    
+    const Submit = () => {
+        alert(`${title}, ${summary}, ${prepTime},${stepsList}, ${picturePath}` )
+    }
     
     const styles = useStyles();
     
     return (
         <div className={styles.root}>
-            <h1 className={styles.title}>Нова Рецепта</h1>
-            <div className={styles.upload}>
-                <FileUpload />
-            </div>
-        <form className={styles.formContainer} onSubmit={formik.handleSubmit}>
+        <h1 className={styles.title}>Нова Рецепта</h1>
+        <div className={styles.upload}>
+        <FileUpload setPicturePath={setPicturePath} />
+        </div>
+        <form className={styles.formContainer}>
         <div style={{float:"left"}}>
         <TextField
         className={styles.inputField}
         id="title"
         name="title"
         label="Заглавие"
-        onChange={formik.handleChange}
-        onBlur={formik.handleBlur}
-        error={!!formik.errors.title && formik.touched.title}
-        helperText={formik.touched.title ? formik.errors.title : ''}
+        onChange={e => setTitle(e.target.value)}
+        onBlur={e => setTitle(e.target.value)}
+        
         />
         <TextField
         className={styles.inputField}
@@ -159,13 +136,38 @@ const CreateRecipe = () => {
         label="Описание"
         multiline
         rowsMax='4'
-        onChange={formik.handleChange}
-        onBlur={formik.handleBlur}
-        error={!!formik.errors.summary && formik.touched.summary}
-        helperText={formik.touched.summary ? formik.errors.summary : ''}
+        onChange={e => setSummary(e.target.value)}
+        onBlur={e => setSummary(e.target.value)}
         />
+        <Typography style={{marginTop: 20}} id="discrete-slider" gutterBottom>
+        Време за приготвяне
+        </Typography>
+        <Slider
+        defaultValue={0}
+        getAriaValueText={valuetext}
+        id="prepTime"
+        name="prepTime"
+        onChange={(e, val) => {
+            if(!Array.isArray(val))
+            setPrepTime(val)
+        }}
+        aria-labelledby="discrete-slider"
+        valueLabelDisplay="auto"
+        step={10}
+        marks
+        min={10}
+        max={180}
+        />
+        <div>
+        <p>Продукти: </p>
+        {productList.map((x, i) => {
+            
+        })}
+        <ProductSelect productList={productList} setProductList={setProductList}/>
+        </div>
         <div className={styles.steps}>
-        <p>Стъпки: </p>
+        <br />
+        <p style={{marginTop: 20}}>Стъпки: </p>
         {stepsList.map((x, i) => {
             return (
                 <>
@@ -173,16 +175,17 @@ const CreateRecipe = () => {
                 <p className={styles.stepNumbers}>{i+1}.</p>
                 <TextField
                 className={styles.stepsInputField}
+                multiline
                 placeholder="Добавете стъпка"
                 value={x.valueOf()}
-                onChange={e => handleInputChange(e, i)}
+                onChange={e => handleInputChange(e, i,stepsList,setStepsList)}
                 />
                 
                 {stepsList.length !== 1 && <Button
                     className={styles.removeButton}
-                    onClick={() => handleRemoveClick(i)}><CancelIcon/></Button>}
+                    onClick={() => handleRemoveClick(i,stepsList,setStepsList)}><CancelIcon/></Button>}
                     </div>
-                    {stepsList.length - 1 === i && <button className={styles.addButton} onClick={handleAddClick}>Добави стъпка</button>}
+                    {stepsList.length - 1 === i && <button className={styles.addButton} onClick={() => handleAddClick(stepsList,"",setStepsList)}>Добави стъпка</button>}
                     
                     </>
                     );
@@ -190,10 +193,13 @@ const CreateRecipe = () => {
                 </div>
                 <div className={styles.steps}>
                 <InputTags selectedTags={selectedTags} initialTags={initialTags} />
-                    </div>
+                </div>
+                <div>
+                <Button onClick={Submit} className={styles.button} variant="outlined">Публикувай</Button>
+                </div>
                 </div>
                 </form>
                 </div>
-    )}
-            
-export default CreateRecipe;
+                )}
+                
+                export default CreateRecipe;
