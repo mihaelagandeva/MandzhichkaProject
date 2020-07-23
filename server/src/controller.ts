@@ -15,7 +15,7 @@ export let login = async (req: Request, res: Response) => {
                 if (err) {
                     res.status(500).send('Error');
                 } else if (result) {
-                    res.send(user);
+                    res.cookie('loggedUser', user.username,  { maxAge: 900000, httpOnly: true, secure: true }).send(user);
                 } else {
                     // username is correct but the password is incorrect
                     res.status(401).send("Потребителското име или парола са грешни");
@@ -134,7 +134,7 @@ export let listAllRecipes = async (req: Request, res: Response) => {
         const query = {}; //should be added later
 
         await Recipe.find(query, (err: any, result: any[]) => {
-            if(err) {
+            if (err) {
                 res.status(501).send("Error!");
             } else {
                 recipes = result;
@@ -172,6 +172,36 @@ export let listTags = async (_req: Request, res: Response) => {
             res.status(200).send(tags);
         }
     });
+};
+
+export let getUser = async (req: Request, res: Response) => {
+    try {
+        const result = await findUser(req, res);
+        if (result) {
+            res.status(200).send(result);
+        } else {
+            res.status(404).send();
+        }
+    } catch (e) {
+        res.status(501).send("Error!");
+    }
+};
+
+
+let findUser = async (req: Request, res: Response): Promise<any> => {
+    await User.findOne({ _id: req.params.recipeId },
+        function (err: any, user: any) {
+            if (err) {
+                throw new Error();
+            } else {
+                if (user) {
+                    return user;
+                } else {
+                    return false;
+                }
+            }
+        }
+    );
 };
 
 async function handleTags(tags: ITag[], res: Response) {
