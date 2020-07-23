@@ -1,13 +1,15 @@
 import mongoose from "mongoose";
+import * as User from "./user";
+import { IUser } from "./user";
 
 const CommentSchema = new mongoose.Schema({
-    authorId: { type: String },
+    author: User.UserSchema,
     text: { type: String },
     date: { type: Date }
 });
 
 interface IComment extends mongoose.Document {
-    authorId: string;
+    authorId: IUser;
     text: string;
     date: Date;
 }

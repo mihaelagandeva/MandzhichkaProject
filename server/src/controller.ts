@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import User from "./db-config/models/user";
 import Recipe from "./db-config/models/recipe";
-import Tag, {ITag} from "./db-config/models/tag";
+import Tag, { ITag } from "./db-config/models/tag";
 import bcrypt from 'bcrypt';
 import Restaurant from "./db-config/models/restaurant";
 
@@ -16,7 +16,7 @@ export let login = async (req: Request, res: Response) => {
                 if (err) {
                     res.status(500).send('Error');
                 } else if (result) {
-                    res.cookie('loggedUser', user.username,  { maxAge: 900000, httpOnly: true, secure: true }).send(user);
+                    res.cookie('loggedUser', user.username, { maxAge: 900000, httpOnly: true, secure: true }).send(user);
                 } else {
                     // username is correct but the password is incorrect
                     res.status(401).send("Потребителското име или парола са грешни");
@@ -55,7 +55,7 @@ export let registration = async (req: Request, res: Response) => {
 };
 
 export let createRecipe = async (req: Request, res: Response) => {
-    await Recipe.findOne({ name: req.body.name, author: req.body.author },
+    await Recipe.findOne({ name: req.body.name, 'author.username': req.body.author },
         async function (err: any, recipe: any) {
             if (err) {
                 res.status(501).send("Error!");
@@ -64,9 +64,17 @@ export let createRecipe = async (req: Request, res: Response) => {
                     res.status(400).send();
                 } else {
                     const tagsToBeInserted = await handleTags(req.body.tags, res);
+                    let author;
+                    await User.findOne({ username: req.body.author }, function (err: any, user: any) {
+                        if (err) {
+                            res.status(501).send();
+                        } else {
+                            author = user;
+                        }
+                    });
                     await Recipe.create({
                         name: req.body.name,
-                        author: req.body.author,
+                        author: author,
                         date: Date.now(),
                         rating: 0,
                         picturePath: req.body.picturePath,
@@ -85,6 +93,7 @@ export let createRecipe = async (req: Request, res: Response) => {
 };
 
 export let getRecipe = async (req: Request, res: Response) => {
+    //getAll comments
     await Recipe.findOne({ _id: req.params.recipeId },
         function (err: any, recipe: any) {
             if (err) {
@@ -155,6 +164,34 @@ export let listAllRecipes = async (req: Request, res: Response) => {
     }
 };
 
+export let listUserFavouriteRecipes = async (req: Request, res: Response) => {
+    await User.findOne({ username: req.cookies.loggedUser }, function (err, user) {
+        if (err) {
+            res.status(501).send();
+        } else {
+            if (user) {
+                res.status(200).send(user?.favourites);
+            } else {
+                res.status(400).send();
+            }
+        }
+    })
+};
+
+export let listUserOwnRecipes = async (req: Request, res: Response) => {
+    await Recipe.find({ 'author.username': req.cookies.loggedUser }, function (err, recipes) {
+        if (err) {
+            res.status(501).send();
+        } else {
+            if (recipes) {
+                res.status(200).send(recipes);
+            } else {
+                res.status(400).send();
+            }
+        }
+    })
+};
+
 export let getRestaurants = async (req: Request, res: Response) => {
     const page = Number(req.params.page);
     const size = Number(req.params.size);
@@ -163,7 +200,7 @@ export let getRestaurants = async (req: Request, res: Response) => {
         const firstRecord = (page - 1) * size;
         const search = req.params.search;
         let restaurants: any[] = [];
-        const query = {$or: [ {name: {$regex: search || ''}}, {address: {$regex: search || ''}} ]};
+        const query = { $or: [{ name: { $regex: search || '' } }, { address: { $regex: search || '' } }] };
 
         await Restaurant.find(query, (err: any, result: any[]) => {
             if (err) {
@@ -172,7 +209,7 @@ export let getRestaurants = async (req: Request, res: Response) => {
                 restaurants = result;
             }
         }).skip(firstRecord).limit(size);
-        
+
         const totalItems = await Restaurant.find(query).countDocuments();
 
         res.send({
@@ -189,7 +226,7 @@ export let getRestaurants = async (req: Request, res: Response) => {
 export let createRestaurant = async (req: Request, res: Response) => {
     const body = req.body;
 
-    Restaurant.findOne({name: body.name, address: body.address}, (err: any, result: any) => {
+    Restaurant.findOne({ name: body.name, address: body.address }, (err: any, result: any) => {
         if (err) {
             res.status(400).send(err);
         } else if (result) {
@@ -228,31 +265,29 @@ export let listTags = async (_req: Request, res: Response) => {
     });
 };
 
-export let getUser = async (req: Request, res: Response) => {
-    try {
-        const result = await findUser(req, res);
-        if (result) {
-            res.status(200).send(result);
-        } else {
-            res.status(404).send();
-        }
-    } catch (e) {
-        res.status(501).send("Error!");
-    }
-};
-
-
-let findUser = async (req: Request, res: Response): Promise<any> => {
-    await User.findOne({ _id: req.params.recipeId },
+export let findUser = async (req: Request, res: Response): Promise<any> => {
+    await User.findOne({ username: req.cookies.loggedUser },
         function (err: any, user: any) {
             if (err) {
-                throw new Error();
+                res.status(501).send();
             } else {
                 if (user) {
-                    return user;
+                    return res.status(200).send(user);
                 } else {
-                    return false;
+                    return res.status(404).send();
                 }
+            }
+        }
+    );
+};
+
+export let updateUser = async (req: Request, res: Response) => {
+    await User.updateOne({ _id: req.cookies.loggedUser }, { $set: req.body, $currentDate: { lastModified: true } },
+        function (err: any) {
+            if (err) {
+                res.status(501).send("Error!");
+            } else {
+                res.status(200).send();
             }
         }
     );

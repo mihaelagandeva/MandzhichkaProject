@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
-const ProductSchema = new mongoose.Schema({
+export const ProductSchema = new mongoose.Schema({
     name: { type: String },
     type: { type: String }
 });
 
-interface IProduct extends mongoose.Document {
+export interface IProduct extends mongoose.Document {
     name: string;
     type: string;
 }

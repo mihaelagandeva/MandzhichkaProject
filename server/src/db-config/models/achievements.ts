@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
-const AchievementSchema = new mongoose.Schema({
+export const AchievementSchema = new mongoose.Schema({
     name: { type: String },
     description: { type: String }
 });
 
-interface IAchievement extends mongoose.Document {
+export interface IAchievement extends mongoose.Document {
     name: string;
     description: string;
 }
