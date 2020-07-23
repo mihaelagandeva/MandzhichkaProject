@@ -5,13 +5,14 @@ import { useFormik } from 'formik';
 import { TextField, Button } from "@material-ui/core";
 import CancelIcon from '@material-ui/icons/Cancel';
 import { InputTags } from './InputTags'
+import { FileUpload } from './FileUpload'
 
 const useStyles = makeStyles({
     root: {
         position: 'absolute',
         width: '40%',
         height: '50%',
-        left: '30%',
+        left: '25%',
         top: '10%'
     },
     
@@ -57,6 +58,11 @@ const useStyles = makeStyles({
         marginLeft: 10,
         marginTop: 5,
         float: 'left',
+    },
+    upload: {
+        marginTop: 10,
+        float: 'left',
+        marginRight: 15
     }
 });
 
@@ -130,8 +136,12 @@ const CreateRecipe = () => {
     
     return (
         <div className={styles.root}>
+            <h1 className={styles.title}>Нова Рецепта</h1>
+            <div className={styles.upload}>
+                <FileUpload />
+            </div>
         <form className={styles.formContainer} onSubmit={formik.handleSubmit}>
-        <h1 className={styles.title}>Нова Рецепта</h1>
+        <div style={{float:"left"}}>
         <TextField
         className={styles.inputField}
         id="title"
@@ -180,6 +190,7 @@ const CreateRecipe = () => {
                 </div>
                 <div className={styles.steps}>
                 <InputTags selectedTags={selectedTags} initialTags={initialTags} />
+                    </div>
                 </div>
                 </form>
                 </div>
