@@ -275,8 +275,7 @@ export let addProducts = async (req: Request, res: Response) => {
                         if (err) {
                             errorList.push(err);
                         } else if (!record) {
-                            const message = `Грещка при създаване на продукт!`;
-                            res.status(500).send(message);
+                            res.status(500).send(`Грещка при създаване на продукт!`);
                         }
                     });
                 }
