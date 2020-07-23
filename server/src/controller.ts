@@ -271,13 +271,17 @@ export let addProducts = async (req: Request, res: Response) => {
                 } else if (result) {
                     errorList.push(`Вече съществува продукт с име '${product.name}'`);
                 } else {
-                    await Product.create(product, (err: any, record: any) => {
-                        if (err) {
-                            errorList.push(err);
-                        } else if (!record) {
-                            res.status(500).send(`Грещка при създаване на продукт!`);
-                        }
-                    });
+                    if (product.name && product.type && product.metrics) {
+                        await Product.create(product, (err: any, record: any) => {
+                            if (err) {
+                                errorList.push(err);
+                            } else if (!record) {
+                                res.status(500).send(`Грещка при създаване на продукт!`);
+                            }
+                        });
+                    } else {
+                        errorList.push('Не бяха предоставени задължителните параметри за продукта');
+                    }
                 }
             });
         }
