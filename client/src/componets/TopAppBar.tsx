@@ -20,11 +20,11 @@ const useStyles = makeStyles((theme: Theme) =>
         button: {
             color: '#FFFFFF'
         }
-        
+
     }),
 );
 
-const TopAppBar = () =>  {
+const TopAppBar = () => {
     const classes = useStyles();
 
     return (
@@ -35,7 +35,7 @@ const TopAppBar = () =>  {
                         <Link href='/main/recipes' color='inherit' underline='none'>
                             Манджичка
                         </Link>
-                     </Typography>
+                    </Typography>
                     <Link href="/">
                         <Button >
                             <p className={classes.button}> Влез </p>

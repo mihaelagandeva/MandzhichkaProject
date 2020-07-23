@@ -52,7 +52,7 @@ interface ReciepProps {
 
 
 const RecipeCard = (props: ReciepProps) => {
-    const [recipe] = useState(props.recipe);   //This will be changed to get request 
+    const { recipe } = props;   //This will be changed to get request 
     const [currUser] = useState(null) // will be added later
     const classes = useStyles()
 
@@ -64,16 +64,16 @@ const RecipeCard = (props: ReciepProps) => {
     return (recipe) ? (
         <Card className={classes.root}>
             <Link href={'/singleRecipe'} underline="none">
-            <CardHeader
-                className={classes.header}
-                title={recipe.title}
-                subheader={`${recipe.author} - ${recipe.date}`}
-            />
-            <Rating className={classes.rating} name="read-only" value={recipe.rating} readOnly />
-            <CardMedia
-                className={classes.media}
-                image={recipe.picturePath}
-                title={recipe.title}
+                <CardHeader
+                    className={classes.header}
+                    title={recipe.title}
+                    subheader={`${recipe.author} - ${recipe.date}`}
+                />
+                <Rating className={classes.rating} name="read-only" value={recipe.rating} readOnly />
+                <CardMedia
+                    className={classes.media}
+                    image={recipe.picturePath}
+                    title={recipe.title}
                 />
             </Link>
             <CardContent>
@@ -81,10 +81,10 @@ const RecipeCard = (props: ReciepProps) => {
                     {recipe.summary}
                 </Typography>
                 <Typography variant="body2" color="textSecondary" component="p">
-                    Tags: 
+                    Тагове:
                     {recipe.tags.map(tag => (
-                        <Chip className={classes.tags} key={tag.id} label={tag.value} size="small" variant="outlined" />
-                    ))}
+                    <Chip className={classes.tags} key={tag.id} label={tag.value} size="small" variant="outlined" />
+                ))}
                 </Typography>
                 {currUser ?
                     <CardActions className={classes.favourite}>
@@ -95,9 +95,9 @@ const RecipeCard = (props: ReciepProps) => {
                     :
                     ''}
             </CardContent>
-            </Card>
+        </Card>
     ) : (<p>
-        No such recipe found
+        Не е намерена такава рецепта
     </p>);
 }
 
