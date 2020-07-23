@@ -5,6 +5,8 @@ import Tag, {ITag} from "./db-config/models/tag";
 import bcrypt from 'bcrypt';
 import Restaurant from "./db-config/models/restaurant";
 import Product from './db-config/models/product';
+import Course from './db-config/models/courses';
+import Event from './db-config/models/event';
 
 export let login = async (req: Request, res: Response) => {
     const { username, password } = req.body;
@@ -302,6 +304,106 @@ export let getAllProducts = async (req: Request, res: Response) => {
             res.status(500).send(err);
         } else {
             res.send(result);
+        }
+    });
+}
+
+export let createCourse = async (req: Request, res: Response) => {
+    const {body} = req;
+
+    if (body.name && body.date) {
+        const {name, date} = body;
+
+        await Course.findOne({name: name, date: date}, async (err: any, result: any) => {
+            if (err) {
+                res.status(400).send(err);
+            } else if (result) {
+                res.status(400).send('Този курс вече съществува');
+            } else {
+                await Course.create(body, (err: any, record: any) => {
+                    if (err) {
+                        res.status(400).send(err);
+                    } else if (record) {
+                        res.send('Курса беше създаден успешно');
+                    } else {
+                        res.status(500).send('Грешка при създаване на курса');
+                    }
+                });
+            }
+        });
+    } else {
+        res.status(400).send('Навалидно тяло на заявката');
+    }
+}
+
+export let getAllCourses = async (req: Request, res: Response) => {
+    // add logic if you are assigned to a course
+    await Course.find((err: any, records: any[]) => {
+        if (err) {
+            res.status(500).send(err);
+        } else {
+            const hiddenRecords = records.map((record) => {
+                return {
+                    name: record.name,
+                    date: record.date,
+                    address: record.address,
+                    picturePath: record.picturePath,
+                    duration: record.duration.quantity.toString() + " " + record.duration.metric,
+                    assigned: false
+                };
+            });
+
+            res.send(hiddenRecords);
+        }
+    });
+}
+
+export let createEvent = async (req: Request, res: Response) => {
+    const {body} = req;
+
+    if (body.name && body.date) {
+        const {name, date} = body;
+
+        await Event.findOne({name: name, date: date}, async (err: any, result: any) => {
+            if (err) {
+                res.status(400).send(err);
+            } else if (result) {
+                res.status(400).send('Този курс вече съществува');
+            } else {
+                await Event.create(body, (err: any, record: any) => {
+                    if (err) {
+                        res.status(400).send(err);
+                    } else if (record) {
+                        res.send('Курса беше създаден успешно');
+                    } else {
+                        res.status(500).send('Грешка при създаване на курса');
+                    }
+                });
+            }
+        });
+    } else {
+        res.status(400).send('Навалидно тяло на заявката');
+    }
+}
+
+export let getAllEvents = async (req: Request, res: Response) => {
+    // add logic if you are assigned to a course
+    await Event.find((err: any, records: any[]) => {
+        if (err) {
+            res.status(500).send(err);
+        } else {
+            const hiddenRecords = records.map((record) => {
+                return {
+                    name: record.name,
+                    date: record.date,
+                    address: record.address,
+                    picturePath: record.picturePath,
+                    duration: record.duration.quantity.toString() + " " + record.duration.metric,
+                    assigned: false
+                };
+            });
+
+            res.send(hiddenRecords);
         }
     });
 }
