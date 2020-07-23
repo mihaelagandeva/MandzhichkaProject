@@ -64,8 +64,8 @@ router.get('/restaurants/:page/:size/:search?', async (req: Request, res: Respon
     await controller.getRestaurants(req, res);
 });
 
-router.get('/shops', (req: Request, res: Response) => {
-    console.log("shops");
+router.get('/shops/:page/:size/:search?', async (req: Request, res: Response) => {
+    await controller.getShops(req, res);
 });
 
 router.get('/courses', (req: Request, res: Response) => {
@@ -99,4 +99,8 @@ router.post('/products', async (req: Request, res: Response) => {
 // so we can create restaurants if we need to
 router.post('/restaurants', async (req: Request, res: Response) => { 
     await controller.createRestaurant(req, res);
+});
+
+router.post('/shops', async (req: Request, res: Response) => {
+    await controller.createShop(req, res);
 });
