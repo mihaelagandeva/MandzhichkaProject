@@ -5,12 +5,9 @@ import Tag, {ITag} from "./db-config/models/tag";
 import bcrypt from 'bcrypt';
 import Restaurant from "./db-config/models/restaurant";
 import Product from './db-config/models/product';
-<<<<<<< HEAD
 import Course from './db-config/models/courses';
 import Event from './db-config/models/event';
-=======
 import Shop from './db-config/models/shop';
->>>>>>> 36f3e96eced007439388a3b1e4e39fe433d89b5a
 
 export let login = async (req: Request, res: Response) => {
     const { username, password } = req.body;
