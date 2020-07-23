@@ -89,6 +89,9 @@ router.get('/achievements', (req: Request, res: Response) => {
     console.log("achievements");
 });
 
+router.post('/upload', async (req: Request, res: Response) => {
+    await controller.uploadPicture(req, res);
+});
 router.get('/products', async (req: Request, res: Response) => {
     await controller.getAllProducts(req, res);
 });
