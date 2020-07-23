@@ -68,12 +68,12 @@ router.get('/shops/:page/:size/:search?', async (req: Request, res: Response) =>
     await controller.getShops(req, res);
 });
 
-router.get('/courses', (req: Request, res: Response) => {
-    console.log("courses");
+router.get('/courses', async (req: Request, res: Response) => {
+    await controller.getAllCourses(req, res);
 });
 
-router.get('/events', (req: Request, res: Response) => {
-    console.log("events");
+router.get('/events', async (req: Request, res: Response) => {
+    await controller.getAllEvents(req, res);
 });
 
 router.get('/tags', async (req: Request, res: Response) => {
@@ -103,4 +103,12 @@ router.post('/restaurants', async (req: Request, res: Response) => {
 
 router.post('/shops', async (req: Request, res: Response) => {
     await controller.createShop(req, res);
+});
+
+router.post('/courses', async (req: Request, res: Response) => {
+    await controller.createCourse(req, res);
+});
+
+router.post('/events', async (req: Request, res: Response) => {
+    await controller.createEvent(req, res);
 });
