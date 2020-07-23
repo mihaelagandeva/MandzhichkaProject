@@ -4,6 +4,7 @@ import Recipe from "./db-config/models/recipe";
 import Tag, {ITag} from "./db-config/models/tag";
 import bcrypt from 'bcrypt';
 import Restaurant from "./db-config/models/restaurant";
+import Product from './db-config/models/product';
 
 export let login = async (req: Request, res: Response) => {
     const { username, password } = req.body;
@@ -253,4 +254,32 @@ async function handleTags(tags: ITag[], res: Response) {
         )
     }
     return result;
+}
+
+export let addProducts = async (req: Request, res: Response) => {
+    const {products} = req.body;
+
+    if (Array.isArray(products) && products.length > 0) {
+        await Product.create(products, (err: any, created: any[]) => {
+            if (err) {
+                res.status(400).send(err);
+            } else if (created) {
+                res.send(`Бяха създадени ${created.length} продукта`);
+            } else {
+                res.status(500).send('Грешка');
+            }
+        });
+    } else {
+        res.status(400).send('Не е поддаден масив като тяло на заявката');
+    }
+}
+
+export let getAllProducts = async (req: Request, res: Response) => {
+    Product.find((err: any, result: any) => {
+        if (err) {
+            res.status(500).send(err);
+        } else {
+            res.send(result);
+        }
+    });
 }
