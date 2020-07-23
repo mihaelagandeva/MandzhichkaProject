@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const ProductSchema = new mongoose.Schema({
+export const ProductSchema = new mongoose.Schema({
     name: {
         type: String,
         maxlength: [30, 'Името на продукта трябва да е най-много 30 символа'],
@@ -19,7 +19,7 @@ const ProductSchema = new mongoose.Schema({
     }
 });
 
-interface IProduct extends mongoose.Document {
+export interface IProduct extends mongoose.Document {
     name: string;
     type: string;
     metrics: string[];

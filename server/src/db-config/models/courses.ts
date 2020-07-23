@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import * as User from "./user";
+import { IUser } from "./user";
 
 const CourseSchema = new mongoose.Schema({
     name: { type: String },
@@ -9,9 +11,7 @@ const CourseSchema = new mongoose.Schema({
         quantity: { type: Number },
         metric: { type: String }
     },
-    participants: [{
-        userId: { type: Number }
-    }]
+    participants: [User.UserSchema]
 });
 
 interface ICourse extends mongoose.Document {
@@ -23,9 +23,7 @@ interface ICourse extends mongoose.Document {
         quantity: number;
         metric: string
     }
-    participants: {
-        userId: string
-    }[]
+    participants: IUser[];
 }
 
 const Course = mongoose.model<ICourse>("Course", CourseSchema);

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { ITag } from "./tag";
 import * as Tag from './tag';
 
-const RecipeSchema = new mongoose.Schema({
+export const RecipeSchema = new mongoose.Schema({
     name: {
         type: String,
         minlength: 3,
@@ -15,7 +15,7 @@ const RecipeSchema = new mongoose.Schema({
     tags: [Tag.TagSchema]
 });
 
-interface IRecipe extends mongoose.Document {
+export interface IRecipe extends mongoose.Document {
     name: string;
     author: string;
     date: Date;

@@ -1,18 +1,22 @@
 import mongoose from "mongoose";
+import * as User from "./user";
+import { IUser } from "./user";
+import * as Product from "./product";
+import { IProduct } from "./product";
 
 const ShoppingListSchema = new mongoose.Schema({
-    userId: { type: String },
+    user: User.UserSchema,
     entities: [{
-        product: { type: String },
+        product: Product.ProductSchema,
         quantity: { type: Number },
         metric: { type: String}
     }]
 });
 
 interface IShoppingList extends mongoose.Document {
-    userId: string;
+    user: IUser;
     entities: {
-        product: string;
+        product: IProduct;
         quantity: number;
         metric: string;
     }[];
