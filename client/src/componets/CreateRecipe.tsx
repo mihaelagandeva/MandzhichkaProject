@@ -82,7 +82,7 @@ const CreateRecipe = () => {
     const [prepTime, setPrepTime] = useState(0);
     const [picturePath, setPicturePath] = useState("");
     const [stepsList, setStepsList] = useState([""]);
-    const [productList, setProductList] = useState([{value:"", quantity: 0, metric:""}]);
+    const [productList, setProductList] = useState([{name:"", quantity: 0, metric:""}]);
     const [tags, setTags] = useState<string[]>([]);
     const [initialTags, setInitialTags] = useState<string[]>([]);
     const selectedTags = (t: string[]) => {
@@ -107,7 +107,7 @@ const CreateRecipe = () => {
     };
     
     const Submit = () => {
-        alert(`${title}, ${summary}, ${prepTime},${stepsList}, ${picturePath}` )
+        alert(`${title}, ${summary}, ${prepTime},${stepsList}, ${picturePath}, ${JSON.stringify(productList)}` )
     }
     
     const styles = useStyles();
