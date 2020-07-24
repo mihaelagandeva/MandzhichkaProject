@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Recipe } from '../model/recipe'
-import { makeStyles, Theme } from '@material-ui/core'
+import { makeStyles, Theme, Button } from '@material-ui/core'
 import TopAppBar from './TopAppBar';
 import picture from '../assets/main.jpg';
 import Rating from '@material-ui/lab/Rating';
@@ -51,6 +51,12 @@ interface SingleRecipeProps {
 
 const SingleRecipe = (props: SingleRecipeProps) => {
     const { recipe } = props //will be later changed with a get query
+    const [haveBeenAdded, setHaveBeenAdded] = useState(false)
+
+    const addProductsToList = () => {
+        // query to add products to list
+        setHaveBeenAdded(true);
+    }
 
     const styles = useStyles()
 
@@ -78,7 +84,16 @@ const SingleRecipe = (props: SingleRecipeProps) => {
                         </div>
                         <h3 style={{ float: "left", marginLeft: 10, marginTop: -1 }}>{recipe.prepTime} мин.</h3> 
                         <h3 style={{clear: "both"}}> Продукти: </h3>
-                        {recipe.products?.map(product => <p>{product}</p>)}
+                        {recipe.products?.map(product => <p>{product.name} - {product.quantity} {product.metric}</p>)}
+                        {haveBeenAdded ?
+                            <Button variant="contained" disabled>
+                                Продуктите бяха добавени
+                            </Button>
+                            :
+                            <Button variant="contained" onClick={() => addProductsToList()}>
+                                Добави в шопинг листа
+                        </Button>
+                    }
                     </div>
                 </div>
                 <div className={styles.steps} >

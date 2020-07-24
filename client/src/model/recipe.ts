@@ -7,7 +7,7 @@ export interface Recipe {
     date: string,
     prepTime: number,
     picturePath: string,
-    products?: string[],
+    products?: {name: string, quantity: number, metric: string}[],
     steps?: string[],
     rating: number,
     tags: Tag[],
