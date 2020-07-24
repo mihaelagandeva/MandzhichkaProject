@@ -526,13 +526,8 @@ export let getAllEvents = async (req: Request, res: Response) => {
                 });;
             }
         }).skip(firstRecord).limit(size);
-<<<<<<< HEAD
         
         const totalItems = await Event.find(query).countDocuments();
-=======
-
-        const totalItems = await Shop.find(query).countDocuments();
->>>>>>> 52ce02d7ed83afd66e2a638a7755eaf0a7d51298
 
         res.send({
             page: page,
