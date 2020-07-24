@@ -43,37 +43,37 @@ const useStyles = makeStyles({
 })
 
 interface ProductSelectProps {
-    productList: { value: string; quantity: number; metric: string }[],
-    setProductList: (val: { value: string; quantity: number; metric: string }[]) => void
+    productList: { name: string; quantity: number; metric: string }[],
+    setProductList: (val: { name: string; quantity: number; metric: string }[]) => void
 }
 
 export const ProductSelect = (props: ProductSelectProps) => {
-    const products = [{ value: 'Eggs', metric: ['number']},{ value: 'Flour', metric: ['spoon','cup','teaspoon']}]
+    const products = [{ name: 'Eggs', metric: ['number']},{ name: 'Flour', metric: ['spoon','cup','teaspoon']}]
     
     const classes = useStyles();
     
     
     const handleValueChange = (e: any, index: number) => {
-        const { value } = e.target;
+        const name = e.target.value;
         const list = [...props.productList];
         const quantity = list[index].quantity
         let metric;
         if (list[index].metric === "") {
-            metric = products.find(el => el.value === value)!.metric[0]
+            metric = products.find(el => el.name === name)!.metric[0]
         }
         else {
             metric = list[index].metric
         }
-        list[index] = { value, quantity, metric };
+        list[index] = { name, quantity, metric };
         props.setProductList(list);
     };
 
     const handleMetricChange = (e: any, index: number) => {
         const metric = e.target.value;
         const list = [...props.productList];
-        const value = list[index].value;
+        const name = list[index].name;
         const quantity = list[index].quantity
-        list[index] = { value, quantity, metric };
+        list[index] = { name, quantity, metric };
         props.setProductList(list);
     };
     
@@ -86,14 +86,14 @@ export const ProductSelect = (props: ProductSelectProps) => {
     const handleQuantityChange = (e: any, index: number) => {
         const quantity = e.target.value;
         const list = [...props.productList];
-        const value = list[index].value;
+        const name = list[index].name;
         const metric = list[index].metric;
-        list[index] = { value, quantity, metric };
+        list[index] = { name, quantity, metric };
         props.setProductList(list)
     }
     
     const handleAddClick = () => {
-        props.setProductList([...props.productList, {value:"",quantity:0,metric:""}]);
+        props.setProductList([...props.productList, {name:"",quantity:0,metric:""}]);
         
     };
     
@@ -107,7 +107,7 @@ export const ProductSelect = (props: ProductSelectProps) => {
             <Select
             native
             className={classes.formControl}
-            value={x.value}
+            value={x.name}
             onChange={e => handleValueChange(e,i)}
             inputProps={{
                 name: 'value',
@@ -116,7 +116,7 @@ export const ProductSelect = (props: ProductSelectProps) => {
             >
             <option aria-label="None" value="" />
             {products.map(elem => 
-                <option key={elem.value} value={elem.value}>{elem.value}</option>
+                <option key={elem.name} value={elem.name}>{elem.name}</option>
                 )}
                 </Select>
                 </div>  
@@ -129,7 +129,7 @@ export const ProductSelect = (props: ProductSelectProps) => {
                 </div>
                 
                 
-                {x.value !== "" ? 
+                {x.name !== "" ? 
                 <div className={classes.boxes}>
                 <InputLabel htmlFor="metric">Мерна единица</InputLabel>
                 <Select
@@ -142,7 +142,7 @@ export const ProductSelect = (props: ProductSelectProps) => {
                     id: 'metric',
                 }}
                 >
-                {products.find(e => e.value === x.value)?.metric.map(elem =>
+                {products.find(e => e.name === x.name)?.metric.map(elem =>
                     <option key={elem} value={elem}>{elem}</option>
                     )}
                     </Select>
@@ -156,7 +156,7 @@ export const ProductSelect = (props: ProductSelectProps) => {
                     className={classes.removeButton}
                     onClick={() => handleRemoveClick(i)}><CancelIcon /></Button>}
                     
-                    {props.productList.length - 1 === i && <button className={classes.addButton} onClick={handleAddClick}>Добави продукт</button>}
+                    {props.productList.length - 1 === i && <button className={classes.addButton} onClick={handleAddClick}>Добави друг продукт</button>}
                     </div>
                     )}
                     </>

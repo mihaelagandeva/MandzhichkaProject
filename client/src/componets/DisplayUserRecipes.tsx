@@ -5,7 +5,7 @@ import TopAppBar from "./TopAppBar"
 import picture from '../assets/main.jpg';
 
 const musakapic = 'https://amiraspantry.com/wp-content/uploads/2019/11/moussaka-I.jpg'
-const hardcodedRecipe = { id: 1, title: 'Musakichka', author: 'Musakichka Master', date: '06/12/2020', picturePath: musakapic, rating: 4, tags: [{ id: 1, value: 'musaka' }, { id: 2, value: 'good' }], summary: 'A very simple recipe to make delicious musaka', products: ['500g potatos', '500g minced meat'] }
+const hardcodedRecipe = { id: 1, title: 'Musakichka', author: 'Musakichka Master', prepTime: 120, date: '06/12/2020', picturePath: musakapic, rating: 4, tags: [{ id: 1, value: 'musaka' }, { id: 2, value: 'good' }], summary: 'A very simple recipe to make delicious musaka', products: [{ name: "potatoes", quantity: 500, metric: "grams" }, { name: "minced meat", quantity: 500, metric: "grams" }] }
 
 const useStyles = makeStyles({
     root: {

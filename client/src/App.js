@@ -9,10 +9,12 @@ import SingleRecipe from './componets/SingleRecipe';
 import CreateRecipe from './componets/CreateRecipe'
 import DisplayUserRecipes from './componets/DisplayUserRecipes'
 import UserProfile from './componets/UserProfile'
+import ShoppingList from './componets/ShoppingList'
 
 //delete later pls 
 const hardcodedRecipe = {
-  id: 1, title: 'Musakichka', author: 'Musakichka Master', date: '06/12/2020', picturePath: 'https://amiraspantry.com/wp-content/uploads/2019/11/moussaka-I.jpg', rating: 4, tags: [{ id: 1, value: 'musaka' }, { id: 2, value: 'good' }], summary: 'A very simple recipe to make delicious musaka', products: ['500g potatoes', '500g minced meat'],
+  id: 1, title: 'Musakichka', author: 'Musakichka Master', date: '06/12/2020', prepTime: 60, picturePath: 'https://amiraspantry.com/wp-content/uploads/2019/11/moussaka-I.jpg', rating: 4, tags: [{ id: 1, value: 'musaka' }, { id: 2, value: 'good' }], summary: 'A very simple recipe to make delicious musaka',
+  products: [{ name: "potatoes", quantity: 500, metric: "grams" }, { name: "minced meat", quantity: 500, metric: "grams" }],
   steps: ['Wash potatoes', 'Peel and cut potatoes, put them to boil in hot water till they are almost ready', 'Put minced meat in a pan and fry it alongside some onion', 'Mix everything and put in oven']
 }
 
@@ -32,6 +34,7 @@ function App() {
         <Route path="/recipes/favorites" exact component={() => <DisplayUserRecipes load="favourites" />} />
         <Route path="/recipes/my" exact component={() => <DisplayUserRecipes load="my" />} />
         <Route path="/profile" exact component={UserProfile} />
+        <Route path="/shopping-list" exact component ={ShoppingList} />
       </Router>
       <Interceptor />
     </SnackbarProvider>

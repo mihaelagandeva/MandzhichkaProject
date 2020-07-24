@@ -90,7 +90,7 @@ const StyledMenu = withStyles({
             </Link>
             </StyledMenuItem>
             <StyledMenuItem>
-            <Link href="/">
+            <Link href="/shopping-list">
             <ListItemIcon>
             <CalendarTodayIcon fontSize="small" />
             </ListItemIcon>

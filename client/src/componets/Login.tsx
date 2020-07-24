@@ -53,13 +53,10 @@ const validate = (values: LoginFormValues): LoginFormValues => {
 
   if (!values.username) {
     errors.username = 'Полето е задължително!';
-  } else if (values.username.length < 5) {
-    errors.username = 'Потребителското име е твърде кратко!'
   }
+
   if (!values.password) {
     errors.password = 'Полето е задължително!';
-  } else if (values.password.length < 5) {
-    errors.password = 'Паролата трябва да е поне 5 символа!';
   }
 
   // only by returning an empty object here you can submit the form

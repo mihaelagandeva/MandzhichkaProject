@@ -6,6 +6,7 @@ import { InputTags } from './InputTags'
 import { FileUpload } from './FileUpload'
 import { ProductSelect } from './ProductSelect'
 import Slider from '@material-ui/core/Slider';
+import TopAppBar from "./TopAppBar";
 
 const useStyles = makeStyles({
     root: {
@@ -82,7 +83,7 @@ const CreateRecipe = () => {
     const [prepTime, setPrepTime] = useState(0);
     const [picturePath, setPicturePath] = useState("");
     const [stepsList, setStepsList] = useState([""]);
-    const [productList, setProductList] = useState([{value:"", quantity: 0, metric:""}]);
+    const [productList, setProductList] = useState([{name:"", quantity: 0, metric:""}]);
     const [tags, setTags] = useState<string[]>([]);
     const [initialTags, setInitialTags] = useState<string[]>([]);
     const selectedTags = (t: string[]) => {
@@ -107,12 +108,14 @@ const CreateRecipe = () => {
     };
     
     const Submit = () => {
-        alert(`${title}, ${summary}, ${prepTime},${stepsList}, ${picturePath}` )
+        alert(`${title}, ${summary}, ${prepTime},${stepsList}, ${picturePath}, ${JSON.stringify(productList)}` )
     }
     
     const styles = useStyles();
     
     return (
+        <div>
+            <TopAppBar />
         <div className={styles.root}>
         <h1 className={styles.title}>Нова Рецепта</h1>
         <div className={styles.upload}>
@@ -160,9 +163,6 @@ const CreateRecipe = () => {
         />
         <div>
         <p>Продукти: </p>
-        {productList.map((x, i) => {
-            
-        })}
         <ProductSelect productList={productList} setProductList={setProductList}/>
         </div>
         <div className={styles.steps}>
@@ -199,7 +199,8 @@ const CreateRecipe = () => {
                 </div>
                 </div>
                 </form>
-                </div>
+            </div>
+        </div>
                 )}
                 
                 export default CreateRecipe;
