@@ -104,7 +104,14 @@ const SingleRecipe = (props: SingleRecipeProps) => {
                 </div>
                 <h2>Коментари: </h2>
                 <div className={styles.commentsSection} >
-
+                    {recipe.comments?.map(comment => 
+                        <div style={{ marginTop: 10, border: '1px solid black', padding: 10, width: "40%"}}>
+                            <h4 style={{margin:0}}>Oт {comment.author} на {comment.date}:</h4>
+                            <div style={{margin: 10}}>
+                                {comment.text}
+                            </div>
+                        </div>
+                        )}
                 </div>
             </div>
         </div>

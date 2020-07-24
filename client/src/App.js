@@ -15,7 +15,8 @@ import ShoppingList from './componets/ShoppingList'
 const hardcodedRecipe = {
   id: 1, title: 'Musakichka', author: 'Musakichka Master', date: '06/12/2020', prepTime: 60, picturePath: 'https://amiraspantry.com/wp-content/uploads/2019/11/moussaka-I.jpg', rating: 4, tags: [{ id: 1, value: 'musaka' }, { id: 2, value: 'good' }], summary: 'A very simple recipe to make delicious musaka',
   products: [{ name: "potatoes", quantity: 500, metric: "grams" }, { name: "minced meat", quantity: 500, metric: "grams" }],
-  steps: ['Wash potatoes', 'Peel and cut potatoes, put them to boil in hot water till they are almost ready', 'Put minced meat in a pan and fry it alongside some onion', 'Mix everything and put in oven']
+  steps: ['Wash potatoes', 'Peel and cut potatoes, put them to boil in hot water till they are almost ready', 'Put minced meat in a pan and fry it alongside some onion', 'Mix everything and put in oven'],
+  comments: [{ text: "very good recipe", date: "6/3/2020", author: "someUser" }, { text: "very wonderful recipe", date: "6/3/2020", author: "someUser" }]
 }
 
 
