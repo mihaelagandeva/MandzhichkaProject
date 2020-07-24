@@ -9,19 +9,23 @@ import CardContainer from './CardContainer';
 interface RestaurantsState {
   page: number;
   pageSize: number;
-  search: string;
   restaurants: Restaurant[];
   totalItems: number;
 }
 
-class Restaurants extends Component<WithSnackbarProps, RestaurantsState> {
+interface RestaurantProps {
+  search: string;
+  updated: boolean;
+  setUpdated: Function;
+}
 
-  constructor(props: any) {
+class Restaurants extends Component<WithSnackbarProps&RestaurantProps, RestaurantsState> {
+
+  constructor(props: WithSnackbarProps&RestaurantProps) {
     super(props);
     this.state = {
       page: 1,
       pageSize: 5,
-      search: '',
       restaurants: [],
       totalItems: 0
     };
@@ -30,7 +34,14 @@ class Restaurants extends Component<WithSnackbarProps, RestaurantsState> {
   }
 
   componentDidMount() {
-    this.setPage(1); 
+    this.setPage(1);
+  }
+
+  componentDidUpdate() {
+    if (this.props.updated) {
+      this.setPage(1);
+      this.props.setUpdated(false);
+    }
   }
 
   handlePageChange(event: any, value: number) {
@@ -38,7 +49,9 @@ class Restaurants extends Component<WithSnackbarProps, RestaurantsState> {
   }
 
   setPage(page: number) {
-    const {pageSize, search} = this.state;
+    const {pageSize} = this.state;
+    const {search} = this.props;
+
     const mandatoryUrl = `${environment.apiUrl}/api/restaurants/${page}/${pageSize}`;
     const optionalUrl = search ? `/${search}` : '';
     const finalUrl = mandatoryUrl + optionalUrl;

@@ -9,18 +9,22 @@ import JoinCard from './JoinCard';
 interface EventsState {
   page: number;
   pageSize: number;
-  search: string;
   events: Event[];
   totalItems: number;
 }
 
-class Events extends Component<WithSnackbarProps, EventsState> {
+interface EventsProps {
+  search: string;
+  updated: boolean;
+  setUpdated: Function;
+}
+
+class Events extends Component<WithSnackbarProps&EventsProps, EventsState> {
   constructor(props: any) {
     super(props);
     this.state = {
       page: 1,
       pageSize: 12,
-      search: '',
       events: [],
       totalItems: 0
     };
@@ -32,12 +36,20 @@ class Events extends Component<WithSnackbarProps, EventsState> {
     this.setPage(1); 
   }
 
+  componentDidUpdate() {
+    if (this.props.updated) {
+      this.setPage(1);
+      this.props.setUpdated(false);
+    }
+  }
+
   handlePageChange(event: any, value: number) {
     this.setPage(value);
   }
 
   setPage(page: number) {
-    const {pageSize, search} = this.state;
+    const {pageSize} = this.state;
+    const {search} = this.props;
     const mandatoryUrl = `${environment.apiUrl}/api/events/${page}/${pageSize}`;
     const optionalUrl = search ? `/${search}` : '';
     const finalUrl = mandatoryUrl + optionalUrl;
