@@ -83,7 +83,10 @@ export let createRecipe = async (req: Request, res: Response) => {
                         date: Date.now(),
                         rating: 0,
                         picturePath: req.body.picturePath,
-                        tags: tagsToBeInserted
+                        products: req.body.products,
+                        tags: tagsToBeInserted,
+                        preparationTime: req.body.preparationTime,
+                        steps: req.body.steps
                     }, function (err: any, recipe: any) {
                         if (err) {
                             console.log(err)
@@ -112,7 +115,7 @@ export const uploadPicture = async (req: Request, res: Response) => {
                 return res.status(500).send(err)
             }
 
-            res.json({fileName: file.name, filePath: `/uploads/${file.name}`})
+            res.json({ fileName: file.name, filePath: `/uploads/${file.name}` })
         })
     }
 };
@@ -346,7 +349,7 @@ async function handleTags(tags: ITag[], res: Response) {
 }
 
 export let addProducts = async (req: Request, res: Response) => {
-    const {products} = req.body;
+    const { products } = req.body;
 
     if (products && Array.isArray(products) && products.length) {
         const errorList: any[] = [];
@@ -354,7 +357,7 @@ export let addProducts = async (req: Request, res: Response) => {
         for (let i = 0; i < products.length; i++) {
             const product = products[i];
 
-            await Product.findOne({name: product.name}, async (err: any, result: any) => {
+            await Product.findOne({ name: product.name }, async (err: any, result: any) => {
                 if (err) {
                     errorList.push(err);
                 } else if (result) {
@@ -396,12 +399,12 @@ export let getAllProducts = async (req: Request, res: Response) => {
 }
 
 export let createCourse = async (req: Request, res: Response) => {
-    const {body} = req;
+    const { body } = req;
 
     if (body.name && body.date) {
-        const {name, date} = body;
+        const { name, date } = body;
 
-        await Course.findOne({name: name, date: date}, async (err: any, result: any) => {
+        await Course.findOne({ name: name, date: date }, async (err: any, result: any) => {
             if (err) {
                 res.status(400).send(err);
             } else if (result) {
@@ -431,7 +434,7 @@ export let getAllCourses = async (req: Request, res: Response) => {
         const firstRecord = (page - 1) * size;
         const search = req.params.search;
         let courses: any[] = [];
-        const query = {$or: [ {name: {$regex: search || ''}}, {address: {$regex: search || ''}} ]};
+        const query = { $or: [{ name: { $regex: search || '' } }, { address: { $regex: search || '' } }] };
 
         await Course.find(query, (err: any, records: any[]) => {
             if (err) {
@@ -452,7 +455,7 @@ export let getAllCourses = async (req: Request, res: Response) => {
                 });;
             }
         }).skip(firstRecord).limit(size);
-        
+
         const totalItems = await Shop.find(query).countDocuments();
 
         res.send({
@@ -467,12 +470,12 @@ export let getAllCourses = async (req: Request, res: Response) => {
 }
 
 export let createEvent = async (req: Request, res: Response) => {
-    const {body} = req;
+    const { body } = req;
 
     if (body.name && body.date) {
-        const {name, date} = body;
+        const { name, date } = body;
 
-        await Event.findOne({name: name, date: date}, async (err: any, result: any) => {
+        await Event.findOne({ name: name, date: date }, async (err: any, result: any) => {
             if (err) {
                 res.status(400).send(err);
             } else if (result) {
@@ -502,8 +505,7 @@ export let getAllEvents = async (req: Request, res: Response) => {
         const firstRecord = (page - 1) * size;
         const search = req.params.search;
         let events: any[] = [];
-        const query = {$or: [ {name: {$regex: search || ''}}, {address: {$regex: search || ''}} ]};
-        console.log(req.cookies, req.signedCookies);
+        const query = { $or: [{ name: { $regex: search || '' } }, { address: { $regex: search || '' } }] };
 
         await Event.find(query, (err: any, records: any[]) => {
             if (err) {
@@ -524,8 +526,13 @@ export let getAllEvents = async (req: Request, res: Response) => {
                 });;
             }
         }).skip(firstRecord).limit(size);
+<<<<<<< HEAD
         
         const totalItems = await Event.find(query).countDocuments();
+=======
+
+        const totalItems = await Shop.find(query).countDocuments();
+>>>>>>> 52ce02d7ed83afd66e2a638a7755eaf0a7d51298
 
         res.send({
             page: page,
@@ -545,7 +552,7 @@ export let getShops = async (req: Request, res: Response) => {
         const firstRecord = (page - 1) * size;
         const search = req.params.search;
         let shop: any[] = [];
-        const query = {$or: [ {name: {$regex: search || ''}}, {address: {$regex: search || ''}} ]};
+        const query = { $or: [{ name: { $regex: search || '' } }, { address: { $regex: search || '' } }] };
 
         await Shop.find(query, (err: any, result: any[]) => {
             if (err) {
@@ -554,7 +561,7 @@ export let getShops = async (req: Request, res: Response) => {
                 shop = result;
             }
         }).skip(firstRecord).limit(size);
-        
+
         const totalItems = await Shop.find(query).countDocuments();
 
         res.send({
@@ -572,16 +579,16 @@ export let joinCourse = async (req: Request, res: Response) => {
     const currentUser = await getUserByCookie(req);
 
     if (currentUser) {
-        const {courseId} = req.params;
+        const { courseId } = req.params;
 
-        Course.updateOne({_id: courseId}, {$push: {participants: currentUser}}, 
-                (err: any, result: any) => {
-            if (err) {
-                res.status(500).send(err);
-            } else if (result) {
-                res.send('Записването за курса беше успешно');
-            }
-        });
+        Course.updateOne({ _id: courseId }, { $push: { participants: currentUser } },
+            (err: any, result: any) => {
+                if (err) {
+                    res.status(500).send(err);
+                } else if (result) {
+                    res.send('Записването за курса беше успешно');
+                }
+            });
     } else {
         res.status(401).send();
     }
@@ -591,16 +598,16 @@ export let joinEvent = async (req: Request, res: Response) => {
     const currentUser = getUserByCookie(req);
 
     if (currentUser) {
-        const {eventId} = req.params;
+        const { eventId } = req.params;
 
-        Event.updateOne({_id: eventId}, {$push: {participants: currentUser}}, 
-                (err: any, result: any) => {
-            if (err) {
-                res.status(500).send(err);
-            } else if (result) {
-                res.send('Бяхте записани за събитието успешно');
-            }
-        })
+        Event.updateOne({ _id: eventId }, { $push: { participants: currentUser } },
+            (err: any, result: any) => {
+                if (err) {
+                    res.status(500).send(err);
+                } else if (result) {
+                    res.send('Бяхте записани за събитието успешно');
+                }
+            })
     } else {
         res.status(401).send();
     }
@@ -610,16 +617,16 @@ export let leaveCourse = async (req: Request, res: Response) => {
     const currentUser = getUserByCookie(req);
 
     if (currentUser) {
-        const {courseId} = req.params;
+        const { courseId } = req.params;
 
-        Course.updateOne({_id: courseId}, {$pull: {participants: currentUser}}, 
-                (err: any, result: any) => {
-            if (err) {
-                res.status(500).send(err);
-            } else if (result) {
-                res.send();
-            }
-        });
+        Course.updateOne({ _id: courseId }, { $pull: { participants: currentUser } },
+            (err: any, result: any) => {
+                if (err) {
+                    res.status(500).send(err);
+                } else if (result) {
+                    res.send();
+                }
+            });
     } else {
         res.status(401).send();
     }
@@ -629,16 +636,16 @@ export let leaveEvent = async (req: Request, res: Response) => {
     const currentUser = getUserByCookie(req);
 
     if (currentUser) {
-        const {courseId} = req.params;
+        const { courseId } = req.params;
 
-        Event.updateOne({_id: courseId}, {$pull: {participants: currentUser}}, 
-                (err: any, result: any) => {
-            if (err) {
-                res.status(500).send(err);
-            } else if (result) {
-                res.send();
-            }
-        });
+        Event.updateOne({ _id: courseId }, { $pull: { participants: currentUser } },
+            (err: any, result: any) => {
+                if (err) {
+                    res.status(500).send(err);
+                } else if (result) {
+                    res.send();
+                }
+            });
     } else {
         res.status(401).send();
     }
@@ -647,7 +654,7 @@ export let leaveEvent = async (req: Request, res: Response) => {
 export let createShop = async (req: Request, res: Response) => {
     const body = req.body;
 
-    Shop.findOne({name: body.name, address: body.address}, (err: any, result: any) => {
+    Shop.findOne({ name: body.name, address: body.address }, (err: any, result: any) => {
         if (err) {
             res.status(400).send(err);
         } else if (result) {
@@ -668,7 +675,7 @@ export let createShop = async (req: Request, res: Response) => {
 
 let getUserByCookie = async (req: Request) => {
     if (req.cookies.loggedUser) {
-        await User.findOne({username: req.cookies.loggedUser}).then((user) => {
+        await User.findOne({ username: req.cookies.loggedUser }).then((user) => {
             console.log(user);
             return user;
         }).catch((err) => {

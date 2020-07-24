@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import axios, { AxiosResponse, AxiosError } from 'axios';
-import {environment} from 'environments/environment.json';
+import {environment} from '../environments/environment.json';
 import {Shop, ShopReport} from 'model/shop';
 import {withSnackbar, WithSnackbarProps} from 'notistack';
 import RestaurantCard from './RestaurantCard';
