@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import * as User from "./user";
+import { IUser } from "./user";
 
 const EventSchema = new mongoose.Schema({
     name: {
@@ -22,7 +24,7 @@ const EventSchema = new mongoose.Schema({
         quantity: { type: Number },
         metric: { type: String }
     },
-    participants: {type: Array}
+    participants: [User.UserSchema]
 });
 
 interface IEvent extends mongoose.Document {
@@ -34,7 +36,7 @@ interface IEvent extends mongoose.Document {
         quantity: number;
         metric: string
     }
-    participants: string[]
+    participants: IUser[];
 }
 
 const Event = mongoose.model<IEvent>("Event", EventSchema);

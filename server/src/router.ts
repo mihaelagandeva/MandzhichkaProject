@@ -7,6 +7,18 @@ router.get('/', (req: Request, res: Response) => {
     console.log("Home page");
 });
 
+router.get('/recipes/favorites', async (req: Request, res: Response) => {
+    await controller.listUserFavouriteRecipes(req, res);
+});
+
+router.get('/recipes/myRecipes', async (req: Request, res: Response) => {
+    await controller.listUserOwnRecipes(req, res);
+});
+
+router.post('/recipes/myRecipes/add', async (req: Request, res: Response) => {
+    await controller.createRecipe(req, res);
+});
+
 router.get('/recipes/:page/:size/:search?', async (req: Request, res: Response) => {
     await controller.listAllRecipes(req, res);
 });
@@ -28,12 +40,12 @@ router.get('/shopping-list', (req: Request, res: Response) => {
     console.log("Get shopping list");
 });
 
-router.get('/profile', (req: Request, res: Response) => {
-    console.log("Get user information");
+router.get('/profile', async (req: Request, res: Response) => {
+    await controller.findUser(req, res);
 });
 
-router.put('/profile', (req: Request, res: Response) => {
-    console.log("Update user information");
+router.put('/profile', async (req: Request, res: Response) => {
+    await controller.updateUser(req, res);
 });
 
 router.post('/login', async (req: Request, res: Response) => {
@@ -44,17 +56,6 @@ router.post('/registration', async (req: Request, res: Response) => {
     await controller.registration(req, res);
 });
 
-router.get('/recipes/favorites', (req: Request, res: Response) => {
-    console.log("List of ordered by name user’s favorite recipes");
-});
-
-router.get('/recipes/myRecipes', (req: Request, res: Response) => {
-    console.log("List of ordered by name user’s recipes");
-});
-
-router.post('/recipes/myRecipes/add', async (req: Request, res: Response) => {
-    await controller.createRecipe(req, res);
-});
 
 router.post('/forgottenPassword', (req: Request, res: Response) => {
     console.log("Form to fill in order to request new password");
@@ -88,6 +89,9 @@ router.get('/achievements', (req: Request, res: Response) => {
     console.log("achievements");
 });
 
+router.post('/upload', async (req: Request, res: Response) => {
+    await controller.uploadPicture(req, res);
+});
 router.get('/products', async (req: Request, res: Response) => {
     await controller.getAllProducts(req, res);
 });
@@ -97,7 +101,7 @@ router.post('/products', async (req: Request, res: Response) => {
 });
 
 // so we can create restaurants if we need to
-router.post('/restaurants', async (req: Request, res: Response) => { 
+router.post('/restaurants', async (req: Request, res: Response) => {
     await controller.createRestaurant(req, res);
 });
 
@@ -112,3 +116,5 @@ router.post('/courses', async (req: Request, res: Response) => {
 router.post('/events', async (req: Request, res: Response) => {
     await controller.createEvent(req, res);
 });
+//post rating
+//post comment
