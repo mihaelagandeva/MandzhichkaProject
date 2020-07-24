@@ -21,7 +21,7 @@ export let login = async (req: Request, res: Response) => {
                 if (err) {
                     res.status(500).send('Error');
                 } else if (result) {
-                    res.cookie('loggedUser', user.username, { maxAge: 900000, httpOnly: true, secure: true }).send(user);
+                    res.cookie('loggedUser', user.username, { maxAge: 900000, httpOnly: true }).send(user);
                 } else {
                     // username is correct but the password is incorrect
                     res.status(401).send("Потребителското име или парола са грешни");
@@ -503,6 +503,7 @@ export let getAllEvents = async (req: Request, res: Response) => {
         const search = req.params.search;
         let events: any[] = [];
         const query = {$or: [ {name: {$regex: search || ''}}, {address: {$regex: search || ''}} ]};
+        console.log(req.cookies, req.signedCookies);
 
         await Event.find(query, (err: any, records: any[]) => {
             if (err) {
