@@ -11,6 +11,13 @@ export interface Recipe {
     steps?: string[],
     rating: number,
     tags: Tag[],
-    summary?: string,
+    summary?: string
     comments?: {text: string, date: string, author: string}[]
+}
+
+export interface RecipeReport {
+    page: number;
+    size: number;
+    resultSet: Recipe[];
+    totalItems: number;
 }
