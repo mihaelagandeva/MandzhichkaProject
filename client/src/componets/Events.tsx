@@ -42,7 +42,7 @@ class Events extends Component<WithSnackbarProps, EventsState> {
     const optionalUrl = search ? `/${search}` : '';
     const finalUrl = mandatoryUrl + optionalUrl;
 
-    axios.get(finalUrl).then((result: AxiosResponse<EventReport>) => {
+    axios.get(finalUrl, {withCredentials: true}).then((result: AxiosResponse<EventReport>) => {
       const response = result.data;
       const formattedDateResultSet = response.resultSet.map((event) => {
         return {...event, date: event.date.split('T')[0]}
