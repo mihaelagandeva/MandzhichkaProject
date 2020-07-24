@@ -95,7 +95,6 @@ export let createRecipe = async (req: Request, res: Response) => {
                 }
             }
         });
-    };
 };
 
 export const uploadPicture = async (req: Request, res: Response) => {
@@ -425,25 +424,46 @@ export let createCourse = async (req: Request, res: Response) => {
 }
 
 export let getAllCourses = async (req: Request, res: Response) => {
-    // add logic if you are assigned to a course
-    await Course.find((err: any, records: any[]) => {
-        if (err) {
-            res.status(500).send(err);
-        } else {
-            const hiddenRecords = records.map((record) => {
-                return {
-                    name: record.name,
-                    date: record.date,
-                    address: record.address,
-                    picturePath: record.picturePath,
-                    duration: record.duration.quantity.toString() + " " + record.duration.metric,
-                    assigned: false
-                };
-            });
+    const page = Number(req.params.page);
+    const size = Number(req.params.size);
 
-            res.send(hiddenRecords);
-        }
-    });
+    if (page && size) {
+        const firstRecord = (page - 1) * size;
+        const search = req.params.search;
+        let courses: any[] = [];
+        const query = {$or: [ {name: {$regex: search || ''}}, {address: {$regex: search || ''}} ]};
+
+        await Course.find(query, (err: any, records: any[]) => {
+            if (err) {
+                res.status(500).send();
+            } else {
+                courses = records.map((record) => {
+                    return {
+                        id: record._id,
+                        name: record.name,
+                        date: record.date,
+                        address: record.address,
+                        picturePath: record.picturePath,
+                        duration: record.duration.quantity.toString() + " " + record.duration.metric,
+                        joined: record.participants
+                            .find((user: any) => user.username === req.cookies.loggedUser) !== undefined,
+                        canJoin: req.cookies.loggedUser !== undefined
+                    };
+                });;
+            }
+        }).skip(firstRecord).limit(size);
+        
+        const totalItems = await Shop.find(query).countDocuments();
+
+        res.send({
+            page: page,
+            size: size,
+            resultSet: courses,
+            totalItems: totalItems
+        });
+    } else {
+        res.status(400).send('Липстват задължителни параметери');
+    }
 }
 
 export let createEvent = async (req: Request, res: Response) => {
@@ -475,25 +495,46 @@ export let createEvent = async (req: Request, res: Response) => {
 }
 
 export let getAllEvents = async (req: Request, res: Response) => {
-    // add logic if you are assigned to a course
-    await Event.find((err: any, records: any[]) => {
-        if (err) {
-            res.status(500).send(err);
-        } else {
-            const hiddenRecords = records.map((record) => {
-                return {
-                    name: record.name,
-                    date: record.date,
-                    address: record.address,
-                    picturePath: record.picturePath,
-                    duration: record.duration.quantity.toString() + " " + record.duration.metric,
-                    assigned: false
-                };
-            });
+    const page = Number(req.params.page);
+    const size = Number(req.params.size);
 
-            res.send(hiddenRecords);
-        }
-    });
+    if (page && size) {
+        const firstRecord = (page - 1) * size;
+        const search = req.params.search;
+        let events: any[] = [];
+        const query = {$or: [ {name: {$regex: search || ''}}, {address: {$regex: search || ''}} ]};
+
+        await Event.find(query, (err: any, records: any[]) => {
+            if (err) {
+                res.status(500).send();
+            } else {
+                events = records.map((record) => {
+                    return {
+                        id: record._id,
+                        name: record.name,
+                        date: record.date,
+                        address: record.address,
+                        picturePath: record.picturePath,
+                        duration: record.duration.quantity.toString() + " " + record.duration.metric,
+                        joined: record.participants
+                            .find((user: any) => user.username === req.cookies.loggedUser) !== undefined,
+                        canJoin: req.cookies.loggedUser !== undefined
+                    };
+                });;
+            }
+        }).skip(firstRecord).limit(size);
+        
+        const totalItems = await Shop.find(query).countDocuments();
+
+        res.send({
+            page: page,
+            size: size,
+            resultSet: events,
+            totalItems: totalItems
+        });
+    } else {
+        res.status(400).send('Липстват задълбителни параметри');
+    }
 }
 export let getShops = async (req: Request, res: Response) => {
     const page = Number(req.params.page);
@@ -526,6 +567,44 @@ export let getShops = async (req: Request, res: Response) => {
     }
 }
 
+export let joinCourse = async (req: Request, res: Response) => {
+    const currentUser = await getUserByCookie(req);
+
+    if (currentUser) {
+        const {courseId} = req.params;
+
+        Course.updateOne({_id: courseId}, {$push: {participants: currentUser}}, 
+                (err: any, result: any) => {
+            if (err) {
+                res.status(500).send(err);
+            } else if (result) {
+                res.send('Записването за курса беше успешно');
+            }
+        })
+    } else {
+        res.status(401).send();
+    }
+}
+
+export let joinEvent = async (req: Request, res: Response) => {
+    const currentUser = getUserByCookie(req);
+
+    if (currentUser) {
+        const {eventId} = req.params;
+
+        Event.updateOne({_id: eventId}, {$push: {participants: currentUser}}, 
+                (err: any, result: any) => {
+            if (err) {
+                res.status(500).send(err);
+            } else if (result) {
+                res.send('Бяхте записани за събитието успешно');
+            }
+        })
+    } else {
+        res.status(401).send();
+    }
+}
+
 export let createShop = async (req: Request, res: Response) => {
     const body = req.body;
 
@@ -546,4 +625,16 @@ export let createShop = async (req: Request, res: Response) => {
             });
         }
     });
+}
+
+let getUserByCookie = async (req: Request) => {
+    if (req.cookies.loggedUser) {
+        await User.findOne({username: req.cookies.loggedUser}).then((user) => {
+            console.log(user);
+            return user;
+        }).catch((err) => {
+            return undefined;
+        });
+    }
+    return undefined;
 }

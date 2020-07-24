@@ -69,11 +69,11 @@ router.get('/shops/:page/:size/:search?', async (req: Request, res: Response) =>
     await controller.getShops(req, res);
 });
 
-router.get('/courses', async (req: Request, res: Response) => {
+router.get('/courses/:page/:size/:search?', async (req: Request, res: Response) => {
     await controller.getAllCourses(req, res);
 });
 
-router.get('/events', async (req: Request, res: Response) => {
+router.get('/events/:page/:size/:search?', async (req: Request, res: Response) => {
     await controller.getAllEvents(req, res);
 });
 
@@ -115,6 +115,14 @@ router.post('/courses', async (req: Request, res: Response) => {
 
 router.post('/events', async (req: Request, res: Response) => {
     await controller.createEvent(req, res);
+});
+
+router.put('/courses/:courseId', async (req: Request, res: Response) => {
+    await controller.joinCourse(req, res);
+});
+
+router.put('/events/:eventId', async (req: Request, res: Response) => {
+    await controller.joinEvent(req, res);
 });
 //post rating
 //post comment
