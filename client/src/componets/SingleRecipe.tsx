@@ -5,6 +5,8 @@ import TopAppBar from './TopAppBar';
 import picture from '../assets/main.jpg';
 import Rating from '@material-ui/lab/Rating';
 import TimerIcon from '@material-ui/icons/Timer';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
+import StarIcon from '@material-ui/icons/Star';
 
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -62,7 +64,17 @@ const SingleRecipe = (props: SingleRecipeProps) => {
     const [haveBeenAdded, setHaveBeenAdded] = useState(false)
     const [isCommenting, setIsCommenting] = useState(false);
     const [comment, setComment] = useState("");
+    const [usersFavourites, setUserFavourites] = useState<number[]>([1]) // array of recipies
     
+    const checkIfIsFavourite = () => {
+        return usersFavourites.includes(recipe.id)
+    }
+
+    const addToFavourites = () => {
+        // post to add 
+        //setUserFavourites()
+    }
+
     const addComment = () => {
         // query to add comment
         
@@ -85,8 +97,20 @@ const SingleRecipe = (props: SingleRecipeProps) => {
         <img src={picture} height='10%' width='100%' alt='img' />
         </div>
         <div className={styles.recipeContainer} >
-        <h1>{recipe.title}</h1>
-        <p className={styles.creator}>Създадена от: {recipe.author} на {recipe.date}</p>
+                <h1 style={{ float: "left" }}>{recipe.title}</h1>
+                <div style={{ float: "left", padding: 10 }}>
+                {checkIfIsFavourite() ? 
+                    <Button disabled size="large">
+                        <StarIcon fontSize="large" />
+                    </Button>
+                    :
+                        <Button size="large" onClick={() => addToFavourites()}>
+                            <StarBorderIcon fontSize="large" />
+                    </Button>
+
+                    }
+                </div>
+        <p style={{clear: "both"}} className={styles.creator}>Създадена от: {recipe.author} на {recipe.date}</p>
         <div>
         <h3>Описание: </h3>
         <p>{recipe.summary}</p>

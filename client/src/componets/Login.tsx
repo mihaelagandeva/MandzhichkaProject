@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useFormik } from 'formik';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -7,7 +7,8 @@ import { LoginFormValues } from '../model/form';
 import Link from '@material-ui/core/Link';
 import axios from 'axios';
 import {environment} from '../environments/environment.json';
-import {useSnackbar} from 'notistack';
+import { useSnackbar } from 'notistack';
+import Cookies from 'js-cookie';
 
 const useStyles = makeStyles({
   root: {
@@ -65,10 +66,13 @@ const validate = (values: LoginFormValues): LoginFormValues => {
 
 const Login = () => {
   const {enqueueSnackbar} = useSnackbar();
-
+  const [cookie, setCookie] = useState(Cookies.get('loggedUser'))
+  console.log(`first ${document.cookie}`)
   const login = (values: LoginFormValues) => {
     axios.post(`${environment.apiUrl}/api/login`, values, {withCredentials: true}).then((user) => {
-      enqueueSnackbar(`Вписахте се успешно`, {variant: 'success'});
+      enqueueSnackbar(`Вписахте се успешно`, { variant: 'success' });
+      setCookie(Cookies.get('loggedUser'))
+      console.log(cookie)
     });
   }
 
