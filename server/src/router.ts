@@ -124,5 +124,13 @@ router.put('/courses/:courseId', async (req: Request, res: Response) => {
 router.put('/events/:eventId', async (req: Request, res: Response) => {
     await controller.joinEvent(req, res);
 });
+
+router.put('/courses/leave/:courseId', async (req: Request, res: Response) => {
+    await controller.leaveCourse(req, res);
+});
+
+router.put('/courses/leave/:eventId', async (req: Request, res: Response) => {
+    await controller.leaveEvent(req, res);
+});
 //post rating
 //post comment

@@ -580,7 +580,7 @@ export let joinCourse = async (req: Request, res: Response) => {
             } else if (result) {
                 res.send('Записването за курса беше успешно');
             }
-        })
+        });
     } else {
         res.status(401).send();
     }
@@ -600,6 +600,44 @@ export let joinEvent = async (req: Request, res: Response) => {
                 res.send('Бяхте записани за събитието успешно');
             }
         })
+    } else {
+        res.status(401).send();
+    }
+}
+
+export let leaveCourse = async (req: Request, res: Response) => {
+    const currentUser = getUserByCookie(req);
+
+    if (currentUser) {
+        const {courseId} = req.params;
+
+        Course.updateOne({_id: courseId}, {$pull: {participants: currentUser}}, 
+                (err: any, result: any) => {
+            if (err) {
+                res.status(500).send(err);
+            } else if (result) {
+                res.send();
+            }
+        });
+    } else {
+        res.status(401).send();
+    }
+}
+
+export let leaveEvent = async (req: Request, res: Response) => {
+    const currentUser = getUserByCookie(req);
+
+    if (currentUser) {
+        const {courseId} = req.params;
+
+        Event.updateOne({_id: courseId}, {$pull: {participants: currentUser}}, 
+                (err: any, result: any) => {
+            if (err) {
+                res.status(500).send(err);
+            } else if (result) {
+                res.send();
+            }
+        });
     } else {
         res.status(401).send();
     }
