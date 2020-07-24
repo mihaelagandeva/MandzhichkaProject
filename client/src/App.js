@@ -8,6 +8,7 @@ import NavigationBar from './componets/NavigationBar';
 import SingleRecipe from './componets/SingleRecipe';
 import CreateRecipe from './componets/CreateRecipe'
 import DisplayUserRecipes from './componets/DisplayUserRecipes'
+import UserProfile from './componets/UserProfile'
 
 //delete later pls 
 const hardcodedRecipe = {
@@ -29,6 +30,7 @@ function App() {
         <Route path="/recipes/my/add" exact component={CreateRecipe} />
         <Route path="/recipes/favorites" exact component={() => <DisplayUserRecipes load="favourites" />} />
         <Route path="/recipes/my" exact component={() => <DisplayUserRecipes load="my" />} />
+        <Route path="/profile" exact component={UserProfile} />
       </Router>
       <Interceptor />
     </SnackbarProvider>

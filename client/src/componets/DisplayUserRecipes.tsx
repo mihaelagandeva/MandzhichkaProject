@@ -1,5 +1,4 @@
 import React from "react"
-import { Recipe } from '../model/recipe'
 import { makeStyles, GridList } from '@material-ui/core'
 import RecipeCard from './RecipeCard'
 import TopAppBar from "./TopAppBar"

@@ -74,7 +74,7 @@ const StyledMenu = withStyles({
             onClose={handleClose}
             >
             <StyledMenuItem>
-            <Link href="/">
+            <Link href="/profile">
             <ListItemIcon>
             <PersonIcon fontSize="small" />
             </ListItemIcon>
@@ -82,7 +82,7 @@ const StyledMenu = withStyles({
             </Link>
             </StyledMenuItem>
             <StyledMenuItem>
-            <Link href="/">
+            <Link href="/recipes/my/add">
             <ListItemIcon>
             <AddCircleOutlineIcon fontSize="small" />
             </ListItemIcon>
@@ -106,7 +106,7 @@ const StyledMenu = withStyles({
             </Link>
             </StyledMenuItem>
             <StyledMenuItem>
-                        <Link href="/recipes/my">
+            <Link href="/recipes/my">
             <ListItemIcon>
             <CreateIcon fontSize="small" />
             </ListItemIcon>
