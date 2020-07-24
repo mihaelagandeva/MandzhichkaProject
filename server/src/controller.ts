@@ -9,6 +9,9 @@ import Product from './db-config/models/product';
 import Course from './db-config/models/courses';
 import Event from './db-config/models/event';
 import Shop from './db-config/models/shop';
+import Achievement from "./db-config/models/achievements";
+import Comment from './db-config/models/comment';
+import Rating from "./db-config/models/rating";
 
 export let login = async (req: Request, res: Response) => {
     const { username, password } = req.body;
@@ -21,7 +24,7 @@ export let login = async (req: Request, res: Response) => {
                 if (err) {
                     res.status(500).send('Error');
                 } else if (result) {
-                    res.cookie('loggedUser', user.username, { maxAge: 900000, httpOnly: true, secure: true }).send(user);
+                    res.cookie('loggedUser', user.username, { maxAge: 900000 }).send(user);
                 } else {
                     // username is correct but the password is incorrect
                     res.status(401).send("Потребителското име или парола са грешни");
@@ -121,14 +124,20 @@ export const uploadPicture = async (req: Request, res: Response) => {
 };
 
 export let getRecipe = async (req: Request, res: Response) => {
-    //getAll comments
     await Recipe.findOne({ _id: req.params.recipeId },
-        function (err: any, recipe: any) {
+        async function (err: any, recipe: any) {
             if (err) {
                 res.status(501).send("Error!");
             } else {
                 if (recipe) {
-                    res.status(200).send(recipe);
+                    await Comment.find({recipeId: req.params.recipeId}, (err: any, comments: any[]) => {
+                        if(err) {
+                            res.status(501).send();
+                        } else {
+                            let result = {recipe: recipe, comments: comments};
+                            res.status(200).send(result);
+                        }
+                    })
                 } else {
                     res.status(404).send();
                 }
@@ -646,6 +655,36 @@ export let leaveEvent = async (req: Request, res: Response) => {
     }
 }
 
+export let getAllAchievements = async (req: Request, res: Response) => {
+    const page = Number(req.params.page);
+    const size = Number(req.params.size);
+
+    if (page && size) {
+        const firstRecord = (page - 1) * size;
+        const search = req.params.search;
+        let achievements: any[] = [];
+
+        await Achievement.find((err: any, result: any[]) => {
+            if (err) {
+                res.status(500).send();
+            } else {
+                achievements = result;
+            }
+        }).skip(firstRecord).limit(size);
+
+        const totalItems = await Achievement.find().countDocuments();
+
+        res.send({
+            page: page,
+            size: size,
+            resultSet: achievements,
+            totalItems: totalItems
+        });
+    } else {
+        res.status(400).send();
+    }
+};
+
 export let createShop = async (req: Request, res: Response) => {
     const body = req.body;
 
@@ -666,16 +705,71 @@ export let createShop = async (req: Request, res: Response) => {
             });
         }
     });
-}
+};
+
+export let addRating = async (req: Request, res: Response) => {
+    await Rating.create({
+        recipeId: req.body.recipeId,
+        userId: req.cookies.loggedUser,
+        value: req.body.value
+    }, (err: any, _rating: any) => {
+        if (err) {
+            res.status(501).send();
+            return;
+        }
+    });
+
+    let sum = 0;
+    let size = 0;
+    await Rating.find({ recipeId: req.body.recipeId }, (err: any, ratings: any[]) => {
+        if (err) {
+            res.status(501).send();
+            return;
+        } else {
+            if (ratings) {
+                sum = ratings.reduce((sum, current) => sum + current.value, 0);
+                size = ratings.length;
+            }
+        }
+    });
+
+    const newRating = sum / size;
+    await Recipe.updateOne({ _id: req.body.recipeId }, { rating: newRating }, (err: any, recipe: any) => {
+        if (err) {
+            res.status(501).send();
+        } else {
+            res.status(201).send();
+        }
+    });
+
+};
+
+export let addComment = async (req: Request, res: Response) => {
+    const authoR = await getUserByCookie(req);
+    await Comment.create({
+        author: authoR,
+        recipeId: req.body.recipeId,
+        text: req.body.text,
+        date: Date.now()
+    }, (err: any, comment: any) => {
+        if (err) {
+            res.status(501).send();
+        } else {
+            res.status(201).send(comment);
+        }
+    })
+};
+
 
 let getUserByCookie = async (req: Request) => {
+    let result;
     if (req.cookies.loggedUser) {
         await User.findOne({ username: req.cookies.loggedUser }).then((user) => {
-            console.log(user);
-            return user;
+            result = user;
         }).catch((err) => {
-            return undefined;
+            result = undefined;
         });
     }
-    return undefined;
+
+    return result;
 }
