@@ -134,3 +134,7 @@ router.post('/rating', async (req: Request, res: Response) => {
 router.post('/comment', async (req: Request, res: Response) => {
     await controller.addComment(req, res);
 });
+
+router.post('/logout', async (req: Request, res: Response) => {
+    await controller.logout(req, res);
+});

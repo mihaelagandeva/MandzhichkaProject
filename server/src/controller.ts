@@ -130,11 +130,11 @@ export let getRecipe = async (req: Request, res: Response) => {
                 res.status(501).send("Error!");
             } else {
                 if (recipe) {
-                    await Comment.find({recipeId: req.params.recipeId}, (err: any, comments: any[]) => {
-                        if(err) {
+                    await Comment.find({ recipeId: req.params.recipeId }, (err: any, comments: any[]) => {
+                        if (err) {
                             res.status(501).send();
                         } else {
-                            let result = {recipe: recipe, comments: comments};
+                            let result = { recipe: recipe, comments: comments };
                             res.status(200).send(result);
                         }
                     })
@@ -535,7 +535,7 @@ export let getAllEvents = async (req: Request, res: Response) => {
                 });;
             }
         }).skip(firstRecord).limit(size);
-        
+
         const totalItems = await Event.find(query).countDocuments();
 
         res.send({
@@ -760,6 +760,9 @@ export let addComment = async (req: Request, res: Response) => {
     })
 };
 
+export let logout = async (req: Request, res: Response) => {
+    res.status(200).clearCookie("loggedUser").send();
+};
 
 let getUserByCookie = async (req: Request) => {
     let result;
