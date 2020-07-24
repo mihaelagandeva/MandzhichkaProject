@@ -32,8 +32,8 @@ const TopAppBar = () => {
             <AppBar position="static">
                 <Toolbar>
                     <Typography variant="h6" className={classes.title}>
-                        <Link href='/main/recipes' color='inherit' underline='none'>
-                            Манджичка
+                        <Link href='/' color='inherit' underline='none'>
+                            Начало
                         </Link>
                     </Typography>
                     <Link href="/">
