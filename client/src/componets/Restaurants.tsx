@@ -68,8 +68,8 @@ class Restaurants extends Component<WithSnackbarProps, RestaurantsState> {
         onPageChange={this.handlePageChange}
       >
         {
-          restaurants.map((restaurant) => {
-            return <RestaurantCard restaurant={restaurant}></RestaurantCard>
+          restaurants.map((restaurant, index) => {
+            return <RestaurantCard key={restaurant.name + index} restaurant={restaurant}></RestaurantCard>
           })
         }
       </CardContainer>

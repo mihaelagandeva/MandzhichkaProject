@@ -21,7 +21,7 @@ export let login = async (req: Request, res: Response) => {
                 if (err) {
                     res.status(500).send('Error');
                 } else if (result) {
-                    res.cookie('loggedUser', user.username, { maxAge: 900000, httpOnly: true, secure: true }).send(user);
+                    res.cookie('loggedUser', user.username, { maxAge: 900000, httpOnly: true }).send(user);
                 } else {
                     // username is correct but the password is incorrect
                     res.status(401).send("Потребителското име или парола са грешни");
@@ -479,15 +479,15 @@ export let createEvent = async (req: Request, res: Response) => {
             if (err) {
                 res.status(400).send(err);
             } else if (result) {
-                res.status(400).send('Този курс вече съществува');
+                res.status(400).send('Това събитие вече съществува');
             } else {
                 await Event.create(body, (err: any, record: any) => {
                     if (err) {
                         res.status(400).send(err);
                     } else if (record) {
-                        res.send('Курса беше създаден успешно');
+                        res.send('Събитието беше създадено успешно');
                     } else {
-                        res.status(500).send('Грешка при създаване на курса');
+                        res.status(500).send('Грешка при създаване на събитието');
                     }
                 });
             }
@@ -526,8 +526,8 @@ export let getAllEvents = async (req: Request, res: Response) => {
                 });;
             }
         }).skip(firstRecord).limit(size);
-
-        const totalItems = await Shop.find(query).countDocuments();
+        
+        const totalItems = await Event.find(query).countDocuments();
 
         res.send({
             page: page,
