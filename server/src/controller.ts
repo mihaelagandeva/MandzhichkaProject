@@ -90,6 +90,7 @@ export let createRecipe = async (req: Request, res: Response) => {
                     await Recipe.create({
                         name: req.body.name,
                         author: author,
+                        summary: req.body.summary,
                         date: Date.now(),
                         rating: 0,
                         picturePath: req.body.picturePath,
