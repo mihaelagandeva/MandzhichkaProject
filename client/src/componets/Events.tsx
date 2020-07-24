@@ -1,27 +1,27 @@
 import React, {Component} from 'react';
 import axios, { AxiosResponse, AxiosError } from 'axios';
-import {environment} from '../environments/environment.json';
-import {Shop, ShopReport} from 'model/shop';
+import {environment} from 'environments/environment.json';
+import {Event, EventReport} from 'model/event';
 import {withSnackbar, WithSnackbarProps} from 'notistack';
-import RestaurantCard from './RestaurantCard';
 import CardContainer from './CardContainer';
+import JoinCard from './JoinCard';
 
-interface ShopsState {
+interface EventsState {
   page: number;
   pageSize: number;
   search: string;
-  shops: Shop[];
+  events: Event[];
   totalItems: number;
 }
 
-class Shops extends Component<WithSnackbarProps, ShopsState> {
+class Events extends Component<WithSnackbarProps, EventsState> {
   constructor(props: any) {
     super(props);
     this.state = {
       page: 1,
       pageSize: 12,
       search: '',
-      shops: [],
+      events: [],
       totalItems: 0
     };
 
@@ -38,17 +38,20 @@ class Shops extends Component<WithSnackbarProps, ShopsState> {
 
   setPage(page: number) {
     const {pageSize, search} = this.state;
-    const mandatoryUrl = `${environment.apiUrl}/api/shops/${page}/${pageSize}`;
+    const mandatoryUrl = `${environment.apiUrl}/api/events/${page}/${pageSize}`;
     const optionalUrl = search ? `/${search}` : '';
     const finalUrl = mandatoryUrl + optionalUrl;
 
-    axios.get(finalUrl).then((result: AxiosResponse<ShopReport>) => {
+    axios.get(finalUrl, {withCredentials: true}).then((result: AxiosResponse<EventReport>) => {
       const response = result.data;
+      const formattedDateResultSet = response.resultSet.map((event) => {
+        return {...event, date: event.date.split('T')[0]}
+      });
 
       this.setState({
         page: response.page,
         pageSize: response.size,
-        shops: response.resultSet,
+        events: formattedDateResultSet,
         totalItems: response.totalItems
       });
     }).catch((error: AxiosError<string>) => {
@@ -57,7 +60,7 @@ class Shops extends Component<WithSnackbarProps, ShopsState> {
   }
 
   render() {
-    const {shops, page, pageSize, totalItems} = this.state;
+    const {events, page, pageSize, totalItems} = this.state;
 
     return (
       <CardContainer
@@ -67,8 +70,8 @@ class Shops extends Component<WithSnackbarProps, ShopsState> {
         onPageChange={this.handlePageChange}
       >
         {
-          shops.map((shop, index) => {
-            return <RestaurantCard key={shop.name + index} restaurant={shop}></RestaurantCard>
+          events.map((event, index) => {
+            return <JoinCard key={event.name + index} item={event}></JoinCard>
           })
         }
       </CardContainer>
@@ -76,4 +79,5 @@ class Shops extends Component<WithSnackbarProps, ShopsState> {
   }
 }
 
-export default withSnackbar(Shops);
+export default withSnackbar(Events);
+
