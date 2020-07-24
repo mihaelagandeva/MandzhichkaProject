@@ -1,28 +1,27 @@
 import React, {Component} from 'react';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import {environment} from 'environments/environment.json';
-import {Restaurant, RestaurantReport} from 'model/restaurant';
+import {Event, EventReport} from 'model/event';
 import {withSnackbar, WithSnackbarProps} from 'notistack';
-import RestaurantCard from './RestaurantCard';
 import CardContainer from './CardContainer';
+import JoinCard from './JoinCard';
 
-interface RestaurantsState {
+interface EventsState {
   page: number;
   pageSize: number;
   search: string;
-  restaurants: Restaurant[];
+  events: Event[];
   totalItems: number;
 }
 
-class Restaurants extends Component<WithSnackbarProps, RestaurantsState> {
-
+class Events extends Component<WithSnackbarProps, EventsState> {
   constructor(props: any) {
     super(props);
     this.state = {
       page: 1,
-      pageSize: 5,
+      pageSize: 12,
       search: '',
-      restaurants: [],
+      events: [],
       totalItems: 0
     };
 
@@ -39,17 +38,20 @@ class Restaurants extends Component<WithSnackbarProps, RestaurantsState> {
 
   setPage(page: number) {
     const {pageSize, search} = this.state;
-    const mandatoryUrl = `${environment.apiUrl}/api/restaurants/${page}/${pageSize}`;
+    const mandatoryUrl = `${environment.apiUrl}/api/events/${page}/${pageSize}`;
     const optionalUrl = search ? `/${search}` : '';
     const finalUrl = mandatoryUrl + optionalUrl;
 
-    axios.get(finalUrl).then((result: AxiosResponse<RestaurantReport>) => {
+    axios.get(finalUrl).then((result: AxiosResponse<EventReport>) => {
       const response = result.data;
+      const formattedDateResultSet = response.resultSet.map((event) => {
+        return {...event, date: event.date.split('T')[0]}
+      });
 
       this.setState({
         page: response.page,
         pageSize: response.size,
-        restaurants: response.resultSet,
+        events: formattedDateResultSet,
         totalItems: response.totalItems
       });
     }).catch((error: AxiosError<string>) => {
@@ -58,7 +60,7 @@ class Restaurants extends Component<WithSnackbarProps, RestaurantsState> {
   }
 
   render() {
-    const {restaurants, page, pageSize, totalItems} = this.state;
+    const {events, page, pageSize, totalItems} = this.state;
 
     return (
       <CardContainer
@@ -68,8 +70,8 @@ class Restaurants extends Component<WithSnackbarProps, RestaurantsState> {
         onPageChange={this.handlePageChange}
       >
         {
-          restaurants.map((restaurant, index) => {
-            return <RestaurantCard key={restaurant.name + index} restaurant={restaurant}></RestaurantCard>
+          events.map((event, index) => {
+            return <JoinCard key={event.name + index} item={event}></JoinCard>
           })
         }
       </CardContainer>
@@ -77,4 +79,5 @@ class Restaurants extends Component<WithSnackbarProps, RestaurantsState> {
   }
 }
 
-export default withSnackbar(Restaurants);
+export default withSnackbar(Events);
+

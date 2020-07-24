@@ -24,6 +24,7 @@ function App() {
         <Route path="/main/recipes" exact component={() => <NavigationBar tabNumber={0} />} />
         <Route path="/main/restaurants" exact component={() => <NavigationBar tabNumber={1} />} />
         <Route path="/shops" component={() => <NavigationBar tabNumber={2} />} />
+        <Route path="/events" component={() => <NavigationBar tabNumber={3} />} />
         <Route path="/singleRecipe" exact component={() => <SingleRecipe recipe={hardcodedRecipe} />} />
         <Route path="/recipe/new" exact component={CreateRecipe} />
       </Router>
