@@ -53,8 +53,8 @@ const RestaurantCard: FunctionComponent<JoinCardProps> = ({item}) => {
       <CardContent>
         <div>Адрес: {item.address}</div>
         <div>Дата: {item.date}</div>
-        <If condition={true}>
-          <If condition={item.joined} els={() => renderLeaveButton(classes)}>
+        <If condition={item.canJoin}>
+          <If condition={!item.joined} els={() => renderLeaveButton(classes)}>
             <div className={classes.joinButton}>
               <Button
                 color="primary"
