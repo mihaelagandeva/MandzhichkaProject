@@ -12,6 +12,7 @@ export interface Recipe {
     rating: number,
     tags: Tag[],
     summary?: string
+    comments?: {text: string, date: string, author: string}[]
 }
 
 export interface RecipeReport {
