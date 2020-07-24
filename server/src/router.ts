@@ -29,15 +29,18 @@ router.get('/recipes/:recipeId', async (req: Request, res: Response) => {
 
 router.put('/recipes/:recipeId', async (req: Request, res: Response) => {
     await controller.updateRecipe(req, res);
-
 });
 
 router.delete('/recipes/:recipeId', async (req: Request, res: Response) => {
     await controller.deleteRecipe(req, res);
 });
 
-router.get('/shopping-list', (req: Request, res: Response) => {
-    console.log("Get shopping list");
+router.get('/shopping-list', async (req: Request, res: Response) => {
+    await controller.getShoppingList(req, res);
+});
+
+router.put('/shopping-list', async (req: Request, res: Response) => {
+    await controller.updateShoppingList(req, res);
 });
 
 router.get('/profile', async (req: Request, res: Response) => {

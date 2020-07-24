@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import User from "./db-config/models/user";
+import User, { IUser } from "./db-config/models/user";
 import { resolve } from 'path';
 import Recipe from "./db-config/models/recipe";
 import Tag, { ITag } from "./db-config/models/tag";
@@ -12,6 +12,7 @@ import Shop from './db-config/models/shop';
 import Achievement from "./db-config/models/achievements";
 import Comment from './db-config/models/comment';
 import Rating from "./db-config/models/rating";
+import ShoppingList from "./db-config/models/shoppingList";
 
 export let login = async (req: Request, res: Response) => {
     const { username, password } = req.body;
@@ -52,7 +53,13 @@ export let registration = async (req: Request, res: Response) => {
                         if (err) {
                             res.status(501).send("Error!");
                         } else {
-                            res.send();
+                            ShoppingList.create({ user: user, entities: [] }, (err: any, shoppingList: any) => {
+                                if (err) {
+                                    res.status(501).send();
+                                } else {
+                                    res.status(201).send({ user: user, shoppingList: shoppingList });
+                                }
+                            })
                         }
                     });
             } else {
@@ -760,11 +767,40 @@ export let addComment = async (req: Request, res: Response) => {
     })
 };
 
+export let getShoppingList = async (req: Request, res: Response) => {
+    const user = await getUserByCookie(req);
+    if (user) {
+        await ShoppingList.findOne({ 'user.username': user.username }, (err: any, shoppingList: any) => {
+            if (err) {
+                res.status(501).send();
+            } else {
+                res.status(200).send(shoppingList);
+            }
+        })
+    }
+};
+
+export let updateShoppingList = async (req: Request, res: Response) => {
+    const user = await getUserByCookie(req);
+    if (user) {
+        await ShoppingList.updateOne({ 'user.username': user.username }, { $set: req.body, $currentDate: { lastModified: true } },
+            function (err: any) {
+                if (err) {
+                    res.status(501).send("Error!");
+                } else {
+                    res.status(200).send();
+                }
+            }
+        );
+    }
+};
+
+
 export let logout = async (req: Request, res: Response) => {
     res.status(200).clearCookie("loggedUser").send();
 };
 
-let getUserByCookie = async (req: Request) => {
+let getUserByCookie = async (req: Request): Promise<IUser | undefined> => {
     let result;
     if (req.cookies.loggedUser) {
         await User.findOne({ username: req.cookies.loggedUser }).then((user) => {
