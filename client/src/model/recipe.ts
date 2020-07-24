@@ -5,6 +5,7 @@ export interface Recipe {
     author: string,
     title: string,
     date: string,
+    prepTime: number,
     picturePath: string,
     products?: string[],
     steps?: string[],
