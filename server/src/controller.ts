@@ -244,7 +244,7 @@ export let getRestaurants = async (req: Request, res: Response) => {
         const firstRecord = (page - 1) * size;
         const {search, filter} = req.params;
         let restaurants: any[] = [];
-        const query = { $or: [{ name: { $regex: search || '' } }, { address: { $regex: search || '' } }], type: filter || '' };
+        const query = { $or: [{ name: { $regex: search || '' } }, { address: { $regex: search || '' } }], type: {$regex: filter || ''} };
 
         await Restaurant.find(query, (err: any, result: any[]) => {
             if (err) {
