@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 import { LoginFormValues } from '../model/form';
 import Link from '@material-ui/core/Link';
 import axios from 'axios';
-import {environment} from 'environments/environment.json';
+import {environment} from '../environments/environment.json';
 import {useSnackbar} from 'notistack';
 
 const useStyles = makeStyles({
@@ -70,7 +70,7 @@ const Login = () => {
   const {enqueueSnackbar} = useSnackbar();
 
   const login = (values: LoginFormValues) => {
-    axios.post(`${environment.apiUrl}/api/login`, values).then((user) => {
+    axios.post(`${environment.apiUrl}/api/login`, values, {withCredentials: true}).then((user) => {
       enqueueSnackbar(`Вписахте се успешно`, {variant: 'success'});
     });
   }

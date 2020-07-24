@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import SearchBar from './SearchBar';
 import Restaurants from './Restaurants';
 import Shops from './Shops';
+import Events from './Events';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -87,10 +88,11 @@ const NavigationBar = () => {
             </div>
             <AppBar className={classes.bar} position="static">
                 <Tabs className={classes.tabs} value={value} onChange={handleChange} aria-label="simple tabs example">
-                    <Tab label="Рецепти" component={Link} to={`/main/recipes`} />
-                    <Tab label="Ресторанти" component={Link} to={`/main/restaurants`} />
+                    <Tab label="Рецепти" component={Link} to={`/`} />
+                    <Tab label="Ресторанти" component={Link} to={`/restaurants`} />
                     <Tab label="Магазини" component={Link} to={'/shops'} />
-                    <Tab label="Събития" {...a11yProps(2)} />
+                    <Tab label="Събития" component={Link} to={'/events'} />
+                    <Tab label="Курсове" {...a11yProps(4)} />
                 </Tabs>
                 <div className={classes.search}>
                     <SearchBar
@@ -111,6 +113,9 @@ const NavigationBar = () => {
             </TabPanel>
             <TabPanel value={value} index={2}>
                 <Shops />
+            </TabPanel>
+            <TabPanel value={value} index={3}>
+                <Events />
             </TabPanel>
         </div>
     );

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import axios, { AxiosResponse, AxiosError } from 'axios';
-import {environment} from 'environments/environment.json';
+import {environment} from '../environments/environment.json';
 import {Restaurant, RestaurantReport} from 'model/restaurant';
 import {withSnackbar, WithSnackbarProps} from 'notistack';
 import RestaurantCard from './RestaurantCard';
@@ -68,8 +68,8 @@ class Restaurants extends Component<WithSnackbarProps, RestaurantsState> {
         onPageChange={this.handlePageChange}
       >
         {
-          restaurants.map((restaurant) => {
-            return <RestaurantCard restaurant={restaurant}></RestaurantCard>
+          restaurants.map((restaurant, index) => {
+            return <RestaurantCard key={restaurant.name + index} restaurant={restaurant}></RestaurantCard>
           })
         }
       </CardContainer>
