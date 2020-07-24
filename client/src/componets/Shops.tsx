@@ -9,18 +9,22 @@ import CardContainer from './CardContainer';
 interface ShopsState {
   page: number;
   pageSize: number;
-  search: string;
   shops: Shop[];
   totalItems: number;
 }
 
-class Shops extends Component<WithSnackbarProps, ShopsState> {
+interface ShopsProps {
+  search: string;
+  updated: boolean;
+  setUpdated: Function;
+}
+
+class Shops extends Component<WithSnackbarProps&ShopsProps, ShopsState> {
   constructor(props: any) {
     super(props);
     this.state = {
       page: 1,
       pageSize: 12,
-      search: '',
       shops: [],
       totalItems: 0
     };
@@ -31,13 +35,21 @@ class Shops extends Component<WithSnackbarProps, ShopsState> {
   componentDidMount() {
     this.setPage(1); 
   }
+  
+  componentDidUpdate() {
+    if (this.props.updated) {
+      this.setPage(1);
+      this.props.setUpdated(false);
+    }
+  }
 
   handlePageChange(event: any, value: number) {
     this.setPage(value);
   }
 
   setPage(page: number) {
-    const {pageSize, search} = this.state;
+    const {pageSize} = this.state;
+    const {search} = this.props;
     const mandatoryUrl = `${environment.apiUrl}/api/shops/${page}/${pageSize}`;
     const optionalUrl = search ? `/${search}` : '';
     const finalUrl = mandatoryUrl + optionalUrl;

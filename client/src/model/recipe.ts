@@ -13,3 +13,10 @@ export interface Recipe {
     tags: Tag[],
     summary?: string
 }
+
+export interface RecipeReport {
+    page: number;
+    size: number;
+    resultSet: Recipe[];
+    totalItems: number;
+}
