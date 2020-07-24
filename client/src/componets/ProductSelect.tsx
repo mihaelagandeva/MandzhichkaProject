@@ -156,7 +156,7 @@ export const ProductSelect = (props: ProductSelectProps) => {
                     className={classes.removeButton}
                     onClick={() => handleRemoveClick(i)}><CancelIcon /></Button>}
                     
-                    {props.productList.length - 1 === i && <button className={classes.addButton} onClick={handleAddClick}>Добави продукт</button>}
+                    {props.productList.length - 1 === i && <button className={classes.addButton} onClick={handleAddClick}>Добави друг продукт</button>}
                     </div>
                     )}
                     </>

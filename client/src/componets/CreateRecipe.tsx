@@ -6,6 +6,7 @@ import { InputTags } from './InputTags'
 import { FileUpload } from './FileUpload'
 import { ProductSelect } from './ProductSelect'
 import Slider from '@material-ui/core/Slider';
+import TopAppBar from "./TopAppBar";
 
 const useStyles = makeStyles({
     root: {
@@ -113,6 +114,8 @@ const CreateRecipe = () => {
     const styles = useStyles();
     
     return (
+        <div>
+            <TopAppBar />
         <div className={styles.root}>
         <h1 className={styles.title}>Нова Рецепта</h1>
         <div className={styles.upload}>
@@ -160,9 +163,6 @@ const CreateRecipe = () => {
         />
         <div>
         <p>Продукти: </p>
-        {productList.map((x, i) => {
-            
-        })}
         <ProductSelect productList={productList} setProductList={setProductList}/>
         </div>
         <div className={styles.steps}>
@@ -199,7 +199,8 @@ const CreateRecipe = () => {
                 </div>
                 </div>
                 </form>
-                </div>
+            </div>
+        </div>
                 )}
                 
                 export default CreateRecipe;
