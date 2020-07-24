@@ -11,6 +11,7 @@ interface RestaurantsState {
   pageSize: number;
   restaurants: Restaurant[];
   totalItems: number;
+  selectedFilter: string;
 }
 
 interface RestaurantProps {
@@ -25,12 +26,14 @@ class Restaurants extends Component<WithSnackbarProps&RestaurantProps, Restauran
     super(props);
     this.state = {
       page: 1,
-      pageSize: 5,
+      pageSize: 12,
       restaurants: [],
-      totalItems: 0
+      totalItems: 0,
+      selectedFilter: ''
     };
 
     this.handlePageChange = this.handlePageChange.bind(this);
+    this.onFilterChange = this.onFilterChange.bind(this);
   }
 
   componentDidMount() {
@@ -49,12 +52,13 @@ class Restaurants extends Component<WithSnackbarProps&RestaurantProps, Restauran
   }
 
   setPage(page: number) {
-    const {pageSize} = this.state;
+    const {pageSize, selectedFilter} = this.state;
     const {search} = this.props;
 
     const mandatoryUrl = `${environment.apiUrl}/api/restaurants/${page}/${pageSize}`;
-    const optionalUrl = search ? `/${search}` : '';
-    const finalUrl = mandatoryUrl + optionalUrl;
+    const searchParam = search ? `/${search}` : '/ ';
+    const filterParam = selectedFilter ? `/${selectedFilter}` : '';
+    const finalUrl = mandatoryUrl + searchParam + filterParam;
 
     axios.get(finalUrl).then((result: AxiosResponse<RestaurantReport>) => {
       const response = result.data;
@@ -70,8 +74,15 @@ class Restaurants extends Component<WithSnackbarProps&RestaurantProps, Restauran
     });
   }
 
+  onFilterChange(event: any) {
+    this.setState({
+      selectedFilter: event.target.value
+    }, () => this.setPage(1));
+  }
+
   render() {
-    const {restaurants, page, pageSize, totalItems} = this.state;
+    const {restaurants, page, pageSize, totalItems, selectedFilter} = this.state;
+    const filterOptions = ['Китайски', 'Мексикански', 'Арабски', 'Италиански', 'Друг'];
 
     return (
       <CardContainer
@@ -79,6 +90,9 @@ class Restaurants extends Component<WithSnackbarProps&RestaurantProps, Restauran
         pageSize={pageSize}
         totalItems={totalItems}
         onPageChange={this.handlePageChange}
+        selected={selectedFilter}
+        selectOptions={filterOptions}
+        onSelected={this.onFilterChange}
       >
         {
           restaurants.map((restaurant, index) => {

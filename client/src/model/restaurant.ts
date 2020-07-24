@@ -3,6 +3,7 @@ export interface Restaurant {
   address: string;
   picturePath: string;
   phone?: string;
+  type?: string;
 }
 
 export interface RestaurantReport {
