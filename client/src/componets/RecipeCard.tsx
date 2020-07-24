@@ -63,7 +63,7 @@ const RecipeCard = (props: ReciepProps) => {
 
     return (recipe) ? (
         <Card className={classes.root}>
-            <Link href={'/recipes/:id'} underline="none">
+            <Link href={'/recipe/:id'} underline="none">
                 <CardHeader
                     className={classes.header}
                     title={recipe.title}

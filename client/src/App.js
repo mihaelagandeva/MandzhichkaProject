@@ -7,6 +7,7 @@ import { SnackbarProvider } from 'notistack';
 import NavigationBar from './componets/NavigationBar';
 import SingleRecipe from './componets/SingleRecipe';
 import CreateRecipe from './componets/CreateRecipe'
+import DisplayUserRecipes from './componets/DisplayUserRecipes'
 
 //delete later pls 
 const hardcodedRecipe = {
@@ -24,8 +25,10 @@ function App() {
         <Route path="/register" exact component={Register} />
         <Route path="/restaurants" exact component={() => <NavigationBar tabNumber={1} />} />
         <Route path="/shops" component={() => <NavigationBar tabNumber={2} />} />
-        <Route path="/recipes/:id" exact component={() => <SingleRecipe recipe={hardcodedRecipe} />} />
+        <Route path="/recipe/:id" exact component={() => <SingleRecipe recipe={hardcodedRecipe} />} />
         <Route path="/recipes/my/add" exact component={CreateRecipe} />
+        <Route path="/recipes/favorites" exact component={() => <DisplayUserRecipes load="favourites" />} />
+        <Route path="/recipes/my" exact component={() => <DisplayUserRecipes load="my" />} />
       </Router>
       <Interceptor />
     </SnackbarProvider>
