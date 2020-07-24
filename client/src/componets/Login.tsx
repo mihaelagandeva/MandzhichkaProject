@@ -67,8 +67,7 @@ const Login = () => {
   const {enqueueSnackbar} = useSnackbar();
 
   const login = (values: LoginFormValues) => {
-    axios.post(`${environment.apiUrl}/api/login`, values).then((user) => {
-      console.log(user)
+    axios.post(`${environment.apiUrl}/api/login`, values, {withCredentials: true}).then((user) => {
       enqueueSnackbar(`Вписахте се успешно`, {variant: 'success'});
     });
   }
