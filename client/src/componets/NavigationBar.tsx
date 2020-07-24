@@ -87,8 +87,8 @@ const NavigationBar = () => {
             </div>
             <AppBar className={classes.bar} position="static">
                 <Tabs className={classes.tabs} value={value} onChange={handleChange} aria-label="simple tabs example">
-                    <Tab label="Рецепти" component={Link} to={`/main/recipes`} />
-                    <Tab label="Ресторанти" component={Link} to={`/main/restaurants`} />
+                    <Tab label="Рецепти" component={Link} to={`/`} />
+                    <Tab label="Ресторанти" component={Link} to={`/restaurants`} />
                     <Tab label="Магазини" component={Link} to={'/shops'} />
                     <Tab label="Събития" {...a11yProps(2)} />
                 </Tabs>
