@@ -4,12 +4,14 @@ import { IUser } from "./user";
 
 const CommentSchema = new mongoose.Schema({
     author: User.UserSchema,
+    recipeId: {type: String},
     text: { type: String },
     date: { type: Date }
 });
 
 interface IComment extends mongoose.Document {
-    authorId: IUser;
+    author: IUser;
+    recipeId: string, 
     text: string;
     date: Date;
 }
