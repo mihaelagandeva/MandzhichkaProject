@@ -326,7 +326,7 @@ export let findUser = async (req: Request, res: Response): Promise<any> => {
 };
 
 export let updateUser = async (req: Request, res: Response) => {
-    await User.updateOne({ _id: req.cookies.loggedUser }, { $set: req.body, $currentDate: { lastModified: true } },
+    await User.updateOne({ username: req.cookies.loggedUser }, { $set: req.body, $currentDate: { lastModified: true } },
         function (err: any) {
             if (err) {
                 res.status(501).send("Error!");

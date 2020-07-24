@@ -1,4 +1,5 @@
 import React from 'react';
+import { PrivateRoute } from  './helper/privateRoute'
 import Login from './componets/Login';
 import Register from './componets/Register';
 import Interceptor from './interceptor/interceptor';
@@ -10,6 +11,7 @@ import CreateRecipe from './componets/CreateRecipe'
 import DisplayUserRecipes from './componets/DisplayUserRecipes'
 import UserProfile from './componets/UserProfile'
 import ShoppingList from './componets/ShoppingList'
+
 
 //delete later pls 
 const hardcodedRecipe = {
@@ -34,7 +36,7 @@ function App() {
         <Route path="/recipes/my/add" exact component={CreateRecipe} />
         <Route path="/recipes/favorites" exact component={() => <DisplayUserRecipes load="favourites" />} />
         <Route path="/recipes/my" exact component={() => <DisplayUserRecipes load="my" />} />
-        <Route path="/profile" exact component={UserProfile} />
+        <PrivateRoute path="/profile" exact component={UserProfile} />
         <Route path="/shopping-list" exact component ={ShoppingList} />
       </Router>
       <Interceptor />
