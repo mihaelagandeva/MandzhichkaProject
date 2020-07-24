@@ -1,18 +1,22 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import { IAchievement } from "./achievements";
+import * as Achievement from './achievements';
+import { IRecipe } from "./recipe";
+import * as Recipe from './recipe';
 
 export const UserSchema = new mongoose.Schema({
     username: { type: String },
     password: { type: String },
-    achievements: [{
-        achievementId: { type: Number }
-    }]
+    achievements: [Achievement.AchievementSchema],
+    favourites: [Recipe.RecipeSchema],
 });
 
-interface IUser extends mongoose.Document {
+export interface IUser extends mongoose.Document {
     username: string;
     password: string;
-    achievements: number[];
+    achievements: IAchievement[];
+    favourites: IRecipe[];
 }
 
 UserSchema.pre<IUser>('save', function (next) {

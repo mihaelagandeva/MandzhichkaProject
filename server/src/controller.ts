@@ -2,10 +2,12 @@ import { Request, Response } from "express";
 import User from "./db-config/models/user";
 import { resolve } from 'path';
 import Recipe from "./db-config/models/recipe";
-import Tag, {ITag} from "./db-config/models/tag";
+import Tag, { ITag } from "./db-config/models/tag";
 import bcrypt from 'bcrypt';
 import Restaurant from "./db-config/models/restaurant";
 import Product from './db-config/models/product';
+import Course from './db-config/models/courses';
+import Event from './db-config/models/event';
 import Shop from './db-config/models/shop';
 
 export let login = async (req: Request, res: Response) => {
@@ -19,7 +21,7 @@ export let login = async (req: Request, res: Response) => {
                 if (err) {
                     res.status(500).send('Error');
                 } else if (result) {
-                    res.send(user);
+                    res.cookie('loggedUser', user.username, { maxAge: 900000, httpOnly: true, secure: true }).send(user);
                 } else {
                     // username is correct but the password is incorrect
                     res.status(401).send("Потребителското име или парола са грешни");
@@ -58,7 +60,7 @@ export let registration = async (req: Request, res: Response) => {
 };
 
 export let createRecipe = async (req: Request, res: Response) => {
-    await Recipe.findOne({ name: req.body.name, author: req.body.author },
+    await Recipe.findOne({ name: req.body.name, 'author.username': req.body.author },
         async function (err: any, recipe: any) {
             if (err) {
                 res.status(501).send("Error!");
@@ -67,13 +69,24 @@ export let createRecipe = async (req: Request, res: Response) => {
                     res.status(400).send();
                 } else {
                     const tagsToBeInserted = await handleTags(req.body.tags, res);
+                    let author;
+                    await User.findOne({ username: req.body.author }, function (err: any, user: any) {
+                        if (err) {
+                            res.status(501).send();
+                        } else {
+                            author = user;
+                        }
+                    });
                     await Recipe.create({
                         name: req.body.name,
-                        author: req.body.author,
+                        author: author,
                         date: Date.now(),
                         rating: 0,
                         picturePath: req.body.picturePath,
-                        tags: tagsToBeInserted
+                        products: req.body.products,
+                        tags: tagsToBeInserted,
+                        preparationTime: req.body.preparationTime,
+                        steps: req.body.steps
                     }, function (err: any, recipe: any) {
                         if (err) {
                             console.log(err)
@@ -85,7 +98,6 @@ export let createRecipe = async (req: Request, res: Response) => {
                 }
             }
         });
-    };
 };
 
 export const uploadPicture = async (req: Request, res: Response) => {
@@ -103,12 +115,13 @@ export const uploadPicture = async (req: Request, res: Response) => {
                 return res.status(500).send(err)
             }
 
-            res.json({fileName: file.name, filePath: `/uploads/${file.name}`})
+            res.json({ fileName: file.name, filePath: `/uploads/${file.name}` })
         })
     }
 };
 
 export let getRecipe = async (req: Request, res: Response) => {
+    //getAll comments
     await Recipe.findOne({ _id: req.params.recipeId },
         function (err: any, recipe: any) {
             if (err) {
@@ -159,7 +172,7 @@ export let listAllRecipes = async (req: Request, res: Response) => {
         const query = {}; //should be added later
 
         await Recipe.find(query, (err: any, result: any[]) => {
-            if(err) {
+            if (err) {
                 res.status(501).send("Error!");
             } else {
                 recipes = result;
@@ -179,6 +192,34 @@ export let listAllRecipes = async (req: Request, res: Response) => {
     }
 };
 
+export let listUserFavouriteRecipes = async (req: Request, res: Response) => {
+    await User.findOne({ username: req.cookies.loggedUser }, function (err, user) {
+        if (err) {
+            res.status(501).send();
+        } else {
+            if (user) {
+                res.status(200).send(user?.favourites);
+            } else {
+                res.status(400).send();
+            }
+        }
+    })
+};
+
+export let listUserOwnRecipes = async (req: Request, res: Response) => {
+    await Recipe.find({ 'author.username': req.cookies.loggedUser }, function (err, recipes) {
+        if (err) {
+            res.status(501).send();
+        } else {
+            if (recipes) {
+                res.status(200).send(recipes);
+            } else {
+                res.status(400).send();
+            }
+        }
+    })
+};
+
 export let getRestaurants = async (req: Request, res: Response) => {
     const page = Number(req.params.page);
     const size = Number(req.params.size);
@@ -187,7 +228,7 @@ export let getRestaurants = async (req: Request, res: Response) => {
         const firstRecord = (page - 1) * size;
         const search = req.params.search;
         let restaurants: any[] = [];
-        const query = {$or: [ {name: {$regex: search || ''}}, {address: {$regex: search || ''}} ]};
+        const query = { $or: [{ name: { $regex: search || '' } }, { address: { $regex: search || '' } }] };
 
         await Restaurant.find(query, (err: any, result: any[]) => {
             if (err) {
@@ -196,7 +237,7 @@ export let getRestaurants = async (req: Request, res: Response) => {
                 restaurants = result;
             }
         }).skip(firstRecord).limit(size);
-        
+
         const totalItems = await Restaurant.find(query).countDocuments();
 
         res.send({
@@ -213,7 +254,7 @@ export let getRestaurants = async (req: Request, res: Response) => {
 export let createRestaurant = async (req: Request, res: Response) => {
     const body = req.body;
 
-    Restaurant.findOne({name: body.name, address: body.address}, (err: any, result: any) => {
+    Restaurant.findOne({ name: body.name, address: body.address }, (err: any, result: any) => {
         if (err) {
             res.status(400).send(err);
         } else if (result) {
@@ -252,6 +293,34 @@ export let listTags = async (_req: Request, res: Response) => {
     });
 };
 
+export let findUser = async (req: Request, res: Response): Promise<any> => {
+    await User.findOne({ username: req.cookies.loggedUser },
+        function (err: any, user: any) {
+            if (err) {
+                res.status(501).send();
+            } else {
+                if (user) {
+                    return res.status(200).send(user);
+                } else {
+                    return res.status(404).send();
+                }
+            }
+        }
+    );
+};
+
+export let updateUser = async (req: Request, res: Response) => {
+    await User.updateOne({ _id: req.cookies.loggedUser }, { $set: req.body, $currentDate: { lastModified: true } },
+        function (err: any) {
+            if (err) {
+                res.status(501).send("Error!");
+            } else {
+                res.status(200).send();
+            }
+        }
+    );
+};
+
 async function handleTags(tags: ITag[], res: Response) {
     let result: any[] = [];
     for (let i = 0; i < tags.length; i++) {
@@ -280,7 +349,7 @@ async function handleTags(tags: ITag[], res: Response) {
 }
 
 export let addProducts = async (req: Request, res: Response) => {
-    const {products} = req.body;
+    const { products } = req.body;
 
     if (products && Array.isArray(products) && products.length) {
         const errorList: any[] = [];
@@ -288,7 +357,7 @@ export let addProducts = async (req: Request, res: Response) => {
         for (let i = 0; i < products.length; i++) {
             const product = products[i];
 
-            await Product.findOne({name: product.name}, async (err: any, result: any) => {
+            await Product.findOne({ name: product.name }, async (err: any, result: any) => {
                 if (err) {
                     errorList.push(err);
                 } else if (result) {
@@ -329,6 +398,147 @@ export let getAllProducts = async (req: Request, res: Response) => {
     });
 }
 
+export let createCourse = async (req: Request, res: Response) => {
+    const { body } = req;
+
+    if (body.name && body.date) {
+        const { name, date } = body;
+
+        await Course.findOne({ name: name, date: date }, async (err: any, result: any) => {
+            if (err) {
+                res.status(400).send(err);
+            } else if (result) {
+                res.status(400).send('Този курс вече съществува');
+            } else {
+                await Course.create(body, (err: any, record: any) => {
+                    if (err) {
+                        res.status(400).send(err);
+                    } else if (record) {
+                        res.send('Курса беше създаден успешно');
+                    } else {
+                        res.status(500).send('Грешка при създаване на курса');
+                    }
+                });
+            }
+        });
+    } else {
+        res.status(400).send('Навалидно тяло на заявката');
+    }
+}
+
+export let getAllCourses = async (req: Request, res: Response) => {
+    const page = Number(req.params.page);
+    const size = Number(req.params.size);
+
+    if (page && size) {
+        const firstRecord = (page - 1) * size;
+        const search = req.params.search;
+        let courses: any[] = [];
+        const query = { $or: [{ name: { $regex: search || '' } }, { address: { $regex: search || '' } }] };
+
+        await Course.find(query, (err: any, records: any[]) => {
+            if (err) {
+                res.status(500).send();
+            } else {
+                courses = records.map((record) => {
+                    return {
+                        id: record._id,
+                        name: record.name,
+                        date: record.date,
+                        address: record.address,
+                        picturePath: record.picturePath,
+                        duration: record.duration.quantity.toString() + " " + record.duration.metric,
+                        joined: record.participants
+                            .find((user: any) => user.username === req.cookies.loggedUser) !== undefined,
+                        canJoin: req.cookies.loggedUser !== undefined
+                    };
+                });;
+            }
+        }).skip(firstRecord).limit(size);
+
+        const totalItems = await Shop.find(query).countDocuments();
+
+        res.send({
+            page: page,
+            size: size,
+            resultSet: courses,
+            totalItems: totalItems
+        });
+    } else {
+        res.status(400).send('Липстват задължителни параметери');
+    }
+}
+
+export let createEvent = async (req: Request, res: Response) => {
+    const { body } = req;
+
+    if (body.name && body.date) {
+        const { name, date } = body;
+
+        await Event.findOne({ name: name, date: date }, async (err: any, result: any) => {
+            if (err) {
+                res.status(400).send(err);
+            } else if (result) {
+                res.status(400).send('Този курс вече съществува');
+            } else {
+                await Event.create(body, (err: any, record: any) => {
+                    if (err) {
+                        res.status(400).send(err);
+                    } else if (record) {
+                        res.send('Курса беше създаден успешно');
+                    } else {
+                        res.status(500).send('Грешка при създаване на курса');
+                    }
+                });
+            }
+        });
+    } else {
+        res.status(400).send('Навалидно тяло на заявката');
+    }
+}
+
+export let getAllEvents = async (req: Request, res: Response) => {
+    const page = Number(req.params.page);
+    const size = Number(req.params.size);
+
+    if (page && size) {
+        const firstRecord = (page - 1) * size;
+        const search = req.params.search;
+        let events: any[] = [];
+        const query = { $or: [{ name: { $regex: search || '' } }, { address: { $regex: search || '' } }] };
+
+        await Event.find(query, (err: any, records: any[]) => {
+            if (err) {
+                res.status(500).send();
+            } else {
+                events = records.map((record) => {
+                    return {
+                        id: record._id,
+                        name: record.name,
+                        date: record.date,
+                        address: record.address,
+                        picturePath: record.picturePath,
+                        duration: record.duration.quantity.toString() + " " + record.duration.metric,
+                        joined: record.participants
+                            .find((user: any) => user.username === req.cookies.loggedUser) !== undefined,
+                        canJoin: req.cookies.loggedUser !== undefined
+                    };
+                });;
+            }
+        }).skip(firstRecord).limit(size);
+
+        const totalItems = await Shop.find(query).countDocuments();
+
+        res.send({
+            page: page,
+            size: size,
+            resultSet: events,
+            totalItems: totalItems
+        });
+    } else {
+        res.status(400).send('Липстват задълбителни параметри');
+    }
+}
 export let getShops = async (req: Request, res: Response) => {
     const page = Number(req.params.page);
     const size = Number(req.params.size);
@@ -337,7 +547,7 @@ export let getShops = async (req: Request, res: Response) => {
         const firstRecord = (page - 1) * size;
         const search = req.params.search;
         let shop: any[] = [];
-        const query = {$or: [ {name: {$regex: search || ''}}, {address: {$regex: search || ''}} ]};
+        const query = { $or: [{ name: { $regex: search || '' } }, { address: { $regex: search || '' } }] };
 
         await Shop.find(query, (err: any, result: any[]) => {
             if (err) {
@@ -346,7 +556,7 @@ export let getShops = async (req: Request, res: Response) => {
                 shop = result;
             }
         }).skip(firstRecord).limit(size);
-        
+
         const totalItems = await Shop.find(query).countDocuments();
 
         res.send({
@@ -360,10 +570,86 @@ export let getShops = async (req: Request, res: Response) => {
     }
 }
 
+export let joinCourse = async (req: Request, res: Response) => {
+    const currentUser = await getUserByCookie(req);
+
+    if (currentUser) {
+        const { courseId } = req.params;
+
+        Course.updateOne({ _id: courseId }, { $push: { participants: currentUser } },
+            (err: any, result: any) => {
+                if (err) {
+                    res.status(500).send(err);
+                } else if (result) {
+                    res.send('Записването за курса беше успешно');
+                }
+            });
+    } else {
+        res.status(401).send();
+    }
+}
+
+export let joinEvent = async (req: Request, res: Response) => {
+    const currentUser = getUserByCookie(req);
+
+    if (currentUser) {
+        const { eventId } = req.params;
+
+        Event.updateOne({ _id: eventId }, { $push: { participants: currentUser } },
+            (err: any, result: any) => {
+                if (err) {
+                    res.status(500).send(err);
+                } else if (result) {
+                    res.send('Бяхте записани за събитието успешно');
+                }
+            })
+    } else {
+        res.status(401).send();
+    }
+}
+
+export let leaveCourse = async (req: Request, res: Response) => {
+    const currentUser = getUserByCookie(req);
+
+    if (currentUser) {
+        const { courseId } = req.params;
+
+        Course.updateOne({ _id: courseId }, { $pull: { participants: currentUser } },
+            (err: any, result: any) => {
+                if (err) {
+                    res.status(500).send(err);
+                } else if (result) {
+                    res.send();
+                }
+            });
+    } else {
+        res.status(401).send();
+    }
+}
+
+export let leaveEvent = async (req: Request, res: Response) => {
+    const currentUser = getUserByCookie(req);
+
+    if (currentUser) {
+        const { courseId } = req.params;
+
+        Event.updateOne({ _id: courseId }, { $pull: { participants: currentUser } },
+            (err: any, result: any) => {
+                if (err) {
+                    res.status(500).send(err);
+                } else if (result) {
+                    res.send();
+                }
+            });
+    } else {
+        res.status(401).send();
+    }
+}
+
 export let createShop = async (req: Request, res: Response) => {
     const body = req.body;
 
-    Shop.findOne({name: body.name, address: body.address}, (err: any, result: any) => {
+    Shop.findOne({ name: body.name, address: body.address }, (err: any, result: any) => {
         if (err) {
             res.status(400).send(err);
         } else if (result) {
@@ -380,4 +666,16 @@ export let createShop = async (req: Request, res: Response) => {
             });
         }
     });
+}
+
+let getUserByCookie = async (req: Request) => {
+    if (req.cookies.loggedUser) {
+        await User.findOne({ username: req.cookies.loggedUser }).then((user) => {
+            console.log(user);
+            return user;
+        }).catch((err) => {
+            return undefined;
+        });
+    }
+    return undefined;
 }
