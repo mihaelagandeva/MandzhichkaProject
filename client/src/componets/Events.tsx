@@ -30,6 +30,8 @@ class Events extends Component<WithSnackbarProps&EventsProps, EventsState> {
     };
 
     this.handlePageChange = this.handlePageChange.bind(this);
+    this.handleEventJoin = this.handleEventJoin.bind(this);
+    this.handleEventLeave = this.handleEventLeave.bind(this);
   }
 
   componentDidMount() {
@@ -71,6 +73,27 @@ class Events extends Component<WithSnackbarProps&EventsProps, EventsState> {
     });
   }
 
+  handleEventJoin(courseId: string) {
+    const url = `${environment.apiUrl}/api/events/${courseId}`;
+
+    axios.put(url, {}, {withCredentials: true}).then((result) => {
+      this.props.enqueueSnackbar(result, {variant: 'success'});
+      this.setPage(1);
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
+
+  handleEventLeave(courseId: string) {
+    const url = `${environment.apiUrl}/api/events/leave/${courseId}`;
+
+    axios.put(url, {}, {withCredentials: true}).then((result) => {
+      this.setPage(1);
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
+
   render() {
     const {events, page, pageSize, totalItems} = this.state;
 
@@ -83,7 +106,14 @@ class Events extends Component<WithSnackbarProps&EventsProps, EventsState> {
       >
         {
           events.map((event, index) => {
-            return <JoinCard key={event.name + index} item={event}></JoinCard>
+            return (
+              <JoinCard 
+                key={event.name + index}
+                item={event}
+                onJoin={this.handleEventJoin}
+                onCancel={this.handleEventLeave}
+              ></JoinCard>
+            )
           })
         }
       </CardContainer>
