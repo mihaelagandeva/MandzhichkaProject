@@ -25,7 +25,7 @@ export let login = async (req: Request, res: Response) => {
                 if (err) {
                     res.status(500).send('Error');
                 } else if (result) {
-                    res.cookie('loggedUser', user.username, { maxAge: 900000, httpOnly: true }).send(user);
+                    res.cookie('loggedUser', user.username, { maxAge: 900000 }).send(user);
                 } else {
                     // username is correct but the password is incorrect
                     res.status(401).send("Потребителското име или парола са грешни");
