@@ -1,4 +1,9 @@
-import { Product } from './Product'
+
+interface SingleProd{
+    name: string,
+    metrics?: string[]
+}
+
 export interface ShoppingListModel {
-    products: Product[]
+    entities: { product: SingleProd, quantity: number, metrics: string }[],
 }

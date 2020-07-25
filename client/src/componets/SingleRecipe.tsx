@@ -11,7 +11,7 @@ import { useParams } from 'react-router-dom';
 import axios, { AxiosError, AxiosResponse } from "axios"
 import { environment } from '../environments/environment.json';
 import { ShoppingListModel } from '../model/shoppingList';
-import {Comment} from 'model/comment'
+import {Comment} from '../model/comment'
 import { useQuery } from 'helper/useQuery';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -68,8 +68,8 @@ const SingleRecipe = () => {
     const [comments, setCommentList] = useState<Comment[] | undefined>([]);
     const [comment, setComment] = useState("");
     const [usersFavourites] = useQuery<Recipe[]>('recipes/favorites', null, []);
-    const [shoppingList] = useQuery<ShoppingListModel>('shopping-list',null,{products:[]});
-
+    const [shoppingList, setShoppingList] = useState<ShoppingListModel>({entities:[] })
+    
     const checkIfIsFavourite = () => {
         if (recipe?._id) {
             for (let i = 0; i < usersFavourites.length; i++){
@@ -79,7 +79,7 @@ const SingleRecipe = () => {
         }
         return false;
     }
-
+    
     const addToFavourites = () => {
         const newFavs = usersFavourites.concat(recipe!)
         const body = { favourites: newFavs }
@@ -97,9 +97,10 @@ const SingleRecipe = () => {
     
     const addProductsToList = () => {
         if (recipe?.products) {
-            const newShoppingList = shoppingList.products.concat(recipe.products)
-            const body = {products: newShoppingList}
-            axios.put(`${environment.apiUrl}/api/shopping-list`, body, { withCredentials: true }).then();
+            const p = recipe.products;
+            const arr: {product: {name: string}, quantity: number, metrics: string}[] = [];
+            p.forEach(el => arr.push({product: {name: el.name}, quantity: el.quantity, metrics: el.metrics}))
+            axios.put(`${environment.apiUrl}/api/shopping-list`, arr, { withCredentials: true }).then();
         }
         setHaveBeenAdded(true);
     }
@@ -111,11 +112,20 @@ const SingleRecipe = () => {
         });
     }
 
+    const getShoppingList = () => {
+        axios.get(`${environment.apiUrl}/api/shopping-list`,{ withCredentials: true })
+            .then((shoppingList: AxiosResponse<ShoppingListModel>) => {
+            setShoppingList(shoppingList.data);
+        });
+    }
+
+
     const formatDate = (date: string): string => {
         return date.replace('T', ' ').split('.')[0];
     }
 
     useEffect(() => {
+        getShoppingList();
         getAllComments();
     }, []);
     

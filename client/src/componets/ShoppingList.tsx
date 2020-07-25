@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import CreateIcon from '@material-ui/icons/Create';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -10,6 +10,9 @@ import { ProductSelect } from './ProductSelect';
 import {useQuery} from '../helper/useQuery'
 import { ShoppingListModel } from 'model/shoppingList';
 import { Product } from 'model/Product';
+import axios, { AxiosError, AxiosResponse } from "axios"
+import { environment } from '../environments/environment.json';
+
 
 const useStyles = makeStyles({
     root: {
@@ -28,18 +31,32 @@ const useStyles = makeStyles({
 })
 
 const ShoppingList = () => {
-    const [products, setProducts] = useState<{ name: string, quantity: number, metrics: string }[]>([]);
-    const [newProducts, setNewProducts] = useState<{ name: string, quantity: number, metrics: string }[]>([{ name: "", quantity: 0, metrics: "" }])
+    const [shoppingList, setShoppingList] = useState<ShoppingListModel>({ entities: [] });
+    const [newProducts, setNewProducts] = useState<{ name: string, quantity: number, metric: string }[]>([{ name: "", quantity: 0, metric: "" }])
     const [isEditing, setIsEditing] = useState(false)
     const [isAdding, setIsAdding] = useState(false)
     const [allProducts] = useQuery<Product[]>('/products',null,[])
-    const [list] = useQuery<ShoppingListModel|null>('/shopping-list',null,null)
+
     
+    const [list] = useQuery<ShoppingListModel|null>('/shopping-list',null,null)
+
+    const getShoppingList = () => {
+        axios.get(`${environment.apiUrl}/api/shopping-list`, { withCredentials: true })
+            .then((shoppingList: AxiosResponse<ShoppingListModel>) => {
+                setShoppingList(shoppingList.data);
+            });
+    }
+
+    useEffect(() => {
+        getShoppingList()
+    },[])
+
+
     const styles = useStyles()
     const handleDelete = (index:number) => {
-        const list = [...products];
+        const list = [...shoppingList.entities];
         list.splice(index, 1);
-        setProducts(list);
+        //setShoppingList(list);
     }
 
     const handleChange = () => {
@@ -48,26 +65,26 @@ const ShoppingList = () => {
 
     const handleQuantityChange = (e: any, index: number) => {
         const quantity = e.target.value;
-        const list = [...products];
-        const name = list[index].name;
-        const metrics = list[index].metrics;
-        list[index] = { name, quantity, metrics };
-        setProducts(list)
+        const list = [...shoppingList.entities];
+        const name = list[index].product.name;
+        const metric = list[index].metrics;
+        list[index] = { product: {name: name}, quantity, metrics: metric };
+       // setProducts(list)
     }
 
     const handleMetricChange = (e: any, index: number ) => {
-        const metrics = e.target.value;
-        const list = [...products];
-        const name = list[index].name;
-        const quantity = list[index].quantity
-        list[index] = { name, quantity, metrics };
-        setProducts(list);
+        const metric = e.target.value;
+        const list = [...shoppingList.entities];
+        // const name = list[index].name;
+        // const quantity = list[index].quantity
+        // list[index] = { name, quantity, metric };
+        // setProducts(list);
     };
 
     const handleAdding = () => {
-        const result = products.concat(newProducts)
-        setProducts(result);
-        setNewProducts([{ name: "", quantity: 0, metrics: "" }])
+        // const result = shoppingList.entities.concat(newProducts)
+        // setProducts(result);
+        setNewProducts([{ name: "", quantity: 0, metric: "" }])
         setIsAdding(false);
     }
 
@@ -76,7 +93,7 @@ const ShoppingList = () => {
             <TopAppBar />
         <div className={styles.root}>
                 <h1 style={{ textAlign: "center" }}>Шопинг лист</h1>
-                {products.length === 0 ? 
+                {shoppingList.entities.length === 0 ? 
                     <>
                         {isAdding ?
                             <>
@@ -102,10 +119,10 @@ const ShoppingList = () => {
                     </>
                 :
                 <div>
-                        {products.map((elem, index) => 
+                        {shoppingList.entities.map((elem, index) => 
                             isEditing ?
                                 <div style={{ clear: "both" }}>
-                                    <p style={{ fontSize: 26, marginLeft: 20, float: "left" }}>{elem.name} - </p>
+                                    <p style={{ fontSize: 26, marginLeft: 20, float: "left" }}>{elem.product.name} - </p>
                                     <input style={{ width: 100, marginTop: 30, marginLeft: 20, padding: 8 }} type="number" value={elem.quantity}
                                         onChange={e => handleQuantityChange(e, index)}
                                     />
@@ -114,20 +131,21 @@ const ShoppingList = () => {
                                         value={elem.metrics || ""}
                                         onChange={e => handleMetricChange(e, index)}
                                         inputProps={{
-                                            name: 'metric',
-                                            id: 'metric',
+                                            name: 'metrics',
+                                            id: 'metrics',
                                         }}
                                     >
-                                        {allProducts.find(el => el.name === elem.name)?.metrics.map(elem =>
+                                        {allProducts.find(el => el.name === elem.product.name)?.metrics.map(elem =>
                                             <option key={elem} value={elem}>{elem}</option>
                                         )}
                                     </Select>
                                 
                                 </div>
                                 :
-                                    
+    
                                 <div style={{ clear: "both" }}>
-                                    <p style={{ fontSize: 26, marginLeft: 20, float: "left" }}>{elem.name} - {elem.quantity} {elem.metrics}</p>
+                                    {console.log(elem)}
+                                    <p style={{ fontSize: 26, marginLeft: 20, float: "left" }}>{elem.product.name} - {elem.quantity} {elem.metrics}</p>
                                     <div style={{ float: "right" }}>
                                         <Button className={styles.button} onClick={() => handleDelete(index)}>
                                             <DeleteIcon fontSize="large" />
@@ -162,7 +180,7 @@ const ShoppingList = () => {
                         </Button>
                     </div>
                         :
-                    products.length>0 ?
+                    shoppingList.entities.length>0 ?
                     <div style={{ clear: "both", float: "right", paddingTop: 20 }}>
                         <Button className={styles.button} onClick={() => setIsEditing(true)}>
                             <CreateIcon fontSize="large" />

@@ -45,8 +45,8 @@ const useStyles = makeStyles({
 })
 
 interface ProductSelectProps {
-    productList: { name: string; quantity: number; metrics: string }[],
-    setProductList: (val: { name: string; quantity: number; metrics: string }[]) => void
+    productList: { name: string; quantity: number; metric: string }[],
+    setProductList: (val: { name: string; quantity: number; metric: string }[]) => void
 }
 
 export const ProductSelect = (props: ProductSelectProps) => {
@@ -59,23 +59,23 @@ export const ProductSelect = (props: ProductSelectProps) => {
         const name = e.target.value;
         const list = [...props.productList];
         const quantity = list[index].quantity
-        let metrics: string;
-        if (list[index].metrics === "") {
-            metrics = products.find(el => el.name === name)!.metrics[0]
+        let metric: string;
+        if (list[index].metric === "") {
+            metric = products.find(el => el.name === name)!.metrics[0]
         }
         else {
-            metrics = list[index].metrics
+            metric = list[index].metric
         }
-        list[index] = { name, quantity, metrics };
+        list[index] = { name, quantity, metric };
         props.setProductList(list);
     };
 
     const handleMetricChange = (e: any, index: number) => {
-        const metrics = e.target.value;
+        const metric = e.target.value;
         const list = [...props.productList];
         const name = list[index].name;
         const quantity = list[index].quantity
-        list[index] = { name, quantity, metrics };
+        list[index] = { name, quantity, metric };
         props.setProductList(list);
     };
     
@@ -89,13 +89,13 @@ export const ProductSelect = (props: ProductSelectProps) => {
         const quantity = e.target.value;
         const list = [...props.productList];
         const name = list[index].name;
-        const metrics = list[index].metrics;
-        list[index] = { name, quantity, metrics };
+        const metric = list[index].metric;
+        list[index] = { name, quantity, metric };
         props.setProductList(list)
     }
     
     const handleAddClick = () => {
-        props.setProductList([...props.productList, {name:"",quantity:0,metrics:""}]);
+        props.setProductList([...props.productList, {name:"",quantity:0,metric:""}]);
         
     };
     
@@ -137,7 +137,7 @@ export const ProductSelect = (props: ProductSelectProps) => {
                 <Select
                 className={classes.formControl}
                 native
-                value={x.metrics}
+                value={x.metric}
                 onChange={e => handleMetricChange(e, i)}
                 inputProps={{
                     name: 'metric',
