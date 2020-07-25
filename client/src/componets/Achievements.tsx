@@ -1,31 +1,32 @@
 import React, {Component} from 'react';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import {environment} from '../environments/environment.json';
-import {Shop, ShopReport} from 'model/shop';
+import {Achievement, AchievementReport} from 'model/achievement';
 import {withSnackbar, WithSnackbarProps} from 'notistack';
 import RestaurantCard from './RestaurantCard';
 import CardContainer from './CardContainer';
+import AchievementCard from './AchievementCard';
 
-interface ShopsState {
+interface AchievementsState {
   page: number;
   pageSize: number;
-  shops: Shop[];
+  achievements: Achievement[];
   totalItems: number;
 }
 
-interface ShopsProps {
+interface AchievementsProps {
   search: string;
   updated: boolean;
   setUpdated: Function;
 }
 
-class Shops extends Component<WithSnackbarProps&ShopsProps, ShopsState> {
+class Shops extends Component<WithSnackbarProps&AchievementsProps, AchievementsState> {
   constructor(props: any) {
     super(props);
     this.state = {
       page: 1,
       pageSize: 12,
-      shops: [],
+      achievements: [],
       totalItems: 0
     };
 
@@ -50,17 +51,17 @@ class Shops extends Component<WithSnackbarProps&ShopsProps, ShopsState> {
   setPage(page: number) {
     const {pageSize} = this.state;
     const {search} = this.props;
-    const mandatoryUrl = `${environment.apiUrl}/api/shops/${page}/${pageSize}`;
+    const mandatoryUrl = `${environment.apiUrl}/api/achievements/${page}/${pageSize}`;
     const optionalUrl = search ? `/${search}` : '';
     const finalUrl = mandatoryUrl + optionalUrl;
 
-    axios.get(finalUrl).then((result: AxiosResponse<ShopReport>) => {
+    axios.get(finalUrl).then((result: AxiosResponse<AchievementReport>) => {
       const response = result.data;
 
       this.setState({
         page: response.page,
         pageSize: response.size,
-        shops: response.resultSet,
+        achievements: response.resultSet,
         totalItems: response.totalItems
       });
     }).catch((error: AxiosError<string>) => {
@@ -69,7 +70,7 @@ class Shops extends Component<WithSnackbarProps&ShopsProps, ShopsState> {
   }
 
   render() {
-    const {shops, page, pageSize, totalItems} = this.state;
+    const {page, pageSize, totalItems, achievements} = this.state;
 
     return (
       <CardContainer
@@ -79,8 +80,8 @@ class Shops extends Component<WithSnackbarProps&ShopsProps, ShopsState> {
         onPageChange={this.handlePageChange}
       >
         {
-          shops.map((shop, index) => {
-            return <RestaurantCard key={shop.name + index} restaurant={shop}></RestaurantCard>
+          achievements.map((achievement, index) => {
+            return <AchievementCard key={achievement.name + "-" + index} achievement={achievement} />
           })
         }
       </CardContainer>

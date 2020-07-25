@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, FunctionComponent } from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -13,6 +13,8 @@ import SearchBar from './SearchBar';
 import Restaurants from './Restaurants';
 import Shops from './Shops';
 import Events from './Events';
+import Courses from './Courses';
+import Achievements from './Achievements';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -65,17 +67,23 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
-const NavigationBar = () => {
+interface NavigationBarProps {
+    tabNumber: number;
+}
+
+const NavigationBar: FunctionComponent<NavigationBarProps> = ({tabNumber}) => {
     const classes = useStyles();
-    const [value, setValue] = useState(0);
-    const [searchString, setSearchString] = useState('')
+    const [value, setValue] = useState(tabNumber);
+    const [searchString, setSearchString] = useState('');
+    const [searchUpdated, setSearchUpdated] = useState(true);
 
     const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
         setValue(newValue);
+        setSearchString('');
     };
 
     const onSearchBtnClick = async () => {
-        //implement search function
+        setSearchUpdated(true);
     }
 
     return (
@@ -87,18 +95,19 @@ const NavigationBar = () => {
                 <img src={picture} height='10%' width='100%' alt='img' />
             </div>
             <AppBar className={classes.bar} position="static">
-                <Tabs className={classes.tabs} value={value} onChange={handleChange} aria-label="simple tabs example">
+                <Tabs className={classes.tabs} value={value || 0} onChange={handleChange} aria-label="simple tabs example">
                     <Tab label="Рецепти" component={Link} to={`/`} />
                     <Tab label="Ресторанти" component={Link} to={`/restaurants`} />
                     <Tab label="Магазини" component={Link} to={'/shops'} />
                     <Tab label="Събития" component={Link} to={'/events'} />
-                    <Tab label="Курсове" {...a11yProps(4)} />
+                    <Tab label="Курсове" component={Link} to={'/courses'} />
+                    <Tab label="Постижения" component={Link} to={'/achievements'} />
                 </Tabs>
                 <div className={classes.search}>
                     <SearchBar
-
                         key="SearchBar"
                         onType={text => {
+                            setSearchUpdated(true);
                             setSearchString(text);
                         }}
                         onSearch={onSearchBtnClick}
@@ -106,16 +115,22 @@ const NavigationBar = () => {
                 </div>
             </AppBar>
             <TabPanel value={value} index={0}>
-                <MainPage />
+                <MainPage search={searchString} updated={searchUpdated} setUpdated={setSearchUpdated} />
             </TabPanel>
             <TabPanel value={value} index={1}>
-                <Restaurants />
+                <Restaurants search={searchString} updated={searchUpdated} setUpdated={setSearchUpdated} />
             </TabPanel>
             <TabPanel value={value} index={2}>
-                <Shops />
+                <Shops search={searchString} updated={searchUpdated} setUpdated={setSearchUpdated} />
             </TabPanel>
             <TabPanel value={value} index={3}>
-                <Events />
+                <Events search={searchString} updated={searchUpdated} setUpdated={setSearchUpdated} />
+            </TabPanel>
+            <TabPanel value={value} index={4}>
+                <Courses search={searchString} updated={searchUpdated} setUpdated={setSearchUpdated} />
+            </TabPanel>
+            <TabPanel value={value} index={5}>
+                <Achievements search={searchString} updated={searchUpdated} setUpdated={setSearchUpdated} />
             </TabPanel>
         </div>
     );

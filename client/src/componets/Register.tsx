@@ -86,7 +86,7 @@ const Register = (props: any) => {
 
     axios.post(`${environment.apiUrl}/api/registration`, body).then((user) => {
       enqueueSnackbar('Регистрацията беше успешна', {variant: 'success'});
-      props.history.push('/');
+      props.history.push('/login');
     });
   }
 

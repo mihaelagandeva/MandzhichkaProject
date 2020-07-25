@@ -63,7 +63,7 @@ router.post('/registration', async (req: Request, res: Response) => {
     await controller.registration(req, res);
 });
 
-router.get('/restaurants/:page/:size/:search?', async (req: Request, res: Response) => {
+router.get('/restaurants/:page/:size/:search?/:filter?', async (req: Request, res: Response) => {
     await controller.getRestaurants(req, res);
 });
 
@@ -143,6 +143,9 @@ router.post('/comment', async (req: Request, res: Response) => {
     await controller.addComment(req, res);
 });
 
+router.get('/comment/:recipeId', async (req: Request, res: Response) => {
+    await controller.getComment(req, res);
+});
 router.post('/logout', async (req: Request, res: Response) => {
     await controller.logout(req, res);
 });

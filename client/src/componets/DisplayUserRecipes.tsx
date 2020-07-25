@@ -3,9 +3,11 @@ import { makeStyles, GridList } from '@material-ui/core'
 import RecipeCard from './RecipeCard'
 import TopAppBar from "./TopAppBar"
 import picture from '../assets/main.jpg';
+import { useQuery } from "helper/useQuery";
+import { Recipe } from "model/recipe";
 
 const musakapic = 'https://amiraspantry.com/wp-content/uploads/2019/11/moussaka-I.jpg'
-const hardcodedRecipe = { id: 1, title: 'Musakichka', author: 'Musakichka Master', prepTime: 120, date: '06/12/2020', picturePath: musakapic, rating: 4, tags: [{ id: 1, value: 'musaka' }, { id: 2, value: 'good' }], summary: 'A very simple recipe to make delicious musaka', products: [{ name: "potatoes", quantity: 500, metric: "grams" }, { name: "minced meat", quantity: 500, metric: "grams" }] }
+const hardcodedRecipe = { id: 1, name: 'Musakichka', author: 'Musakichka Master', prepTime: 120, date: '06/12/2020', picturePath: musakapic, rating: 4, tags: [{ id: 1, value: 'musaka' }, { id: 2, value: 'good' }], summary: 'A very simple recipe to make delicious musaka', products: [{ name: "potatoes", quantity: 500, metric: "grams" }, { name: "minced meat", quantity: 500, metric: "grams" }] }
 
 const useStyles = makeStyles({
     root: {
@@ -25,15 +27,16 @@ interface DisplayUserRecipesProps{
 }
 
  const DisplayUserRecipes = (props: DisplayUserRecipesProps) => {
-     let rec;
+     const [allRecipes] = useQuery<Recipe[]>(`${props.load}`,null,[]);
 
      // we will determine which get request to query like this
-     if (props.load === "favourites") {
-         rec = [hardcodedRecipe, hardcodedRecipe, hardcodedRecipe];
-     }
-     else {
-         rec = [hardcodedRecipe, hardcodedRecipe, hardcodedRecipe, hardcodedRecipe, hardcodedRecipe]
-     }
+    //  if (props.load === "favourites") {
+    //      rec = [hardcodedRecipe, hardcodedRecipe, hardcodedRecipe];
+    //      recipe=useQuery<Recipe[]>
+    //  }
+    //  else {
+    //      rec = [hardcodedRecipe, hardcodedRecipe, hardcodedRecipe, hardcodedRecipe, hardcodedRecipe]
+    //  }
     
     const styles = useStyles();
     
@@ -45,8 +48,8 @@ interface DisplayUserRecipesProps{
             </div>
         <div className={styles.recipes}>
         <GridList cellHeight={200} spacing={6}>
-        {rec.map(recipe =>
-            <RecipeCard key={recipe.id} recipe={recipe} />
+        {allRecipes.map((recipe: Recipe) =>
+           <RecipeCard key={recipe._id} recipe={recipe} />
             )}
             </GridList>
             </div>

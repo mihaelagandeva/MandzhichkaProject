@@ -12,6 +12,8 @@ import StarBorderIcon from '@material-ui/icons/StarBorder';
 import CreateIcon from '@material-ui/icons/Create';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { Link } from '@material-ui/core';
+import { environment } from '../environments/environment.json';
+import axios from "axios"
 
 const StyledMenu = withStyles({
     paper: {
@@ -114,12 +116,16 @@ const StyledMenu = withStyles({
             </Link>
             </StyledMenuItem>
             <StyledMenuItem>
-            <Link href="/">
+                        <Button onClick={() => {
+                            axios.post(`${environment.apiUrl}/api/logout`)
+                            document.cookie = "loggedUser=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                            window.location.reload();
+                        }}>
             <ListItemIcon>
             <ExitToAppIcon fontSize="small" />
             </ListItemIcon>
             <ListItemText primary="Изход" />
-            </Link>
+            </Button>
             </StyledMenuItem>
             </StyledMenu>
             </div>

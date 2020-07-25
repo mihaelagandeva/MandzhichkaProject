@@ -25,7 +25,7 @@ export let login = async (req: Request, res: Response) => {
                 if (err) {
                     res.status(500).send('Error');
                 } else if (result) {
-                    res.cookie('loggedUser', user.username, { maxAge: 900000, httpOnly: true }).send(user);
+                    res.cookie('loggedUser', user.username, { maxAge: 900000 }).send(user);
                 } else {
                     // username is correct but the password is incorrect
                     res.status(401).send("Потребителското име или парола са грешни");
@@ -93,6 +93,7 @@ export let createRecipe = async (req: Request, res: Response) => {
                         summary: req.body.summary,
                         date: Date.now(),
                         rating: 0,
+                        summary: req.body.summary,
                         picturePath: req.body.picturePath,
                         products: req.body.products,
                         tags: tagsToBeInserted,
@@ -119,7 +120,6 @@ export const uploadPicture = async (req: Request, res: Response) => {
     const { file } = req.files;
     if (!Array.isArray(file)) {
         const path = resolve(`${__dirname}/../../client/public/uploads/${file.name}`);
-        console.log(path)
         file.mv(path, err => {
             if (err) {
                 console.error(err);
@@ -142,8 +142,7 @@ export let getRecipe = async (req: Request, res: Response) => {
                         if (err) {
                             res.status(501).send();
                         } else {
-                            let result = { recipe: recipe, comments: comments };
-                            res.status(200).send(result);
+                            res.status(200).send(recipe);
                         }
                     })
                 } else {
@@ -153,6 +152,16 @@ export let getRecipe = async (req: Request, res: Response) => {
         }
     );
 };
+
+export let getComment = async (req: Request, res: Response) => {
+    await Comment.find({ recipeId: req.params.recipeId }, (err: any, comments: any[]) => {
+        if (err) {
+            res.status(501).send();
+        } else {
+            res.status(200).send(comments);
+        }
+    })
+}
 
 export let updateRecipe = async (req: Request, res: Response) => {
     await Recipe.updateOne({ _id: req.params.recipeId }, { $set: req.body, $currentDate: { lastModified: true } },
@@ -274,9 +283,9 @@ export let getRestaurants = async (req: Request, res: Response) => {
 
     if (page && size) {
         const firstRecord = (page - 1) * size;
-        const search = req.params.search;
+        const {search, filter} = req.params;
         let restaurants: any[] = [];
-        const query = { $or: [{ name: { $regex: search || '' } }, { address: { $regex: search || '' } }] };
+        const query = { $or: [{ name: { $regex: search || '' } }, { address: { $regex: search || '' } }], type: {$regex: filter || ''} };
 
         await Restaurant.find(query, (err: any, result: any[]) => {
             if (err) {
@@ -358,7 +367,7 @@ export let findUser = async (req: Request, res: Response): Promise<any> => {
 };
 
 export let updateUser = async (req: Request, res: Response) => {
-    await User.updateOne({ _id: req.cookies.loggedUser }, { $set: req.body, $currentDate: { lastModified: true } },
+    await User.updateOne({ username: req.cookies.loggedUser }, { $set: req.body, $currentDate: { lastModified: true } },
         function (err: any) {
             if (err) {
                 res.status(501).send("Error!");

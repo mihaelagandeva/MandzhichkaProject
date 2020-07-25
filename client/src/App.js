@@ -1,4 +1,5 @@
 import React from 'react';
+import { PrivateRoute } from  './helper/privateRoute'
 import Login from './componets/Login';
 import Register from './componets/Register';
 import Interceptor from './interceptor/interceptor';
@@ -10,6 +11,7 @@ import CreateRecipe from './componets/CreateRecipe'
 import DisplayUserRecipes from './componets/DisplayUserRecipes'
 import UserProfile from './componets/UserProfile'
 import ShoppingList from './componets/ShoppingList'
+
 
 //delete later pls 
 const hardcodedRecipe = {
@@ -30,11 +32,13 @@ function App() {
         <Route path="/restaurants" exact component={() => <NavigationBar tabNumber={1} />} />
         <Route path="/shops" component={() => <NavigationBar tabNumber={2} />} />
         <Route path="/events" component={() => <NavigationBar tabNumber={3} />} />
+        <Route path="/courses" component={() => <NavigationBar tabNumber={4} />} />
+        <Route path="/achievements" component={() => <NavigationBar tabNumber={5} />} />
         <Route path="/recipe/:id" exact component={() => <SingleRecipe recipe={hardcodedRecipe} />} />
         <Route path="/recipes/my/add" exact component={CreateRecipe} />
-        <Route path="/recipes/favorites" exact component={() => <DisplayUserRecipes load="favourites" />} />
-        <Route path="/recipes/my" exact component={() => <DisplayUserRecipes load="my" />} />
-        <Route path="/profile" exact component={UserProfile} />
+        <Route path="/recipes/favorites" exact component={() => <DisplayUserRecipes load="recipes/favorites" />} />
+        <Route path="/recipes/my" exact component={() => <DisplayUserRecipes load="recipes/myRecipes" />} />
+        <PrivateRoute path="/profile" exact component={UserProfile} />
         <Route path="/shopping-list" exact component ={ShoppingList} />
       </Router>
       <Interceptor />

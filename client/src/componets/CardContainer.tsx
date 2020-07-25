@@ -1,6 +1,10 @@
 import React, {FunctionComponent} from 'react';
 import If from './If';
 import Pagination from '@material-ui/lab/Pagination';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 import {makeStyles} from '@material-ui/styles';
 
 const useStyles = makeStyles({
@@ -11,8 +15,21 @@ const useStyles = makeStyles({
   },
 
   resultCounter: {
+    flex: 8,
     fontSize: 20,
-    marginBottom: 20
+    marginBottom: 20,
+    marginTop: 20,
+  },
+
+  selectionContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: 1150
+  },
+
+  filterSelection: {
+    flex: 1,
+    minWidth: 120,
   },
 
   cardsContainer: {
@@ -34,10 +51,13 @@ const useStyles = makeStyles({
 });
 
 interface CardContainerProps {
-  page: number,
-  pageSize: number,
-  totalItems: number,
-  onPageChange: Function
+  page: number;
+  pageSize: number;
+  totalItems: number;
+  onPageChange: Function;
+  selectOptions?: string[];
+  selected?: string;
+  onSelected?: Function;
 }
 
 function renderNoCardsMessage() {
@@ -47,21 +67,41 @@ function renderNoCardsMessage() {
 }
 
 const CardContainer: FunctionComponent<CardContainerProps> = ({page, pageSize, totalItems,
-    onPageChange, children}) => {
+    onPageChange, children, selectOptions, selected, onSelected}) => {
     
   const classes = useStyles();
   return (
-    <div className={classes.root}>
-      <If condition={totalItems > 0} els={() => renderNoCardsMessage()}>
+    <div className={classes.root}>  
         <div>
-          <div className={classes.resultCounter}>Намерени: <b>{totalItems}</b></div>
-          <div className={classes.cardsContainer}>
-            {children}
+          <div>
+            <span className={classes.selectionContainer}>
+              <span className={classes.resultCounter}>Намерени: <b>{totalItems}</b></span>
+              <If condition={selectOptions !== undefined && selectOptions.length > 0}>
+                <FormControl className={classes.filterSelection}>
+                  <InputLabel>Тип кухня</InputLabel>
+                  <Select
+                    value={selected}
+                    onChange={onSelected ? (event) => onSelected(event) : undefined}
+                  >
+                    {
+                      selectOptions?.map((option) => {
+                        return <MenuItem value={option}>{option}</MenuItem>
+                      })
+                    }
+                  </Select>
+                </FormControl>
+              </If>
+            </span>
           </div>
+          <If condition={totalItems > 0} els={() => renderNoCardsMessage()}>
+            <div className={classes.cardsContainer}>
+              {children}
+            </div>
+          </If>
           <div className={classes.paginationContainer}>
             <If condition={totalItems > pageSize}>
               <Pagination
-                count={totalItems / pageSize}
+                count={Math.round(totalItems / pageSize)}
                 page={page}
                 color="primary"
                 onChange={(event, value) => onPageChange(event, value)}
@@ -69,7 +109,6 @@ const CardContainer: FunctionComponent<CardContainerProps> = ({page, pageSize, t
             </If>
           </div>
         </div>
-      </If>
     </div>
   );
 }

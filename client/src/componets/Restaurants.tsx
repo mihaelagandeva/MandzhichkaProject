@@ -9,28 +9,42 @@ import CardContainer from './CardContainer';
 interface RestaurantsState {
   page: number;
   pageSize: number;
-  search: string;
   restaurants: Restaurant[];
   totalItems: number;
+  selectedFilter: string;
 }
 
-class Restaurants extends Component<WithSnackbarProps, RestaurantsState> {
+interface RestaurantProps {
+  search: string;
+  updated: boolean;
+  setUpdated: Function;
+}
 
-  constructor(props: any) {
+class Restaurants extends Component<WithSnackbarProps&RestaurantProps, RestaurantsState> {
+
+  constructor(props: WithSnackbarProps&RestaurantProps) {
     super(props);
     this.state = {
       page: 1,
-      pageSize: 5,
-      search: '',
+      pageSize: 12,
       restaurants: [],
-      totalItems: 0
+      totalItems: 0,
+      selectedFilter: ''
     };
 
     this.handlePageChange = this.handlePageChange.bind(this);
+    this.onFilterChange = this.onFilterChange.bind(this);
   }
 
   componentDidMount() {
-    this.setPage(1); 
+    this.setPage(1);
+  }
+
+  componentDidUpdate() {
+    if (this.props.updated) {
+      this.setPage(1);
+      this.props.setUpdated(false);
+    }
   }
 
   handlePageChange(event: any, value: number) {
@@ -38,10 +52,13 @@ class Restaurants extends Component<WithSnackbarProps, RestaurantsState> {
   }
 
   setPage(page: number) {
-    const {pageSize, search} = this.state;
+    const {pageSize, selectedFilter} = this.state;
+    const {search} = this.props;
+
     const mandatoryUrl = `${environment.apiUrl}/api/restaurants/${page}/${pageSize}`;
-    const optionalUrl = search ? `/${search}` : '';
-    const finalUrl = mandatoryUrl + optionalUrl;
+    const searchParam = search ? `/${search}` : '/ ';
+    const filterParam = selectedFilter ? `/${selectedFilter}` : '';
+    const finalUrl = mandatoryUrl + searchParam + filterParam;
 
     axios.get(finalUrl).then((result: AxiosResponse<RestaurantReport>) => {
       const response = result.data;
@@ -57,8 +74,15 @@ class Restaurants extends Component<WithSnackbarProps, RestaurantsState> {
     });
   }
 
+  onFilterChange(event: any) {
+    this.setState({
+      selectedFilter: event.target.value
+    }, () => this.setPage(1));
+  }
+
   render() {
-    const {restaurants, page, pageSize, totalItems} = this.state;
+    const {restaurants, page, pageSize, totalItems, selectedFilter} = this.state;
+    const filterOptions = ['Китайски', 'Мексикански', 'Арабски', 'Италиански', 'Друг'];
 
     return (
       <CardContainer
@@ -66,6 +90,9 @@ class Restaurants extends Component<WithSnackbarProps, RestaurantsState> {
         pageSize={pageSize}
         totalItems={totalItems}
         onPageChange={this.handlePageChange}
+        selected={selectedFilter}
+        selectOptions={filterOptions}
+        onSelected={this.onFilterChange}
       >
         {
           restaurants.map((restaurant, index) => {
