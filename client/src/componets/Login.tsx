@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useFormik } from 'formik';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -7,7 +7,9 @@ import { LoginFormValues } from '../model/form';
 import Link from '@material-ui/core/Link';
 import axios from 'axios';
 import {environment} from '../environments/environment.json';
-import {useSnackbar} from 'notistack';
+import { useSnackbar } from 'notistack';
+import Cookies from 'js-cookie';
+import { Redirect } from "react-router-dom";
 
 const useStyles = makeStyles({
   root: {
@@ -65,10 +67,12 @@ const validate = (values: LoginFormValues): LoginFormValues => {
 
 const Login = () => {
   const {enqueueSnackbar} = useSnackbar();
-
+  const [cookie, setCookie] = useState(document.cookie);
+ 
   const login = (values: LoginFormValues) => {
     axios.post(`${environment.apiUrl}/api/login`, values, {withCredentials: true}).then((user) => {
-      enqueueSnackbar(`Вписахте се успешно`, {variant: 'success'});
+      enqueueSnackbar(`Вписахте се успешно`, { variant: 'success' });
+      setCookie(document.cookie)
     });
   }
 
@@ -83,45 +87,53 @@ const Login = () => {
 
   const styles = useStyles();
 
+  
   return (
-    <div className={styles.root}>
-      <form className={styles.formContainer} onSubmit={formik.handleSubmit}>
-        <h1 className={styles.title}>Вход</h1>
-        <TextField
-          className={styles.inputField}
-          id="username"
-          name="username"
-          label="Потребителско име"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={!!formik.errors.username && formik.touched.username}
-          helperText={formik.touched.username ? formik.errors.username : ''}
-        />
-        <TextField
-          className={styles.inputField}
-          id="password"
-          name="password"
-          label="Парола"
-          type="password"
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={!!formik.errors.password && formik.touched.password}
-          helperText={formik.touched.password ? formik.errors.password : ''}
-        />
-        <Button
-          className={styles.loginButton}
-          color="primary"
-          variant="outlined"
-          type="submit"
-          disabled={!!formik.errors.username || !!formik.errors.password}
-        >Вход</Button>
-        <div className={styles.footer}>
-          <Link href="/register" variant="body2" align="center">
-            Нямате профил? Регистрирайте се!
+    <>
+      {(cookie.includes('loggedUser')) ?
+        <Redirect to="/" />
+        :
+      
+        <div className={styles.root}>
+          <form className={styles.formContainer} onSubmit={formik.handleSubmit}>
+            <h1 className={styles.title}>Вход</h1>
+            <TextField
+              className={styles.inputField}
+              id="username"
+              name="username"
+              label="Потребителско име"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={!!formik.errors.username && formik.touched.username}
+              helperText={formik.touched.username ? formik.errors.username : ''}
+            />
+            <TextField
+              className={styles.inputField}
+              id="password"
+              name="password"
+              label="Парола"
+              type="password"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={!!formik.errors.password && formik.touched.password}
+              helperText={formik.touched.password ? formik.errors.password : ''}
+            />
+            <Button
+              className={styles.loginButton}
+              color="primary"
+              variant="outlined"
+              type="submit"
+              disabled={!!formik.errors.username || !!formik.errors.password}
+            >Вход</Button>
+            <div className={styles.footer}>
+              <Link href="/register" variant="body2" align="center">
+                Нямате профил? Регистрирайте се!
               </Link>
+            </div>
+          </form>
         </div>
-      </form>
-    </div>
+      }
+      </>
   );
 }
 

@@ -27,7 +27,7 @@ createStyles({
 
 const TopAppBar = () => {
     const classes = useStyles();
-    const isLogged = true;  //should check if cookie
+    const cookie = document.cookie.includes('loggedUser');
     return (
         <div className={classes.root}>
         <AppBar position="static">
@@ -37,7 +37,7 @@ const TopAppBar = () => {
         Начало
         </Link>
         </Typography>
-        {isLogged ? <UserMenu /> :
+        {cookie ? <UserMenu /> :
         <>
         <Link href="/login">
         <Button >

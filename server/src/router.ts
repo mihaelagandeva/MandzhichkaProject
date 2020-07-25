@@ -139,6 +139,9 @@ router.post('/comment', async (req: Request, res: Response) => {
     await controller.addComment(req, res);
 });
 
+router.get('/comment/:recipeId', async (req: Request, res: Response) => {
+    await controller.getComment(req, res);
+});
 router.post('/logout', async (req: Request, res: Response) => {
     await controller.logout(req, res);
 });

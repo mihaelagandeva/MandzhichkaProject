@@ -7,7 +7,9 @@ import CheckIcon from '@material-ui/icons/Check';
 import TopAppBar from './TopAppBar';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import { ProductSelect } from './ProductSelect';
-
+import {useQuery} from '../helper/useQuery'
+import { ShoppingListModel } from 'model/shoppingList';
+import { Product } from 'model/Product';
 
 const useStyles = makeStyles({
     root: {
@@ -26,13 +28,14 @@ const useStyles = makeStyles({
 })
 
 const ShoppingList = () => {
-    const [products, setProducts] = useState<{ name: string, quantity: number, metric: string }[]>([]);
-    const [newProducts, setNewProducts] = useState<{ name: string, quantity: number, metric: string }[]>([{ name: "", quantity: 0, metric: "" }])
+    const [products, setProducts] = useState<{ name: string, quantity: number, metrics: string }[]>([]);
+    const [newProducts, setNewProducts] = useState<{ name: string, quantity: number, metrics: string }[]>([{ name: "", quantity: 0, metrics: "" }])
     const [isEditing, setIsEditing] = useState(false)
     const [isAdding, setIsAdding] = useState(false)
-    const allProducts = [{ name: 'Eggs', metric: ['number'] }, { name: 'Flour', metric: ['spoon', 'cup', 'teaspoon'] }, { name: "Milk", quantity: 1, metric: ["cups"] } , { name: 'Cacao', metric: ['spoon', 'cup', 'teaspoon'] }]
+    const [allProducts] = useQuery<Product[]>('/products',null,[])
+    const [list] = useQuery<ShoppingListModel|null>('/shopping-list',null,null)
+    
     const styles = useStyles()
-
     const handleDelete = (index:number) => {
         const list = [...products];
         list.splice(index, 1);
@@ -47,24 +50,24 @@ const ShoppingList = () => {
         const quantity = e.target.value;
         const list = [...products];
         const name = list[index].name;
-        const metric = list[index].metric;
-        list[index] = { name, quantity, metric };
+        const metrics = list[index].metrics;
+        list[index] = { name, quantity, metrics };
         setProducts(list)
     }
 
     const handleMetricChange = (e: any, index: number ) => {
-        const metric = e.target.value;
+        const metrics = e.target.value;
         const list = [...products];
         const name = list[index].name;
         const quantity = list[index].quantity
-        list[index] = { name, quantity, metric };
+        list[index] = { name, quantity, metrics };
         setProducts(list);
     };
 
     const handleAdding = () => {
         const result = products.concat(newProducts)
         setProducts(result);
-        setNewProducts([{ name: "", quantity: 0, metric: "" }])
+        setNewProducts([{ name: "", quantity: 0, metrics: "" }])
         setIsAdding(false);
     }
 
@@ -108,14 +111,14 @@ const ShoppingList = () => {
                                     />
                                     <Select
                                         native
-                                        value={elem.metric || ""}
+                                        value={elem.metrics || ""}
                                         onChange={e => handleMetricChange(e, index)}
                                         inputProps={{
                                             name: 'metric',
                                             id: 'metric',
                                         }}
                                     >
-                                        {allProducts.find(el => el.name === elem.name)?.metric.map(elem =>
+                                        {allProducts.find(el => el.name === elem.name)?.metrics.map(elem =>
                                             <option key={elem} value={elem}>{elem}</option>
                                         )}
                                     </Select>
@@ -124,7 +127,7 @@ const ShoppingList = () => {
                                 :
                                     
                                 <div style={{ clear: "both" }}>
-                                    <p style={{ fontSize: 26, marginLeft: 20, float: "left" }}>{elem.name} - {elem.quantity} {elem.metric}</p>
+                                    <p style={{ fontSize: 26, marginLeft: 20, float: "left" }}>{elem.name} - {elem.quantity} {elem.metrics}</p>
                                     <div style={{ float: "right" }}>
                                         <Button className={styles.button} onClick={() => handleDelete(index)}>
                                             <DeleteIcon fontSize="large" />
