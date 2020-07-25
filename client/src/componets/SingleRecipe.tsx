@@ -11,7 +11,7 @@ import { useParams } from 'react-router-dom';
 import axios, { AxiosError, AxiosResponse } from "axios"
 import { environment } from '../environments/environment.json';
 import { ShoppingListModel } from '../model/shoppingList';
-import {Comment} from '../model/comment'
+import {Comment} from 'model/comment'
 import { useQuery } from 'helper/useQuery';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -65,7 +65,7 @@ const SingleRecipe = () => {
     const [haveBeenAdded, setHaveBeenAdded] = useState(false)
     const [isCommenting, setIsCommenting] = useState(false);
     const [isAddedToFav, setIsAddedToFav] = useState(false)
-    const [comments] = useQuery<Comment[]>(`comment/${id}`, null,[]);
+    const [comments, setCommentList] = useState<Comment[] | undefined>([]);
     const [comment, setComment] = useState("");
     const [usersFavourites] = useQuery<Recipe[]>('recipes/favorites', null, []);
     const [shoppingList] = useQuery<ShoppingListModel>('shopping-list',null,{products:[]});
@@ -89,19 +89,31 @@ const SingleRecipe = () => {
 
     const addComment = () => {
         const body = {recipeId: id, text: comment}
-        axios.post(`${environment.apiUrl}/api/comment`, body, { withCredentials: true })
-        setIsCommenting(false)
+        axios.post(`${environment.apiUrl}/api/comment`, body, { withCredentials: true }).then(() => {
+            setIsCommenting(false);
+            getAllComments();
+        })
     }
     
     const addProductsToList = () => {
         if (recipe?.products) {
-            console.log(shoppingList.products);
             const newShoppingList = shoppingList.products.concat(recipe.products)
             const body = {products: newShoppingList}
             axios.put(`${environment.apiUrl}/api/shopping-list`, body, { withCredentials: true }).then();
         }
         setHaveBeenAdded(true);
     }
+
+    const getAllComments = () => {
+        axios.get(`${environment.apiUrl}/api/comment/${id}`, {withCredentials: true})
+            .then((comments: AxiosResponse<Comment[]>) => {
+            setCommentList(comments.data);
+        });
+    }
+
+    useEffect(() => {
+        getAllComments();
+    }, []);
     
     const styles = useStyles()
     
