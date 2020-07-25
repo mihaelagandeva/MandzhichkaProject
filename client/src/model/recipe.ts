@@ -9,7 +9,7 @@ export interface Recipe {
     date: string,
     prepTime: number,
     picturePath: string,
-    products?: Product[],
+    products?: {name:string, quantity: number, metrics: string}[],
     steps?: string[],
     rating: number,
     tags: Tag[],
