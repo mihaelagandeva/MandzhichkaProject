@@ -360,15 +360,23 @@ export let findUser = async (req: Request, res: Response): Promise<any> => {
 };
 
 export let updateUser = async (req: Request, res: Response) => {
-    await User.updateOne({ username: req.cookies.loggedUser }, { $set: req.body, $currentDate: { lastModified: true } },
-        function (err: any) {
-            if (err) {
-                res.status(501).send("Error!");
-            } else {
-                res.status(200).send();
-            }
+
+    await bcrypt.hash(req.body.password, 10, async (err: any, hash: string) => {
+        if (err) {
+            res.status(500).send();
+        } else if (hash) {
+            await User.updateOne({ username: req.cookies.loggedUser },
+                { $set: {password: hash}, $currentDate: { lastModified: true } },
+                function (err: any, result: any) {
+                    if (err) {
+                        res.status(501).send("Error!");
+                    } else {
+                        res.status(200).send();
+                    }
+                }
+            );
         }
-    );
+    });
 };
 
 async function handleTags(tags: string[], res: Response) {
