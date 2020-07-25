@@ -11,6 +11,10 @@ router.get('/recipes/favorites', async (req: Request, res: Response) => {
     await controller.listUserFavouriteRecipes(req, res);
 });
 
+router.post('/recipes/favorites', async (req: Request, res: Response) => {
+    await controller.addUserFavouriteRecipes(req, res);
+});
+
 router.get('/recipes/myRecipes', async (req: Request, res: Response) => {
     await controller.listUserOwnRecipes(req, res);
 });

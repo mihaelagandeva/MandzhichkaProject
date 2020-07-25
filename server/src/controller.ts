@@ -223,6 +223,37 @@ export let listUserFavouriteRecipes = async (req: Request, res: Response) => {
     })
 };
 
+export let addUserFavouriteRecipes = async (req: Request, res: Response) => {
+    await User.findOne({ username: req.cookies.loggedUser }, async function (err, user) {
+        if (err) {
+            res.status(501).send();
+        } else {
+            if (user) {
+                await Recipe.findOne({ _id: req.body.recipeId }, async function (err, recipe) {
+                    if (err) {
+                        res.status(501).send();
+                    } else {
+                        if (recipe) {
+                            user.favourites.push(recipe);
+                            User.updateOne({ username: user.username }, { $set: { favourites: user.favourites } }, (err: any, user: any) => {
+                                if (err) {
+                                    res.status(501).send();
+                                } else {
+                                    res.status(200).send();
+                                }
+                            })
+                        } else {
+                            res.status(404).send();
+                        }
+                    }
+                })
+            } else {
+                res.status(400).send();
+            }
+        }
+    })
+};
+
 export let listUserOwnRecipes = async (req: Request, res: Response) => {
     await Recipe.find({ 'author.username': req.cookies.loggedUser }, function (err, recipes) {
         if (err) {
