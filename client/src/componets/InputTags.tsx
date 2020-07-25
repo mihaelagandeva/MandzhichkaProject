@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Chip } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import { useQuery } from 'helper/useQuery';
 
 interface TagProps {
     selectedTags: (t: string[]) => void;
@@ -16,7 +17,7 @@ function onlyUnique(value: string, index: number, array: string[]) {
 }
 
 export function InputTags(props: TagProps) {
-    const tagsSuggestion = [{id: 1, value: "tag1"},{id:2, value: "tag2"}] // will be replaced with normal values
+    const [tagsSuggestion] = useQuery<Tag[]>('tags', null,[])
     const [userInputTag, setUserInputTag] = useState('');
     const { initialTags } = props;
     const [autoselectValue, setAutoselectValue] = useState<string[]>(initialTags);

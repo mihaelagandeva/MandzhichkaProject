@@ -7,6 +7,8 @@ import { FileUpload } from './FileUpload'
 import { ProductSelect } from './ProductSelect'
 import Slider from '@material-ui/core/Slider';
 import TopAppBar from "./TopAppBar";
+import axios from "axios"
+import { environment } from '../environments/environment.json';
 
 const useStyles = makeStyles({
     root: {
@@ -77,13 +79,13 @@ function valuetext(value: number) {
     return `${value}мин.`;
 }
 
-const CreateRecipe = () => {
+const CreateRecipe = (props: any) => {
     const [title, setTitle] = useState("");
     const [summary, setSummary] = useState("");
     const [prepTime, setPrepTime] = useState(0);
     const [picturePath, setPicturePath] = useState("");
     const [stepsList, setStepsList] = useState([""]);
-    const [productList, setProductList] = useState([{name:"", quantity: 0, metric:""}]);
+    const [productList, setProductList] = useState([{name:"", quantity: 0, metrics:""}]);
     const [tags, setTags] = useState<string[]>([]);
     const [initialTags, setInitialTags] = useState<string[]>([]);
     const selectedTags = (t: string[]) => {
@@ -108,7 +110,9 @@ const CreateRecipe = () => {
     };
     
     const Submit = () => {
-        alert(`${title}, ${summary}, ${prepTime},${stepsList}, ${picturePath}, ${JSON.stringify(productList)}` )
+        const body = { name: title, summary, prepTime, steps: stepsList, picturePath, products: productList, tags: tags }
+        axios.post(`${environment.apiUrl}/api/recipes/myRecipes/add`, body, {withCredentials: true})
+        props.history.push('/login');
     }
     
     const styles = useStyles();

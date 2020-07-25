@@ -5,7 +5,7 @@ import picture from '../assets/main.jpg'
 import { environment } from '../environments/environment.json';
 import axios, { AxiosError, AxiosResponse } from "axios"
 import { User } from '../model/User'
-import { Redirect } from "react-router-dom";
+import { useQuery } from "helper/useQuery";
 
 const useStyles = makeStyles({
     user: {
@@ -45,25 +45,12 @@ const useStyles = makeStyles({
 
 
 const UserProfile = () => {
-    const [user, setUser] = useState<User>();
+    const [user] = useQuery<User | null>('/profile', null, null);
     const [oldPassword, setOldPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [changePassword, setChangePassword] = useState(false)
     const [wrongPassError, setWrongPassError] = useState(false);
-    
-    const getUser = () => {
-        axios.get(`${environment.apiUrl}/api/profile`, { withCredentials: true }).then((result: AxiosResponse<User>) => {
-            const response = result.data;
-            console.log(response)
-            setUser(response);
-        }).catch((error: AxiosError<string>) => {
-            const message = error.message;
-        })
-    }
 
-    useEffect(() => {
-        getUser()
-    },[])
 
     const styles = useStyles();
     

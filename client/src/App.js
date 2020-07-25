@@ -32,10 +32,10 @@ function App() {
         <Route path="/restaurants" exact component={() => <NavigationBar tabNumber={1} />} />
         <Route path="/shops" component={() => <NavigationBar tabNumber={2} />} />
         <Route path="/events" component={() => <NavigationBar tabNumber={3} />} />
-        <Route path="/recipe/:id" exact component={() => <SingleRecipe recipe={hardcodedRecipe} />} />
+        <Route path="/recipe/:id" exact component={() => <SingleRecipe/>} />
         <Route path="/recipes/my/add" exact component={CreateRecipe} />
-        <Route path="/recipes/favorites" exact component={() => <DisplayUserRecipes load="favourites" />} />
-        <Route path="/recipes/my" exact component={() => <DisplayUserRecipes load="my" />} />
+        <Route path="/recipes/favorites" exact component={() => <DisplayUserRecipes load="recipes/favorites" />} />
+        <Route path="/recipes/my" exact component={() => <DisplayUserRecipes load="recipes/myRecipes" />} />
         <PrivateRoute path="/profile" exact component={UserProfile} />
         <Route path="/shopping-list" exact component ={ShoppingList} />
       </Router>

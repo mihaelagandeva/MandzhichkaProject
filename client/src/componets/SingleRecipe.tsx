@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Recipe } from '../model/recipe'
 import { makeStyles, Theme, Button, TextField } from '@material-ui/core'
 import TopAppBar from './TopAppBar';
@@ -7,7 +7,12 @@ import Rating from '@material-ui/lab/Rating';
 import TimerIcon from '@material-ui/icons/Timer';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import StarIcon from '@material-ui/icons/Star';
-
+import { useParams } from 'react-router-dom';
+import axios, { AxiosError, AxiosResponse } from "axios"
+import { environment } from '../environments/environment.json';
+import { ShoppingListModel } from '../model/shoppingList';
+import {Comment} from '../model/comment'
+import { useQuery } from 'helper/useQuery';
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -53,142 +58,161 @@ const useStyles = makeStyles((theme: Theme) => ({
 }))
 
 
-interface SingleRecipeProps {
-    // id: number   we will use this to make get query later
-    recipe: Recipe
-}
-
-const SingleRecipe = (props: SingleRecipeProps) => {
-    const { recipe } = props //will be later changed with a get query
-    const user = "some";
+const SingleRecipe = () => {
+    const { id } = useParams<{ id: string }>()
+    const [recipe] = useQuery<Recipe | null>(`/recipes/${id}`, null, null)
+    const user = document.cookie.includes('loggedUser')
     const [haveBeenAdded, setHaveBeenAdded] = useState(false)
     const [isCommenting, setIsCommenting] = useState(false);
+    const [isAddedToFav, setIsAddedToFav] = useState(false)
+    const [comments] = useQuery<Comment[]>(`comment/${id}`, null,[]);
     const [comment, setComment] = useState("");
-    const [usersFavourites, setUserFavourites] = useState<number[]>([1]) // array of recipies
-    
+    const [usersFavourites] = useQuery<Recipe[]>('recipes/favorites', null, []);
+    const [shoppingList] = useQuery<ShoppingListModel>('shopping-list',null,{products:[]});
+
     const checkIfIsFavourite = () => {
-        return usersFavourites.includes(recipe.id)
+        if (recipe?._id) {
+            for (let i = 0; i < usersFavourites.length; i++){
+                if (usersFavourites[i]._id === recipe._id)
+                    return true;
+            }
+        }
+        return false;
     }
 
     const addToFavourites = () => {
-        // post to add 
-        //setUserFavourites()
+        const newFavs = usersFavourites.concat(recipe!)
+        const body = { favourites: newFavs }
+        axios.put(`${environment.apiUrl}/api/profile`, body, { withCredentials: true })
+        setIsAddedToFav(true)
     }
 
     const addComment = () => {
-        // query to add comment
-        
+        const body = {recipeId: id, text: comment}
+        axios.post(`${environment.apiUrl}/api/comment`, body, { withCredentials: true })
         setIsCommenting(false)
+
     }
     
     const addProductsToList = () => {
-        // query to add products to list
+        if (recipe?.products) {
+            const newShoppingList = shoppingList.products.concat(recipe.products)
+            const body = {products: newShoppingList}
+            axios.put(`${environment.apiUrl}/api/shopping-list`, body, { withCredentials: true });
+        }
         setHaveBeenAdded(true);
     }
     
     const styles = useStyles()
     
     return (
-        <div className={styles.root}>
-        <div className="topAppBar">
-        <TopAppBar />
-        </div>
-        <div className="topImage">
-        <img src={picture} height='10%' width='100%' alt='img' />
-        </div>
-        <div className={styles.recipeContainer} >
-                <h1 style={{ float: "left" }}>{recipe.title}</h1>
-                <div style={{ float: "left", padding: 10 }}>
-                {checkIfIsFavourite() ? 
-                    <Button disabled size="large">
-                        <StarIcon fontSize="large" />
-                    </Button>
-                    :
-                        <Button size="large" onClick={() => addToFavourites()}>
-                            <StarBorderIcon fontSize="large" />
-                    </Button>
+        <>
+            {recipe ?
+                <div className={styles.root}>
+                    <div className="topAppBar">
+                        <TopAppBar />
+                    </div>
+                    <div className="topImage">
+                        <img src={picture} height='10%' width='100%' alt='img' />
+                    </div>
+                    <div className={styles.recipeContainer} >
+                        <h1 style={{ float: "left" }}>{recipe.name}</h1>
+                        {user ?
+                            <div style={{ float: "left", padding: 10 }}>
+                                {checkIfIsFavourite() || isAddedToFav ?
+                                    <Button disabled size="large">
+                                        <StarIcon fontSize="large" />
+                                    </Button>
+                                    :
+                                    <Button size="large" onClick={() => addToFavourites()}>
+                                        <StarBorderIcon fontSize="large" />
+                                    </Button>
 
-                    }
-                </div>
-        <p style={{clear: "both"}} className={styles.creator}>Създадена от: {recipe.author} на {recipe.date}</p>
-        <div>
-        <h3>Описание: </h3>
-        <p>{recipe.summary}</p>
-        <div className={styles.image} >
-        <img height="400" width="400" src={recipe.picturePath} />
-        </div>
-        <div className={styles.products}>
-        <Rating className={styles.rating} name="read-only" value={recipe.rating} readOnly />
-        <div style={{float:"left", marginLeft: 40}}>
-        <TimerIcon />
-        </div>
-        <h3 style={{ float: "left", marginLeft: 10, marginTop: -1 }}>{recipe.prepTime} мин.</h3> 
-        <h3 style={{clear: "both"}}> Продукти: </h3>
-        {recipe.products?.map(product => <p>{product.name} - {product.quantity} {product.metric}</p>)}
-        {haveBeenAdded ?
-            <Button variant="contained" disabled>
-            Продуктите бяха добавени
+                                }
+                            </div> : ""}
+                        <p style={{ clear: "both" }} className={styles.creator}>Създадена на {recipe.date}</p>
+                        <div>
+                            <h3>Описание: </h3>
+                            <p>{recipe.summary}</p>
+                            <div className={styles.image} >
+                                <img height="400" width="400" src={recipe.picturePath} />
+                            </div>
+                            <div className={styles.products}>
+                                <Rating className={styles.rating} name="read-only" value={recipe.rating} readOnly />
+                                <div style={{ float: "left", marginLeft: 40 }}>
+                                    <TimerIcon />
+                                </div>
+                                <h3 style={{ float: "left", marginLeft: 10, marginTop: -1 }}>{recipe.prepTime} мин.</h3>
+                                <h3 style={{ clear: "both" }}> Продукти: </h3>
+                                {recipe.products?.map(product => <p>{product.name} - {product.quantity} {product.metrics}</p>)}
+                                {haveBeenAdded ?
+                                    <Button variant="contained" disabled>
+                                        Продуктите бяха добавени
             </Button>
-            :
-            <Button variant="contained" onClick={() => addProductsToList()}>
-            Добави в шопинг листа
+                                    :
+                                    <Button variant="contained" onClick={() => addProductsToList()}>
+                                        Добави в шопинг листа
             </Button>
-        }
-        </div>
-        </div>
-        <div className={styles.steps} >
-        <h3>Стъпки:</h3>
-        {recipe.steps?.map((element, index) =>
-            <p key={++index}>{index}. {element}</p>
-            )}
-            </div>
-            <h2>Коментари: </h2>
-            <div className={styles.commentsSection} >
-            {recipe.comments?.map(comment => 
-                <div style={{ marginTop: 10, border: '1px solid black', padding: 10, width: "40%"}}>
-                <h4 style={{margin:0}}>Oт {comment.author} на {comment.date}:</h4>
-                <div style={{margin: 10}}>
-                {comment.text}
-                </div>
-                </div>
-                )}
-                </div>
-                <div className={styles.commentsSection}>
+                                }
+                            </div>
+                        </div>
+                        <div className={styles.steps} >
+                            <h3>Стъпки:</h3>
+                            {recipe.steps?.map((element, index) =>
+                                <p key={++index}>{index}. {element}</p>
+                            )}
+                        </div>
+                        <h2>Коментари: </h2>
+                        <div className={styles.commentsSection} >
+                            {comments?.map(comment =>
+                                <div style={{ marginTop: 10, border: '1px solid black', padding: 10, width: "40%" }}>
+                                    <h4 style={{ margin: 0 }}>Публикувано на {comment.date}:</h4>
+                                    <div style={{ margin: 10 }}>
+                                        {comment.text}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        <div className={styles.commentsSection}>
                 
-                {user && !isCommenting ?
-                    <div style={{marginTop: 20, width:"58%", float:"right"}}>
-                    <Button variant="contained" onClick={() => setIsCommenting(true)}>
-                    Добави коментар
+                            {user && !isCommenting ?
+                                <div style={{ marginTop: 20, width: "58%", float: "right" }}>
+                                    <Button variant="contained" onClick={() => setIsCommenting(true)}>
+                                        Добави коментар
                     </Button>
-                    </div>
-                    :
-                    isCommenting ? 
-                    <>
-                    <TextField
-                    className={styles.inputField}
-                    id="comment"
-                    name="comment"
-                    label="Коментар"
-                    variant="outlined"
-                    multiline
+                                </div>
+                                :
+                                isCommenting ?
+                                    <>
+                                        <TextField
+                                            className={styles.inputField}
+                                            id="comment"
+                                            name="comment"
+                                            label="Коментар"
+                                            variant="outlined"
+                                            multiline
                     
-                    onChange={e => setComment(e.target.value)}
-                    onBlur={e => setComment(e.target.value)}
-                    />
-                    <div style={{ marginTop: 20, width: "58%", float: "right" }}>
-                    <Button variant="contained" onClick={() => addComment()}>
-                    Публикувай коментар
+                                            onChange={e => setComment(e.target.value)}
+                                            onBlur={e => setComment(e.target.value)}
+                                        />
+                                        <div style={{ marginTop: 20, width: "58%", float: "right" }}>
+                                            <Button variant="contained" onClick={() => addComment()}>
+                                                Публикувай коментар
                     </Button>
+                                        </div>
+                                    </>
+                                    :
+                                    ""
+                            }
+                        </div>
+                
+                
                     </div>
-                    </>
-                    :
-                    ""
-                }
                 </div>
-                
-                
-                </div>
-                </div>
+                :
+                "No recipe"
+            }
+            </>
                 )
                 
             }

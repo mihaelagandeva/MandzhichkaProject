@@ -1,18 +1,19 @@
 import { Tag } from './tag'
+import { User } from './User';
+import { Product } from './Product';
 
 export interface Recipe {
-    id: number,
-    author: string,
-    title: string,
+    _id: string,
+    author: User,
+    name: string,
     date: string,
     prepTime: number,
     picturePath: string,
-    products?: {name: string, quantity: number, metric: string}[],
+    products?: Product[],
     steps?: string[],
     rating: number,
     tags: Tag[],
     summary?: string
-    comments?: {text: string, date: string, author: string}[]
 }
 
 export interface RecipeReport {

@@ -23,7 +23,6 @@ interface MainPageProps {
 }
 
 const MainPage: FunctionComponent<MainPageProps> = ({search, updated, setUpdated}) => {
-    // const recipes: Recipe[] = [hardcodedRecipe, hardcodedRecipe, hardcodedRecipe, hardcodedRecipe]
     const [recipes, setRecipes] = useState<Recipe[]>([]);
     const [pageSize, setPageSize] = useState(12);
     const [page, setPage] = useState(1);
@@ -62,7 +61,7 @@ const MainPage: FunctionComponent<MainPageProps> = ({search, updated, setUpdated
                 <GridList cellHeight={200} spacing={6}>
                     { 
                     recipes.map((recipe: Recipe) =>
-                        <RecipeCard key={recipe.id} recipe={recipe} />
+                        <RecipeCard key={recipe._id} recipe={recipe} />
                     )}
                 </GridList>
             </div>

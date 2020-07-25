@@ -6,9 +6,8 @@ import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import { Recipe } from '../model/recipe'
-import { Chip, CardActions, IconButton } from '@material-ui/core';
+import { Chip } from '@material-ui/core';
 import Rating from '@material-ui/lab/Rating';
-import FavoriteIcon from '@material-ui/icons/Favorite';
 import { Link } from '@material-ui/core';
 
 
@@ -53,27 +52,21 @@ interface ReciepProps {
 
 const RecipeCard = (props: ReciepProps) => {
     const { recipe } = props;   //This will be changed to get request 
-    const [currUser] = useState(null) // will be added later
     const classes = useStyles()
-
-
-    function addToFavourites() {
-        alert('Added to favourites!')
-    }
 
     return (recipe) ? (
         <Card className={classes.root}>
-            <Link href={'/recipe/:id'} underline="none">
+            <Link href={`/recipe/${recipe._id}`} underline="none">
                 <CardHeader
                     className={classes.header}
-                    title={recipe.title}
-                    subheader={`${recipe.author} - ${recipe.date}`}
+                    title={recipe.name}
+                   // subheader={`${recipe.author.username} - ${recipe.date}`}
                 />
                 <Rating className={classes.rating} name="read-only" value={recipe.rating} readOnly />
                 <CardMedia
                     className={classes.media}
                     image={recipe.picturePath}
-                    title={recipe.title}
+                    title={recipe.name}
                 />
             </Link>
             <CardContent>
@@ -86,14 +79,6 @@ const RecipeCard = (props: ReciepProps) => {
                     <Chip className={classes.tags} key={tag.id} label={tag.value} size="small" variant="outlined" />
                 ))}
                 </Typography>
-                {currUser ?
-                    <CardActions className={classes.favourite}>
-                        <IconButton onClick={addToFavourites} aria-label="add to favorites">
-                            <FavoriteIcon />
-                        </IconButton>
-                    </CardActions>
-                    :
-                    ''}
             </CardContent>
         </Card>
     ) : (<p>
