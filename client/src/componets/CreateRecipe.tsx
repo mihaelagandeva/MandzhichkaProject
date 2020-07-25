@@ -111,8 +111,9 @@ const CreateRecipe = (props: any) => {
     
     const Submit = () => {
         const body = { name: title, summary, prepTime, steps: stepsList, picturePath, products: productList, tags: tags }
-        axios.post(`${environment.apiUrl}/api/recipes/myRecipes/add`, body, {withCredentials: true})
-        props.history.push('/login');
+        axios.post(`${environment.apiUrl}/api/recipes/myRecipes/add`, body, { withCredentials: true }).then(() => {
+            props.history.push('/login');
+        });
     }
     
     const styles = useStyles();
