@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import User, { IUser } from "./db-config/models/user";
 import { resolve } from 'path';
-import Recipe from "./db-config/models/recipe";
+import Recipe, {IRecipe} from "./db-config/models/recipe";
 import Tag, { ITag } from "./db-config/models/tag";
 import bcrypt from 'bcrypt';
 import Restaurant from "./db-config/models/restaurant";
@@ -79,14 +79,7 @@ export let createRecipe = async (req: Request, res: Response) => {
                     res.status(400).send();
                 } else {
                     const tagsToBeInserted = await handleTags(req.body.tags, res);
-                    let author;
-                    await User.findOne({ username: req.cookies.loggedUser }, function (err: any, user: any) {
-                        if (err) {
-                            res.status(501).send();
-                        } else {
-                            author = user;
-                        }
-                    });
+                    let author = await getUserByCookie(req);
                     await Recipe.create({
                         name: req.body.name,
                         author: author,
@@ -217,12 +210,23 @@ export let listAllRecipes = async (req: Request, res: Response) => {
 };
 
 export let listUserFavouriteRecipes = async (req: Request, res: Response) => {
-    await User.findOne({ username: req.cookies.loggedUser }, function (err, user) {
+    await User.findOne({ username: req.cookies.loggedUser }, async function (err, user) {
         if (err) {
             res.status(501).send();
         } else {
             if (user) {
-                res.status(200).send(user?.favourites);
+                let result: (IRecipe | null)[] = [];
+                for (let index = 0; index < user.favouritesId.length; index++) {
+                    const recipeId = user.favouritesId[index];
+                    await Recipe.findOne({ _id: recipeId }, (err, recipe) => {
+                        if (err) {
+                            res.status(501).send();
+                        } else {
+                            result.push(recipe);
+                        }
+                    })
+                }
+                res.status(200).send(result);
             } else {
                 res.status(400).send();
             }
@@ -236,22 +240,13 @@ export let addUserFavouriteRecipes = async (req: Request, res: Response) => {
             res.status(501).send();
         } else {
             if (user) {
-                await Recipe.findOne({ _id: req.body.recipeId }, async function (err, recipe) {
+                user.favouritesId.push(req.body.recipeId);
+                console.log(user.favouritesId)
+                await User.updateOne({ username: user.username }, { $set: { favouritesId: user.favouritesId } }, (err: any, user: any) => {
                     if (err) {
                         res.status(501).send();
                     } else {
-                        if (recipe) {
-                            user.favourites.push(recipe);
-                            User.updateOne({ username: user.username }, { $set: { favourites: user.favourites } }, (err: any, user: any) => {
-                                if (err) {
-                                    res.status(501).send();
-                                } else {
-                                    res.status(200).send();
-                                }
-                            })
-                        } else {
-                            res.status(404).send();
-                        }
+                        res.status(200).send();
                     }
                 })
             } else {
@@ -388,7 +383,7 @@ async function handleTags(tags: string[], res: Response) {
                         result.push(tag);
                     }
                     else {
-                        await Tag.create({value: tags[i]}, function (err: any, tag: any) {
+                        await Tag.create({ value: tags[i] }, function (err: any, tag: any) {
                             if (err) {
                                 res.status(501).send("Error!");
                             } else {
