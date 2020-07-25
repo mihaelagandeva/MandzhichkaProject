@@ -32,7 +32,7 @@ const useStyles = makeStyles({
 
 const ShoppingList = () => {
     const [shoppingList, setShoppingList] = useState<ShoppingListModel>({ entities: [] });
-    const [newProducts, setNewProducts] = useState<{ name: string, quantity: number, metric: string }[]>([{ name: "", quantity: 0, metric: "" }])
+    const [newProducts, setNewProducts] = useState<{ name: string, quantity: number, metrics: string }[]>([{ name: "", quantity: 0, metrics: "" }])
     const [isEditing, setIsEditing] = useState(false)
     const [isAdding, setIsAdding] = useState(false)
     const [allProducts] = useQuery<Product[]>('/products',null,[])
@@ -84,7 +84,7 @@ const ShoppingList = () => {
     const handleAdding = () => {
         // const result = shoppingList.entities.concat(newProducts)
         // setProducts(result);
-        setNewProducts([{ name: "", quantity: 0, metric: "" }])
+        setNewProducts([{ name: "", quantity: 0, metrics: "" }])
         setIsAdding(false);
     }
 

@@ -81,9 +81,8 @@ const SingleRecipe = () => {
     }
     
     const addToFavourites = () => {
-        const newFavs = usersFavourites.concat(recipe!)
-        const body = { favourites: newFavs }
-        axios.put(`${environment.apiUrl}/api/profile`, body, { withCredentials: true })
+        const body = { recipeId: id }
+        axios.post(`${environment.apiUrl}/api/recipes/favorites`, body, { withCredentials: true })
         setIsAddedToFav(true)
     }
 

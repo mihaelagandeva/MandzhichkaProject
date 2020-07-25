@@ -257,7 +257,7 @@ export let addUserFavouriteRecipes = async (req: Request, res: Response) => {
 };
 
 export let listUserOwnRecipes = async (req: Request, res: Response) => {
-    await Recipe.find({ 'author.username': req.cookies.loggedUser }, function (err, recipes) {
+    await Recipe.find({ 'author.username': req.cookies.loggedUser }, async function (err, recipes) {
         if (err) {
             res.status(501).send();
         } else {

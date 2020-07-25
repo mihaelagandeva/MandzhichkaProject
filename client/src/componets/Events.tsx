@@ -77,7 +77,6 @@ class Events extends Component<WithSnackbarProps&EventsProps, EventsState> {
     const url = `${environment.apiUrl}/api/events/${courseId}`;
 
     axios.put(url, {}, {withCredentials: true}).then((result) => {
-      this.props.enqueueSnackbar(result, {variant: 'success'});
       this.setPage(1);
     }).catch((error) => {
       console.log(error);
