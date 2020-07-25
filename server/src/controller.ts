@@ -80,7 +80,7 @@ export let createRecipe = async (req: Request, res: Response) => {
                 } else {
                     const tagsToBeInserted = await handleTags(req.body.tags, res);
                     let author;
-                    await User.findOne({ username: req.body.author }, function (err: any, user: any) {
+                    await User.findOne({ username: req.cookies.loggedUser }, function (err: any, user: any) {
                         if (err) {
                             res.status(501).send();
                         } else {
