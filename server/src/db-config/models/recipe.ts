@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 import { IProduct } from "./product";
 import { ITag } from "./tag";
 import * as Tag from './tag';
+import { IUser } from "./user";
+import * as User from './user';
+
 
 export const RecipeSchema = new mongoose.Schema({
     name: {
@@ -9,7 +12,7 @@ export const RecipeSchema = new mongoose.Schema({
         minlength: 3,
         maxlength: 100,
     },
-    author: { type: String },
+    author: User.UserSchema,
     summary: { type: String },
     date: { type: Date },
     rating: { type: Number, min: 0, max: 5 },
@@ -26,7 +29,7 @@ export const RecipeSchema = new mongoose.Schema({
 
 export interface IRecipe extends mongoose.Document {
     name: string;
-    author: string;
+    author: IUser;
     date: Date;
     rating: number;
     picturePath: string;
