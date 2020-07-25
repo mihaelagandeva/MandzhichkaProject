@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import { IProduct } from "./product";
-import * as Product from './product';
 import { ITag } from "./tag";
 import * as Tag from './tag';
 
@@ -11,6 +10,7 @@ export const RecipeSchema = new mongoose.Schema({
         maxlength: 100,
     },
     author: { type: String },
+    summary: { type: String },
     date: { type: Date },
     rating: { type: Number, min: 0, max: 5 },
     picturePath: { type: String },

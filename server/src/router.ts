@@ -90,6 +90,7 @@ router.get('/achievements/:page/:size', async (req: Request, res: Response) => {
 router.post('/upload', async (req: Request, res: Response) => {
     await controller.uploadPicture(req, res);
 });
+
 router.get('/products', async (req: Request, res: Response) => {
     await controller.getAllProducts(req, res);
 });
