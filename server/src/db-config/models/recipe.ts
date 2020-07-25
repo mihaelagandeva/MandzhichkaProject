@@ -20,7 +20,7 @@ export const RecipeSchema = new mongoose.Schema({
         metric: { type: String }
     }],
     tags: [Tag.TagSchema],
-    preprationTime: { type: Number },
+    prepTime: { type: Number },
     steps: [{ type: String }]
 });
 
@@ -32,7 +32,7 @@ export interface IRecipe extends mongoose.Document {
     picturePath: string;
     products: IProduct[];
     tags: ITag['_id'];
-    preprationTime: Number;
+    prepTime: Number;
     steps: string[];
 }
 

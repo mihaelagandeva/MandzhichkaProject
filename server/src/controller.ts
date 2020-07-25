@@ -93,15 +93,13 @@ export let createRecipe = async (req: Request, res: Response) => {
                         summary: req.body.summary,
                         date: Date.now(),
                         rating: 0,
-                        summary: req.body.summary,
                         picturePath: req.body.picturePath,
                         products: req.body.products,
                         tags: tagsToBeInserted,
-                        preparationTime: req.body.preparationTime,
+                        prepTime: req.body.prepTime,
                         steps: req.body.steps
                     }, function (err: any, recipe: any) {
                         if (err) {
-                            console.log(err)
                             res.status(501).send("Error!");
                         } else {
                             res.status(201).send(recipe);
@@ -232,6 +230,37 @@ export let listUserFavouriteRecipes = async (req: Request, res: Response) => {
     })
 };
 
+export let addUserFavouriteRecipes = async (req: Request, res: Response) => {
+    await User.findOne({ username: req.cookies.loggedUser }, async function (err, user) {
+        if (err) {
+            res.status(501).send();
+        } else {
+            if (user) {
+                await Recipe.findOne({ _id: req.body.recipeId }, async function (err, recipe) {
+                    if (err) {
+                        res.status(501).send();
+                    } else {
+                        if (recipe) {
+                            user.favourites.push(recipe);
+                            User.updateOne({ username: user.username }, { $set: { favourites: user.favourites } }, (err: any, user: any) => {
+                                if (err) {
+                                    res.status(501).send();
+                                } else {
+                                    res.status(200).send();
+                                }
+                            })
+                        } else {
+                            res.status(404).send();
+                        }
+                    }
+                })
+            } else {
+                res.status(400).send();
+            }
+        }
+    })
+};
+
 export let listUserOwnRecipes = async (req: Request, res: Response) => {
     await Recipe.find({ 'author.username': req.cookies.loggedUser }, function (err, recipes) {
         if (err) {
@@ -252,9 +281,9 @@ export let getRestaurants = async (req: Request, res: Response) => {
 
     if (page && size) {
         const firstRecord = (page - 1) * size;
-        const {search, filter} = req.params;
+        const { search, filter } = req.params;
         let restaurants: any[] = [];
-        const query = { $or: [{ name: { $regex: search || '' } }, { address: { $regex: search || '' } }], type: {$regex: filter || ''} };
+        const query = { $or: [{ name: { $regex: search || '' } }, { address: { $regex: search || '' } }], type: { $regex: filter || '' } };
 
         await Restaurant.find(query, (err: any, result: any[]) => {
             if (err) {

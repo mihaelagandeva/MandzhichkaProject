@@ -41,7 +41,7 @@ const MainPage: FunctionComponent<MainPageProps> = ({search, updated, setUpdated
         const optionalUrl = search ? `/${search}` : '';
         const finalUrl = mandatoryUrl + optionalUrl;
 
-        axios.get(finalUrl, {withCredentials: true}).then((result: AxiosResponse<RecipeReport>) => {
+        axios.get(finalUrl, {withCredentials: true, headers: {'content-type': 'application/json'}}).then((result: AxiosResponse<RecipeReport>) => {
             const response = result.data;
 
             setPage(response.page);

@@ -91,14 +91,14 @@ const SingleRecipe = () => {
         const body = {recipeId: id, text: comment}
         axios.post(`${environment.apiUrl}/api/comment`, body, { withCredentials: true })
         setIsCommenting(false)
-
     }
     
     const addProductsToList = () => {
         if (recipe?.products) {
+            console.log(shoppingList.products);
             const newShoppingList = shoppingList.products.concat(recipe.products)
             const body = {products: newShoppingList}
-            axios.put(`${environment.apiUrl}/api/shopping-list`, body, { withCredentials: true });
+            axios.put(`${environment.apiUrl}/api/shopping-list`, body, { withCredentials: true }).then();
         }
         setHaveBeenAdded(true);
     }
@@ -130,7 +130,7 @@ const SingleRecipe = () => {
 
                                 }
                             </div> : ""}
-                        <p style={{ clear: "both" }} className={styles.creator}>Създадена на {recipe.date}</p>
+                            <p style={{ clear: "both" }} className={styles.creator}>Създадена на {recipe.date}</p>
                         <div>
                             <h3>Описание: </h3>
                             <p>{recipe.summary}</p>

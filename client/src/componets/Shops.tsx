@@ -54,7 +54,7 @@ class Shops extends Component<WithSnackbarProps&ShopsProps, ShopsState> {
     const optionalUrl = search ? `/${search}` : '';
     const finalUrl = mandatoryUrl + optionalUrl;
 
-    axios.get(finalUrl).then((result: AxiosResponse<ShopReport>) => {
+    axios.get(finalUrl, {headers: {'content-type': 'application/json'}}).then((result: AxiosResponse<ShopReport>) => {
       const response = result.data;
 
       this.setState({

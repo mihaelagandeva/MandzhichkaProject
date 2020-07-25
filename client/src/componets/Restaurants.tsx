@@ -60,7 +60,7 @@ class Restaurants extends Component<WithSnackbarProps&RestaurantProps, Restauran
     const filterParam = selectedFilter ? `/${selectedFilter}` : '';
     const finalUrl = mandatoryUrl + searchParam + filterParam;
 
-    axios.get(finalUrl).then((result: AxiosResponse<RestaurantReport>) => {
+    axios.get(finalUrl, {headers: {'content-type': 'application/json'}}).then((result: AxiosResponse<RestaurantReport>) => {
       const response = result.data;
 
       this.setState({

@@ -56,7 +56,7 @@ class Courses extends Component<WithSnackbarProps&CoursesProps, CoursesState> {
     const optionalUrl = search ? `/${search}` : '';
     const finalUrl = mandatoryUrl + optionalUrl;
 
-    axios.get(finalUrl, {withCredentials: true}).then((result: AxiosResponse<EventReport>) => {
+    axios.get(finalUrl, {withCredentials: true, headers: {'content-type': 'application/json'}}).then((result: AxiosResponse<EventReport>) => {
       const response = result.data;
       const formattedDateResultSet = response.resultSet.map((event) => {
         return {...event, date: event.date.split('T')[0]}
