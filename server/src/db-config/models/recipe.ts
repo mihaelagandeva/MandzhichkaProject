@@ -17,7 +17,7 @@ export const RecipeSchema = new mongoose.Schema({
     products: [{
         name: { type: String },
         quantity: { type: Number },
-        metric: { type: String }
+        metrics: { type: String }
     }],
     tags: [Tag.TagSchema],
     prepTime: { type: Number },
