@@ -59,7 +59,7 @@ router.post('/registration', async (req: Request, res: Response) => {
     await controller.registration(req, res);
 });
 
-router.get('/restaurants/:page/:size/:search?', async (req: Request, res: Response) => {
+router.get('/restaurants/:page/:size/:search?/:filter?', async (req: Request, res: Response) => {
     await controller.getRestaurants(req, res);
 });
 
