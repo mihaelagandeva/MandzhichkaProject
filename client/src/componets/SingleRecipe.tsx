@@ -92,7 +92,7 @@ const SingleRecipe = () => {
         axios.post(`${environment.apiUrl}/api/comment`, body, { withCredentials: true }).then(() => {
             setIsCommenting(false);
             getAllComments();
-        })
+        });
     }
     
     const addProductsToList = () => {
@@ -109,6 +109,10 @@ const SingleRecipe = () => {
             .then((comments: AxiosResponse<Comment[]>) => {
             setCommentList(comments.data);
         });
+    }
+
+    const formatDate = (date: string): string => {
+        return date.replace('T', ' ').split('.')[0];
     }
 
     useEffect(() => {
@@ -142,7 +146,9 @@ const SingleRecipe = () => {
 
                                 }
                             </div> : ""}
-                            <p style={{ clear: "both" }} className={styles.creator}>Създадена на {recipe.date}</p>
+                            <p style={{ clear: "both" }} className={styles.creator}>
+                                Създадена на {formatDate(recipe.date)}
+                            </p>
                         <div>
                             <h3>Описание: </h3>
                             <p>{recipe.summary}</p>
@@ -178,7 +184,7 @@ const SingleRecipe = () => {
                         <div className={styles.commentsSection} >
                             {comments?.map(comment =>
                                 <div style={{ marginTop: 10, border: '1px solid black', padding: 10, width: "40%" }}>
-                                    <h4 style={{ margin: 0 }}>Публикувано на {comment.date}:</h4>
+                                    <h4 style={{ margin: 0 }}>Публикувано на {formatDate(comment.date)}</h4>
                                     <div style={{ margin: 10 }}>
                                         {comment.text}
                                     </div>
