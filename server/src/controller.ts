@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import User, { IUser } from "./db-config/models/user";
 import { resolve } from 'path';
-import Recipe, {IRecipe} from "./db-config/models/recipe";
+import Recipe, { IRecipe } from "./db-config/models/recipe";
 import Tag, { ITag } from "./db-config/models/tag";
 import bcrypt from 'bcrypt';
 import Restaurant from "./db-config/models/restaurant";
-import Product from './db-config/models/product';
+import Product, { IProduct } from './db-config/models/product';
 import Course from './db-config/models/courses';
 import Event from './db-config/models/event';
 import Shop from './db-config/models/shop';
@@ -817,15 +817,38 @@ export let getShoppingList = async (req: Request, res: Response) => {
 export let updateShoppingList = async (req: Request, res: Response) => {
     const user = await getUserByCookie(req);
     if (user) {
-        await ShoppingList.updateOne({ 'user.username': user.username }, { $set: req.body, $currentDate: { lastModified: true } },
-            function (err: any) {
-                if (err) {
-                    res.status(501).send("Error!");
+        await ShoppingList.findOne({ 'user.username': user.username }, async (err, shoppingList) => {
+            if (err) {
+                res.status(501).send();
+            } else {
+                if (shoppingList) {
+                    let entities = shoppingList.entities;
+                    let reqProducts = req.body;
+
+                    for (let index = 0; index < reqProducts.length; index++) {
+                        const product = reqProducts[index].product;
+                        await Product.findOne({ name: product.name }, (err, product) => {
+                            if (product) {
+                                entities.push({
+                                    product: product,
+                                    quantity: reqProducts[index].quantity,
+                                    metric: reqProducts[index].metrics,
+                                });
+                            }
+                        })
+                    }
+                    await ShoppingList.updateOne({ 'user.username': user.username }, { $set: { entities: entities } }, (err, shoppingList) => {
+                        if(err) {
+                            res.status(501).send();
+                        } else {
+                            res.status(200).send();
+                        }
+                    })
                 } else {
-                    res.status(200).send();
+                    res.status(404).send();
                 }
             }
-        );
+        })
     }
 };
 
