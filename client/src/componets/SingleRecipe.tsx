@@ -11,7 +11,7 @@ import { useParams } from 'react-router-dom';
 import axios, { AxiosError, AxiosResponse } from "axios"
 import { environment } from '../environments/environment.json';
 import { ShoppingListModel } from '../model/shoppingList';
-import {Comment} from '../model/comment'
+import {Comment} from 'model/comment'
 import { useQuery } from 'helper/useQuery';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -65,7 +65,7 @@ const SingleRecipe = () => {
     const [haveBeenAdded, setHaveBeenAdded] = useState(false)
     const [isCommenting, setIsCommenting] = useState(false);
     const [isAddedToFav, setIsAddedToFav] = useState(false)
-    const [comments] = useQuery<Comment[]>(`comment/${id}`, null,[]);
+    const [comments, setCommentList] = useState<Comment[] | undefined>([]);
     const [comment, setComment] = useState("");
     const [usersFavourites] = useQuery<Recipe[]>('recipes/favorites', null, []);
     const [shoppingList] = useQuery<ShoppingListModel>('shopping-list',null,{products:[]});
@@ -89,19 +89,35 @@ const SingleRecipe = () => {
 
     const addComment = () => {
         const body = {recipeId: id, text: comment}
-        axios.post(`${environment.apiUrl}/api/comment`, body, { withCredentials: true })
-        setIsCommenting(false)
+        axios.post(`${environment.apiUrl}/api/comment`, body, { withCredentials: true }).then(() => {
+            setIsCommenting(false);
+            getAllComments();
+        });
     }
     
     const addProductsToList = () => {
         if (recipe?.products) {
-            console.log(shoppingList.products);
             const newShoppingList = shoppingList.products.concat(recipe.products)
             const body = {products: newShoppingList}
             axios.put(`${environment.apiUrl}/api/shopping-list`, body, { withCredentials: true }).then();
         }
         setHaveBeenAdded(true);
     }
+
+    const getAllComments = () => {
+        axios.get(`${environment.apiUrl}/api/comment/${id}`, {withCredentials: true})
+            .then((comments: AxiosResponse<Comment[]>) => {
+            setCommentList(comments.data);
+        });
+    }
+
+    const formatDate = (date: string): string => {
+        return date.replace('T', ' ').split('.')[0];
+    }
+
+    useEffect(() => {
+        getAllComments();
+    }, []);
     
     const styles = useStyles()
     
@@ -130,7 +146,9 @@ const SingleRecipe = () => {
 
                                 }
                             </div> : ""}
-                            <p style={{ clear: "both" }} className={styles.creator}>Създадена на {recipe.date}</p>
+                            <p style={{ clear: "both" }} className={styles.creator}>
+                                Създадена на {formatDate(recipe.date)}
+                            </p>
                         <div>
                             <h3>Описание: </h3>
                             <p>{recipe.summary}</p>
@@ -166,7 +184,7 @@ const SingleRecipe = () => {
                         <div className={styles.commentsSection} >
                             {comments?.map(comment =>
                                 <div style={{ marginTop: 10, border: '1px solid black', padding: 10, width: "40%" }}>
-                                    <h4 style={{ margin: 0 }}>Публикувано на {comment.date}:</h4>
+                                    <h4 style={{ margin: 0 }}>Публикувано на {formatDate(comment.date)}</h4>
                                     <div style={{ margin: 10 }}>
                                         {comment.text}
                                     </div>
