@@ -14,6 +14,7 @@ import Restaurants from './Restaurants';
 import Shops from './Shops';
 import Events from './Events';
 import Courses from './Courses';
+import Achievements from './Achievements';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -100,7 +101,7 @@ const NavigationBar: FunctionComponent<NavigationBarProps> = ({tabNumber}) => {
                     <Tab label="Магазини" component={Link} to={'/shops'} />
                     <Tab label="Събития" component={Link} to={'/events'} />
                     <Tab label="Курсове" component={Link} to={'/courses'} />
-                    <Tab label="Постижения" {...a11yProps(4)} />
+                    <Tab label="Постижения" component={Link} to={'/achievements'} />
                 </Tabs>
                 <div className={classes.search}>
                     <SearchBar
@@ -127,6 +128,9 @@ const NavigationBar: FunctionComponent<NavigationBarProps> = ({tabNumber}) => {
             </TabPanel>
             <TabPanel value={value} index={4}>
                 <Courses search={searchString} updated={searchUpdated} setUpdated={setSearchUpdated} />
+            </TabPanel>
+            <TabPanel value={value} index={5}>
+                <Achievements search={searchString} updated={searchUpdated} setUpdated={setSearchUpdated} />
             </TabPanel>
         </div>
     );
