@@ -8,7 +8,6 @@ import Link from '@material-ui/core/Link';
 import axios from 'axios';
 import {environment} from '../environments/environment.json';
 import { useSnackbar } from 'notistack';
-import Cookies from 'js-cookie';
 import { Redirect } from "react-router-dom";
 
 const useStyles = makeStyles({

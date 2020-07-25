@@ -93,15 +93,13 @@ export let createRecipe = async (req: Request, res: Response) => {
                         summary: req.body.summary,
                         date: Date.now(),
                         rating: 0,
-                        summary: req.body.summary,
                         picturePath: req.body.picturePath,
                         products: req.body.products,
                         tags: tagsToBeInserted,
-                        preparationTime: req.body.preparationTime,
+                        prepTime: req.body.prepTime,
                         steps: req.body.steps
                     }, function (err: any, recipe: any) {
                         if (err) {
-                            console.log(err)
                             res.status(501).send("Error!");
                         } else {
                             res.status(201).send(recipe);
@@ -283,9 +281,9 @@ export let getRestaurants = async (req: Request, res: Response) => {
 
     if (page && size) {
         const firstRecord = (page - 1) * size;
-        const {search, filter} = req.params;
+        const { search, filter } = req.params;
         let restaurants: any[] = [];
-        const query = { $or: [{ name: { $regex: search || '' } }, { address: { $regex: search || '' } }], type: {$regex: filter || ''} };
+        const query = { $or: [{ name: { $regex: search || '' } }, { address: { $regex: search || '' } }], type: { $regex: filter || '' } };
 
         await Restaurant.find(query, (err: any, result: any[]) => {
             if (err) {
