@@ -4,6 +4,8 @@ import { makeStyles, GridList } from '@material-ui/core'
 import RecipeCard from './RecipeCard'
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import {environment} from 'environments/environment.json';
+import If from './If';
+import Pagination from '@material-ui/lab/Pagination';
 
 const useStyles = makeStyles({
     root: {
@@ -13,6 +15,10 @@ const useStyles = makeStyles({
         marginTop: 10,
         marginLeft: '15%',
         marginRight: '15%'
+    },
+    paginationContainer: {
+        display: 'flex',
+        justifyContent: 'center'
     }
 })
 
@@ -31,7 +37,7 @@ const MainPage: FunctionComponent<MainPageProps> = ({search, updated, setUpdated
 
     const styles = useStyles();
 
-    const loadRecipes = () => {
+    const loadRecipes = (page: number) => {
         const mandatoryUrl = `${environment.apiUrl}/api/recipes/${page}/${pageSize}`;
         const optionalUrl = search ? `/${search}` : '';
         const finalUrl = mandatoryUrl + optionalUrl;
@@ -51,10 +57,14 @@ const MainPage: FunctionComponent<MainPageProps> = ({search, updated, setUpdated
 
     useEffect(() => {
         if (updated) {
-            loadRecipes();
+            loadRecipes(1);
             setUpdated(false);
         }
     });
+
+    const onPageChange = (event: any, value: number) => {
+        loadRecipes(value);
+    }
 
     return (
         <div className={styles.root}>
@@ -65,6 +75,16 @@ const MainPage: FunctionComponent<MainPageProps> = ({search, updated, setUpdated
                         <RecipeCard key={recipe.id} recipe={recipe} />
                     )}
                 </GridList>
+            </div>
+            <div className={styles.paginationContainer}>
+                <If condition={totalItems > pageSize}>
+                    <Pagination
+                        count={Math.round(totalItems / pageSize)}
+                        page={page}
+                        color="primary"
+                        onChange={(event, value) => onPageChange(event, value)}
+                    />
+                </If>
             </div>
         </div>
     )
