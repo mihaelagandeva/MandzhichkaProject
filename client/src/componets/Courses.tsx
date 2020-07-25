@@ -6,20 +6,20 @@ import {withSnackbar, WithSnackbarProps} from 'notistack';
 import CardContainer from './CardContainer';
 import JoinCard from './JoinCard';
 
-interface EventsState {
+interface CoursesState {
   page: number;
   pageSize: number;
   events: Event[];
   totalItems: number;
 }
 
-interface EventsProps {
+interface CoursesProps {
   search: string;
   updated: boolean;
   setUpdated: Function;
 }
 
-class Events extends Component<WithSnackbarProps&EventsProps, EventsState> {
+class Courses extends Component<WithSnackbarProps&CoursesProps, CoursesState> {
   constructor(props: any) {
     super(props);
     this.state = {
@@ -30,8 +30,8 @@ class Events extends Component<WithSnackbarProps&EventsProps, EventsState> {
     };
 
     this.handlePageChange = this.handlePageChange.bind(this);
-    this.handleEventJoin = this.handleEventJoin.bind(this);
-    this.handleEventLeave = this.handleEventLeave.bind(this);
+    this.handleCourseJoin = this.handleCourseJoin.bind(this);
+    this.handleCourseLeave = this.handleCourseLeave.bind(this);
   }
 
   componentDidMount() {
@@ -52,7 +52,7 @@ class Events extends Component<WithSnackbarProps&EventsProps, EventsState> {
   setPage(page: number) {
     const {pageSize} = this.state;
     const {search} = this.props;
-    const mandatoryUrl = `${environment.apiUrl}/api/events/${page}/${pageSize}`;
+    const mandatoryUrl = `${environment.apiUrl}/api/courses/${page}/${pageSize}`;
     const optionalUrl = search ? `/${search}` : '';
     const finalUrl = mandatoryUrl + optionalUrl;
 
@@ -73,19 +73,18 @@ class Events extends Component<WithSnackbarProps&EventsProps, EventsState> {
     });
   }
 
-  handleEventJoin(courseId: string) {
-    const url = `${environment.apiUrl}/api/events/${courseId}`;
+  handleCourseJoin(courseId: string) {
+    const url = `${environment.apiUrl}/api/courses/${courseId}`;
 
     axios.put(url, {}, {withCredentials: true}).then((result) => {
-      this.props.enqueueSnackbar(result, {variant: 'success'});
       this.setPage(1);
     }).catch((error) => {
       console.log(error);
     });
   }
 
-  handleEventLeave(courseId: string) {
-    const url = `${environment.apiUrl}/api/events/leave/${courseId}`;
+  handleCourseLeave(courseId: string) {
+    const url = `${environment.apiUrl}/api/courses/leave/${courseId}`;
 
     axios.put(url, {}, {withCredentials: true}).then((result) => {
       this.setPage(1);
@@ -107,13 +106,13 @@ class Events extends Component<WithSnackbarProps&EventsProps, EventsState> {
         {
           events.map((event, index) => {
             return (
-              <JoinCard 
+              <JoinCard
                 key={event.name + index}
                 item={event}
-                onJoin={this.handleEventJoin}
-                onCancel={this.handleEventLeave}
+                onJoin={this.handleCourseJoin}
+                onCancel={this.handleCourseLeave}
               ></JoinCard>
-            )
+            );
           })
         }
       </CardContainer>
@@ -121,5 +120,5 @@ class Events extends Component<WithSnackbarProps&EventsProps, EventsState> {
   }
 }
 
-export default withSnackbar(Events);
+export default withSnackbar(Courses);
 

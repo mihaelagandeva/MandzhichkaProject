@@ -59,7 +59,7 @@ router.post('/registration', async (req: Request, res: Response) => {
     await controller.registration(req, res);
 });
 
-router.get('/restaurants/:page/:size/:search?', async (req: Request, res: Response) => {
+router.get('/restaurants/:page/:size/:search?/:filter?', async (req: Request, res: Response) => {
     await controller.getRestaurants(req, res);
 });
 
@@ -90,6 +90,7 @@ router.get('/achievements/:page/:size', async (req: Request, res: Response) => {
 router.post('/upload', async (req: Request, res: Response) => {
     await controller.uploadPicture(req, res);
 });
+
 router.get('/products', async (req: Request, res: Response) => {
     await controller.getAllProducts(req, res);
 });

@@ -90,6 +90,7 @@ export let createRecipe = async (req: Request, res: Response) => {
                     await Recipe.create({
                         name: req.body.name,
                         author: author,
+                        summary: req.body.summary,
                         date: Date.now(),
                         rating: 0,
                         summary: req.body.summary,
@@ -251,9 +252,9 @@ export let getRestaurants = async (req: Request, res: Response) => {
 
     if (page && size) {
         const firstRecord = (page - 1) * size;
-        const search = req.params.search;
+        const {search, filter} = req.params;
         let restaurants: any[] = [];
-        const query = { $or: [{ name: { $regex: search || '' } }, { address: { $regex: search || '' } }] };
+        const query = { $or: [{ name: { $regex: search || '' } }, { address: { $regex: search || '' } }], type: {$regex: filter || ''} };
 
         await Restaurant.find(query, (err: any, result: any[]) => {
             if (err) {

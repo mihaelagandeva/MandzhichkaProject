@@ -20,7 +20,12 @@ const RestaurantSchema = new mongoose.Schema({
         minlength: [10, 'Телефонният номер трябва да е дълъг поне 10 символа'],
         maxlength: [13, 'Телефонният номер трябва да е дълъг най-много 13 символа'],
         validate: [/^\+359[0-9]{9}$|^0[0-9]{9}$/g, 'Телефонният номер е невалиден']
-    }
+    },
+    type: {
+        type: String,
+        required: [true, 'Типът на ресторанта е задължителен'],
+        minlength: [3, 'Типът номер трябва да е дълъг поне 3 символа'],
+        maxlength: [20, 'Типът номер трябва да е дълъг най-много 20 символа'],    }
 });
 
 interface IRestaurant extends mongoose.Document {
