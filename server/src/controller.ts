@@ -376,10 +376,10 @@ export let updateUser = async (req: Request, res: Response) => {
     );
 };
 
-async function handleTags(tags: ITag[], res: Response) {
+async function handleTags(tags: string[], res: Response) {
     let result: any[] = [];
     for (let i = 0; i < tags.length; i++) {
-        await Tag.findOne({ value: tags[i].value },
+        await Tag.findOne({ value: tags[i] },
             async function (err: any, tag: any) {
                 if (err) {
                     res.status(501).send("Error!");
@@ -388,7 +388,7 @@ async function handleTags(tags: ITag[], res: Response) {
                         result.push(tag);
                     }
                     else {
-                        await Tag.create(tags[i], function (err: any, tag: any) {
+                        await Tag.create({value: tags[i]}, function (err: any, tag: any) {
                             if (err) {
                                 res.status(501).send("Error!");
                             } else {
